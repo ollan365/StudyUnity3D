@@ -1,10 +1,9 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class CubeManager : MonoBehaviour
 {
-    public enum TouchPlaneColor { WHITE = 0, RED, BLUE, GREEN, ORANGE, YELLOW }
+    public enum TouchPlaneColor { WHITE, RED, BLUE, GREEN, ORANGE, YELLOW }
     [SerializeField] private GameObject[] whiteArray;
     [SerializeField] private GameObject[] redArray;
     [SerializeField] private GameObject[] blueArray;
@@ -14,39 +13,53 @@ public class CubeManager : MonoBehaviour
 
     [SerializeField] private GameObject[] turnPoints;
     [SerializeField] private GameObject touchPanels;
+    [SerializeField] private GameObject cubeParent;
     public void Turn(TouchPlaneColor color, int direction)
     {
         touchPanels.SetActive(false); // 연속 클릭이 안 되도록 
-        GameObject turnPoint = turnPoints[(int)color];
+        GameObject turnPoint;
         GameObject[] array;
-        Vector3 rotation = turnPoint.transform.rotation.eulerAngles;
+        Vector3 rotation;
         switch (color)
         {
             case TouchPlaneColor.WHITE:
+                turnPoint = turnPoints[0];
+                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.y += direction * 90;
                 array = whiteArray;
                 break;
             case TouchPlaneColor.RED:
+                turnPoint = turnPoints[1];
+                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.x += direction * 90;
                 array = redArray;
                 break;
             case TouchPlaneColor.BLUE:
+                turnPoint = turnPoints[2];
+                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.z += direction * 90;
                 array = blueArray;
                 break;
             case TouchPlaneColor.GREEN:
+                turnPoint = turnPoints[3];
+                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.z -= direction * 90;
                 array = greenArray;
                 break;
             case TouchPlaneColor.ORANGE:
+                turnPoint = turnPoints[4];
+                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.x -= direction * 90;
                 array = orangeArray;
                 break;
             case TouchPlaneColor.YELLOW:
+                turnPoint = turnPoints[5];
+                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.y -= direction * 90;
                 array = yellowArray;
                 break;
             default:
+                turnPoint = null;
                 rotation = Vector3.zero;
                 array = null;
                 break;
@@ -70,7 +83,7 @@ public class CubeManager : MonoBehaviour
         Quaternion startRotation = turnPoint.transform.rotation;
         Quaternion endRotation = Quaternion.Euler(rotation);
 
-        Debug.Log($"rotation: {rotation} / endRotation: {endRotation.eulerAngles}");
+        Debug.Log($"startRotation: {startRotation.eulerAngles} / rotation: {rotation} / endRotation: {endRotation.eulerAngles}");
 
         float elapsedTime = 0f;
         float duration = 1.0f; // 회전에 걸릴 시간
@@ -84,12 +97,12 @@ public class CubeManager : MonoBehaviour
 
         // 보정을 위해 최종 회전 각도로 설정
         turnPoint.transform.rotation = endRotation;
+        Debug.Log($"turnPoint.transform.rotation: {turnPoint.transform.rotation.eulerAngles}");
 
         foreach (GameObject cube in array) // 큐브들을 다시 본래의 부모 밑으로 보낸다
         {
-            cube.transform.parent = transform;
+            cube.transform.parent = cubeParent.transform;
         }
         touchPanels.SetActive(true);
-        Debug.Log("rotate end!");
     }
 }
