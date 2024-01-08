@@ -239,6 +239,7 @@ MonoBehaviour:
   - {fileID: 11079287}
   touchPanels: {fileID: 742084453}
   cubeParent: {fileID: 225169777}
+  duration: 0.3
 --- !u!1001 &7612536
 PrefabInstance:
   m_ObjectHideFlags: 0

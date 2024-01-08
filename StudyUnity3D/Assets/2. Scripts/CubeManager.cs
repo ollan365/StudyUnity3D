@@ -14,47 +14,43 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private GameObject[] turnPoints;
     [SerializeField] private GameObject touchPanels;
     [SerializeField] private GameObject cubeParent;
+
+    [SerializeField] private float duration; // 회전에 걸리는 시간
     public void Turn(TouchPlaneColor color, int direction)
     {
         touchPanels.SetActive(false); // 연속 클릭이 안 되도록 
         GameObject turnPoint;
         GameObject[] array;
-        Vector3 rotation;
+        Vector3 rotation = Vector3.zero;
         switch (color)
         {
             case TouchPlaneColor.WHITE:
                 turnPoint = turnPoints[0];
-                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.y += direction * 90;
                 array = whiteArray;
                 break;
             case TouchPlaneColor.RED:
                 turnPoint = turnPoints[1];
-                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.x += direction * 90;
                 array = redArray;
                 break;
             case TouchPlaneColor.BLUE:
                 turnPoint = turnPoints[2];
-                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.z += direction * 90;
                 array = blueArray;
                 break;
             case TouchPlaneColor.GREEN:
                 turnPoint = turnPoints[3];
-                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.z -= direction * 90;
                 array = greenArray;
                 break;
             case TouchPlaneColor.ORANGE:
                 turnPoint = turnPoints[4];
-                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.x -= direction * 90;
                 array = orangeArray;
                 break;
             case TouchPlaneColor.YELLOW:
                 turnPoint = turnPoints[5];
-                rotation = turnPoint.transform.rotation.eulerAngles;
                 rotation.y -= direction * 90;
                 array = yellowArray;
                 break;
@@ -80,24 +76,20 @@ public class CubeManager : MonoBehaviour
     // yellow: y +90 / y -90
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {
-        Quaternion startRotation = turnPoint.transform.rotation;
-        Quaternion endRotation = Quaternion.Euler(rotation);
-
-        Debug.Log($"startRotation: {startRotation.eulerAngles} / rotation: {rotation} / endRotation: {endRotation.eulerAngles}");
+        Quaternion startRotation = turnPoint.transform.localRotation;
+        Quaternion endRotation = Quaternion.Euler(rotation) * startRotation;
 
         float elapsedTime = 0f;
-        float duration = 1.0f; // 회전에 걸릴 시간
 
         while (elapsedTime < duration)
         {
-            turnPoint.transform.rotation = Quaternion.Slerp(startRotation, endRotation, elapsedTime / duration);
+            turnPoint.transform.localRotation = Quaternion.Slerp(startRotation, endRotation, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
         // 보정을 위해 최종 회전 각도로 설정
-        turnPoint.transform.rotation = endRotation;
-        Debug.Log($"turnPoint.transform.rotation: {turnPoint.transform.rotation.eulerAngles}");
+        turnPoint.transform.localRotation = endRotation;
 
         foreach (GameObject cube in array) // 큐브들을 다시 본래의 부모 밑으로 보낸다
         {
