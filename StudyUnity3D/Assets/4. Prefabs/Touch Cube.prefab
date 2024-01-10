@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1439152771444461697}
   - component: {fileID: 3984907099363930444}
   - component: {fileID: 866461321260495778}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Touch Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

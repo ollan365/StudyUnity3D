@@ -15,15 +15,6 @@ public class CubeManager : MonoBehaviour
 
     private GameObject[][] colorArray;
 
-    [SerializeField] private GameObject[] whiteArrayForAssignment; // 다차원 배열이 inspector에서 할당이 안 돼서 만든 array
-    [SerializeField] private GameObject[] redArrayForAssignment;
-    [SerializeField] private GameObject[] blueArrayForAssignment;
-    [SerializeField] private GameObject[] greenArrayForAssignment;
-    [SerializeField] private GameObject[] orangeArrayForAssignment;
-    [SerializeField] private GameObject[] yellowArrayForAssignment;
-
-    private GameObject[][][] colorChangeArray;
-
     [SerializeField] private GameObject[] turnPoints;
     [SerializeField] private GameObject touchPanels;
     [SerializeField] private GameObject cubeParent;
@@ -32,145 +23,6 @@ public class CubeManager : MonoBehaviour
     private void Start()
     {
         colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray };
-        colorChangeArray = new GameObject[6][][];
-
-        int index = 0;
-        colorChangeArray[WHITE] = new GameObject[6][];
-        for (int i = 0; i < colorChangeArray[WHITE].Length; i++)
-        {
-            colorChangeArray[WHITE][i] = new GameObject[3];
-
-            switch (i)
-            {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    for (int j = 0; j < 3; j++)
-                    {
-                        colorChangeArray[WHITE][i][j] = whiteArrayForAssignment[index];
-                        index++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        index = 0;
-
-        colorChangeArray[RED] = new GameObject[6][];
-        for (int i = 0; i < colorChangeArray[RED].Length; i++)
-        {
-            colorChangeArray[RED][i] = new GameObject[3];
-
-            switch (i)
-            {
-                case 0:
-                case 2:
-                case 3:
-                case 5:
-                    for (int j = 0; j < 3; j++)
-                    {
-                        colorChangeArray[RED][i][j] = redArrayForAssignment[index];
-                        index++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        index = 0;
-
-        colorChangeArray[BLUE] = new GameObject[6][];
-        for (int i = 0; i < colorChangeArray[BLUE].Length; i++)
-        {
-            colorChangeArray[BLUE][i] = new GameObject[3];
-
-            switch (i)
-            {
-                case 0:
-                case 1:
-                case 4:
-                case 5:
-                    for (int j = 0; j < 3; j++)
-                    {
-                        colorChangeArray[BLUE][i][j] = blueArrayForAssignment[index];
-                        index++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        index = 0;
-
-        colorChangeArray[GREEN] = new GameObject[6][];
-        for (int i = 0; i < colorChangeArray[GREEN].Length; i++)
-        {
-            colorChangeArray[GREEN][i] = new GameObject[3];
-
-            switch (i)
-            {
-                case 0:
-                case 1:
-                case 4:
-                case 5:
-                    for (int j = 0; j < 3; j++)
-                    {
-                        colorChangeArray[GREEN][i][j] = greenArrayForAssignment[index];
-                        index++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        index = 0;
-
-        colorChangeArray[ORANGE] = new GameObject[6][];
-        for (int i = 0; i < colorChangeArray[ORANGE].Length; i++)
-        {
-            colorChangeArray[ORANGE][i] = new GameObject[3];
-
-            switch (i)
-            {
-                case 0:
-                case 2:
-                case 3:
-                case 5:
-                    for (int j = 0; j < 3; j++)
-                    {
-                        colorChangeArray[ORANGE][i][j] = orangeArrayForAssignment[index];
-                        index++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        index = 0;
-
-        colorChangeArray[YELLOW] = new GameObject[6][];
-        for (int i = 0; i < colorChangeArray[YELLOW].Length; i++)
-        {
-            colorChangeArray[YELLOW][i] = new GameObject[3];
-
-            switch (i)
-            {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    for (int j = 0; j < 3; j++)
-                    {
-                        colorChangeArray[YELLOW][i][j] = yellowArrayForAssignment[index];
-                        index++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
     }
     public void Turn(TouchPlaneColor color, int direction)
     {
@@ -216,12 +68,11 @@ public class CubeManager : MonoBehaviour
                 array = null;
                 break;
         }
-        foreach (GameObject cube in array) // 큐브의 부모를 turnPoint로 설정하여 함께 회전시킨다
+        foreach (GameObject position in array) // 큐브의 부모를 turnPoint로 설정하여 함께 회전시킨다
         {
-            cube.transform.parent = turnPoint.transform;
+            position.transform.GetChild(0).parent = turnPoint.transform;
         }
         StartCoroutine(TurnEffect(turnPoint, rotation, array));
-        ChangeArray(color, direction);
     }
 
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
@@ -241,70 +92,9 @@ public class CubeManager : MonoBehaviour
         // 보정을 위해 최종 회전 각도로 설정
         turnPoint.transform.localRotation = endRotation;
 
-        foreach (GameObject cube in array) // 큐브들을 다시 본래의 부모 밑으로 보낸다
-        {
-            cube.transform.parent = cubeParent.transform;
-        }
+        foreach (GameObject position in array)
+            position.GetComponent<CubePosition>().FindChild();
+
         touchPanels.SetActive(true);
-    }
-
-    private void ChangeArray(TouchPlaneColor color, int direction)
-    {
-        int index = 0;
-        int[] originColor = new int[4];
-        switch (color)
-        {
-            case TouchPlaneColor.WHITE:
-                index = WHITE;
-                originColor = new int[] { RED, BLUE, ORANGE, GREEN };
-                break;
-            case TouchPlaneColor.RED:
-                index = RED;
-                originColor = new int[] { WHITE, GREEN, YELLOW, BLUE };
-                break;
-            case TouchPlaneColor.BLUE:
-                index = BLUE;
-                originColor = new int[] { WHITE, RED, YELLOW, ORANGE };
-                break;
-            case TouchPlaneColor.GREEN:
-                index = GREEN;
-                originColor = new int[] { WHITE, ORANGE, YELLOW, RED };
-                break;
-            case TouchPlaneColor.ORANGE:
-                index = ORANGE;
-                originColor = new int[] { WHITE, BLUE, YELLOW, GREEN };
-                break;
-            case TouchPlaneColor.YELLOW:
-                index = YELLOW;
-                originColor = new int[] { RED, GREEN, ORANGE, BLUE };
-                break;
-        }
-
-        if(direction > 0)
-        {
-            int swap = originColor[1];
-            originColor[1] = originColor[3];
-            originColor[3] = swap;
-        }
-
-        GameObject[][] nextColorChangeArray = new GameObject[4][];
-        for(int i = 0; i< 4; i++)
-        {
-            nextColorChangeArray[i] = new GameObject[3];
-            for(int j = 0; j < 3; j++)
-                nextColorChangeArray[i][j] = colorChangeArray[originColor[(i + 3) % 4]][index][j];
-            
-        }
-
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 3; j++)
-                for (int k = 0; k < colorArray[0].Length; k++)
-                    if(colorChangeArray[originColor[i]][index][j] == colorArray[originColor[i]][k])
-                    {
-                        colorArray[originColor[i]][k] = nextColorChangeArray[i][j];
-                        colorChangeArray[originColor[i]][index][j] = nextColorChangeArray[i][j];
-                        colorChangeArray[index][originColor[i]][j] = nextColorChangeArray[i][j];
-                        break;
-                    }
     }
 }

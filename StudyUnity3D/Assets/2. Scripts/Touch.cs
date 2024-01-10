@@ -15,7 +15,6 @@ public class Touch : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
-                // 만약 클릭된 객체가 3D plane이라면, Debug.log("click!"); 호출
                 if (hit.collider.gameObject == gameObject)
                 {
                     CM.Turn(touchPlaneColor, -1);
@@ -31,7 +30,6 @@ public class Touch : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
-                // 만약 클릭된 객체가 3D plane이라면, Debug.log("click!"); 호출
                 if (hit.collider.gameObject == gameObject)
                 {
                     CM.Turn(touchPlaneColor, 1);

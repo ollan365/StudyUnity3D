@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7444708311319934782}
   - component: {fileID: 6915414382561290086}
   - component: {fileID: 3699576465549573858}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Color Point Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
