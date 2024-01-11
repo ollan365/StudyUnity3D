@@ -17,12 +17,47 @@ public class CubeManager : MonoBehaviour
 
     [SerializeField] private GameObject[] turnPoints;
     [SerializeField] private GameObject touchPanels;
-    [SerializeField] private GameObject cubeParent;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
+    private bool turning;
     private void Start()
     {
+        turning = false;
         colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray };
+    }
+    public void StartRandomTurn(int randomCount)
+    {
+        StartCoroutine(RandomTurn(randomCount));
+    }
+    private IEnumerator RandomTurn(int randomCount)
+    {
+        for(int i = 0; i < randomCount; i++)
+        {
+            while (turning)
+                yield return null;
+
+            turning = true;
+
+            int direction = Random.Range(0, 2);
+            direction = direction == 1 ? 1 : -1;
+            int value = Random.Range(0, 6);
+
+            switch (value)
+            {
+                case 0:
+                    Turn(TouchPlaneColor.WHITE, direction); break;
+                case 1:
+                    Turn(TouchPlaneColor.RED, direction); break;
+                case 2:
+                    Turn(TouchPlaneColor.BLUE, direction); break;
+                case 3:
+                    Turn(TouchPlaneColor.GREEN, direction); break;
+                case 4:
+                    Turn(TouchPlaneColor.ORANGE, direction); break;
+                case 5:
+                    Turn(TouchPlaneColor.YELLOW, direction); break;
+            }
+        }
     }
     public void Turn(TouchPlaneColor color, int direction)
     {
@@ -96,5 +131,6 @@ public class CubeManager : MonoBehaviour
             position.GetComponent<CubePosition>().FindChild();
 
         touchPanels.SetActive(true);
+        turning = false;
     }
 }
