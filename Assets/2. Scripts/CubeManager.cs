@@ -1,106 +1,120 @@
 using UnityEngine;
 using System.Collections;
+using static Constants;
 
 public class CubeManager : MonoBehaviour
 {
-    public enum TouchPlaneColor { WHITE, RED, BLUE, GREEN, ORANGE, YELLOW }
-    private readonly int WHITE = 0, RED = 1, BLUE = 2, GREEN = 3, ORANGE = 4, YELLOW = 5;
-
-    [SerializeField] private GameObject[] whiteArray; // 2차원 배열이 inspector에서 할당이 안 돼서 만든 array
-    [SerializeField] private GameObject[] redArray;
-    [SerializeField] private GameObject[] blueArray;
-    [SerializeField] private GameObject[] greenArray;
-    [SerializeField] private GameObject[] orangeArray;
-    [SerializeField] private GameObject[] yellowArray;
-
+    // 2차원 배열이 inspector에서 할당이 안 돼서 만든 array들
+    [SerializeField] private GameObject[] whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray;
+    [SerializeField] private GameObject[] wyArray, roArray, bgArray;
     private GameObject[][] colorArray;
 
     [SerializeField] private GameObject[] turnPoints;
-    [SerializeField] private GameObject touchPanels;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
-    private bool turning;
+    private bool isTurning;
+    public bool isDraging;
+    private Colors[] mouseStartColors;
+    private int[] mouseStartInt;
+
     private void Start()
     {
-        turning = false;
-        colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray };
+        isTurning = false;
+        colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
     }
-    public void StartRandomTurn(int randomCount)
+    private void Update()
     {
-        StartCoroutine(RandomTurn(randomCount));
-    }
-    private IEnumerator RandomTurn(int randomCount)
-    {
-        for(int i = 0; i < randomCount; i++)
+        if (Input.GetMouseButtonDown(0))
         {
-            while (turning)
-                yield return null;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits;
+            hits = Physics.RaycastAll(ray);
 
-            turning = true;
-
-            int direction = Random.Range(0, 2);
-            direction = direction == 1 ? 1 : -1;
-            int value = Random.Range(0, 6);
-
-            switch (value)
+            foreach (RaycastHit hit in hits)
             {
-                case 0:
-                    Turn(TouchPlaneColor.WHITE, direction); break;
-                case 1:
-                    Turn(TouchPlaneColor.RED, direction); break;
-                case 2:
-                    Turn(TouchPlaneColor.BLUE, direction); break;
-                case 3:
-                    Turn(TouchPlaneColor.GREEN, direction); break;
-                case 4:
-                    Turn(TouchPlaneColor.ORANGE, direction); break;
-                case 5:
-                    Turn(TouchPlaneColor.YELLOW, direction); break;
+                Touch script = hit.collider.gameObject.GetComponent<Touch>();
+                // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
+                if (script != null)
+                {
+                    MouseStart(script.GetTouchColors(), script.GetTouchInts());
+                    break;
+                }
+            }
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits;
+            hits = Physics.RaycastAll(ray);
+
+            foreach (RaycastHit hit in hits)
+            {
+                Touch script = hit.collider.gameObject.GetComponent<Touch>();
+                // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
+                if (script != null)
+                {
+                    MouseEnd(script.GetTouchColors(), script.GetTouchInts());
+                    break;
+                }
             }
         }
     }
-    public void Turn(TouchPlaneColor color, int direction)
+    public void MouseStart(Colors[] mouseStartColors, int[] mouseStartInt)
     {
-        touchPanels.SetActive(false); // 연속 클릭이 안 되도록 
-        GameObject turnPoint;
-        GameObject[] array;
+        if (isTurning) return;
+
+        isDraging = true;
+        this.mouseStartColors = mouseStartColors;
+        this.mouseStartInt = mouseStartInt;
+    }
+    public void MouseEnd(Colors[] mouseEndColors, int[] mouseEndInt)
+    {
+        if (!isDraging) return;
+        isDraging = false;
+
+        for (int i =0;i<mouseStartColors.Length;i++)
+            for(int j=0;j<mouseEndColors.Length;j++)
+                if(mouseStartColors[i] == mouseEndColors[j])
+                {
+                    int direction = mouseEndInt[j] - mouseStartInt[i];
+                    if (direction < 0) Turn(mouseEndColors[j], -1);
+                    else if (direction > 0) Turn(mouseEndColors[j], 1);
+                    return;
+                }
+    }
+    private void Turn(Colors color, int direction)
+    {
+        if (color == Colors.NULL || isTurning) return;
+        isTurning = true;
+
+        GameObject turnPoint = turnPoints[color.ToInt()];
+        GameObject[] array = colorArray[color.ToInt()];
         Vector3 rotation = Vector3.zero;
-        switch (color)
+        switch (color.ToInt())
         {
-            case TouchPlaneColor.WHITE:
-                turnPoint = turnPoints[WHITE];
+            case WHITE:
+            case WY:
                 rotation.y += direction * 90;
-                array = colorArray[WHITE];
                 break;
-            case TouchPlaneColor.RED:
-                turnPoint = turnPoints[RED];
+            case RED:
+            case RO:
                 rotation.x += direction * 90;
-                array = colorArray[RED];
                 break;
-            case TouchPlaneColor.BLUE:
-                turnPoint = turnPoints[BLUE];
+            case BLUE:
+            case BG:
                 rotation.z += direction * 90;
-                array = colorArray[BLUE];
                 break;
-            case TouchPlaneColor.GREEN:
-                turnPoint = turnPoints[GREEN];
+            case GREEN:
                 rotation.z -= direction * 90;
-                array = colorArray[GREEN];
                 break;
-            case TouchPlaneColor.ORANGE:
-                turnPoint = turnPoints[ORANGE];
+            case ORANGE:
                 rotation.x -= direction * 90;
-                array = colorArray[ORANGE];
                 break;
-            case TouchPlaneColor.YELLOW:
-                turnPoint = turnPoints[YELLOW];
+            case YELLOW:
                 rotation.y -= direction * 90;
-                array = colorArray[YELLOW];
                 break;
             default:
-                turnPoint = null;
                 rotation = Vector3.zero;
-                array = null;
                 break;
         }
         foreach (GameObject position in array) // 큐브의 부모를 turnPoint로 설정하여 함께 회전시킨다
@@ -109,7 +123,6 @@ public class CubeManager : MonoBehaviour
         }
         StartCoroutine(TurnEffect(turnPoint, rotation, array));
     }
-
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {
         Quaternion startRotation = turnPoint.transform.localRotation;
@@ -130,7 +143,25 @@ public class CubeManager : MonoBehaviour
         foreach (GameObject position in array)
             position.GetComponent<CubePosition>().FindChild();
 
-        touchPanels.SetActive(true);
-        turning = false;
+        isTurning = false;
+    }
+
+    public void StartRandomTurn(int randomCount)
+    {
+        StartCoroutine(RandomTurn(randomCount));
+    }
+    private IEnumerator RandomTurn(int randomCount)
+    {
+        for (int i = 0; i < randomCount; i++)
+        {
+            while (isTurning)
+                yield return null;
+
+            int direction = Random.Range(0, 2);
+            direction = direction == 1 ? 1 : -1;
+            int value = Random.Range(0, 6);
+
+            Turn(value.ToColor(), direction);
+        }
     }
 }
