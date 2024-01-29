@@ -12,8 +12,8 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private GameObject[] turnPoints;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
-    private bool isTurning;
-    public bool isDraging;
+    private bool isTurning; // 큐브가 돌아가고 있는가
+    public bool isDraging; // 마우스 드래그 중인가
     private Colors[] mouseStartColors;
     private int[] mouseStartInt;
 
@@ -143,6 +143,7 @@ public class CubeManager : MonoBehaviour
         foreach (GameObject position in array)
             position.GetComponent<CubePosition>().FindChild();
 
+        gameObject.GetComponent<ColorCheckManager>().BingoCheck();
         isTurning = false;
     }
 
