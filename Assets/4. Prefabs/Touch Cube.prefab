@@ -75,5 +75,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52bea5a3f9cc70c4e945eb3518965bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touchPlaneColor: 0
   CM: {fileID: 0}
+  colors: 
+  ints: 
+  positionColor: 0
+  positionIndex: 0

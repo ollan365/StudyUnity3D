@@ -10,9 +10,13 @@ public class Touch : MonoBehaviour
 
     [SerializeField] private Colors positionColor;
     [SerializeField] private int positionIndex;
-    public void PrintInfo()
+    public Colors GetPositionColor()
     {
-        Debug.Log($"{positionColor}의 {positionIndex}번째 큐브");
+        return positionColor;
+    }
+    public int GetPositionIndex()
+    {
+        return positionIndex;
     }
     public Colors[] GetTouchColors()
     {

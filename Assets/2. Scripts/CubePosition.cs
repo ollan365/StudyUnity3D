@@ -11,6 +11,7 @@ public class CubePosition : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        child = other.transform;
+        if (other.gameObject.layer == 3)
+            child = other.transform;
     }
 }

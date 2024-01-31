@@ -14,11 +14,14 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private float duration; // 회전에 걸리는 시간
     private bool isTurning; // 큐브가 돌아가고 있는가
     public bool isDraging; // 마우스 드래그 중인가
+    private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
+    private bool isCharacterSelected;
 
     private void Start()
     {
         isTurning = false;
+        isCharacterSelected = false;
         colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
     }
     private void Update()
@@ -31,10 +34,20 @@ public class CubeManager : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
+                Object script = hit.collider.gameObject.GetComponent<Object>();
+                if (script != null) // 클릭된 객체들 중 Object 컴포넌트를 가진 객체가 있으면
+                {
+                    mouseStartObject = hit.collider.gameObject;
+                    break;
+                }
+            }
+
+            foreach (RaycastHit hit in hits)
+            {
                 Touch script = hit.collider.gameObject.GetComponent<Touch>();
                 if (script != null) // 클릭된 객체들 중 Touch 컴포넌트를 가진 객체가 있으면
                 {
-                    MouseStart(hit.collider.gameObject);
+                    MouseStart(script);
                     break;
                 }
             }
@@ -47,38 +60,57 @@ public class CubeManager : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
+                Object script = hit.collider.gameObject.GetComponent<Object>();
+                // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
+                if (script != null && mouseStartObject == hit.collider.gameObject) // 오브젝트를 클릭했다면
+                {
+                    if (!isCharacterSelected)
+                    {
+                        isCharacterSelected = true;
+                        gameObject.GetComponent<ColorCheckManager>().CharacterSelect(mouseStartObject);
+                    }
+                    else
+                    {
+                        isCharacterSelected = !gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject);
+                    }
+                    return;
+                }
+            }
+
+            foreach (RaycastHit hit in hits)
+            {
                 Touch script = hit.collider.gameObject.GetComponent<Touch>();
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
                 if (script != null)
                 {
-                    MouseEnd(hit.collider.gameObject);
+                    MouseEnd(script);
                     break;
                 }
             }
         }
     }
-    public void MouseStart(GameObject mouseStartObject)
+    public void MouseStart(Touch script)
     {
         if (isTurning) return;
 
         isDraging = true;
-        this.mouseStartObject = mouseStartObject;
+        mouseStartTouchCube = script;
     }
-    public void MouseEnd(GameObject mouseEndObject)
+    public void MouseEnd(Touch script)
     {
         if (!isDraging) return;
         isDraging = false;
 
-        if(mouseStartObject == mouseEndObject)
+        if(mouseStartTouchCube == script && isCharacterSelected)
         {
-            // 한 곳을 클릭했을 때
-            // 그곳에 캐릭터가 있다면 선택하는 로직으로 가겠지 아마...?
-            mouseEndObject.GetComponent<Touch>().PrintInfo();
+            GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex());
             return;
         }
 
-        Touch start = mouseStartObject.GetComponent<Touch>();
-        Touch end = mouseEndObject.GetComponent<Touch>();
+        if (isCharacterSelected) return; // 캐릭터 선택되어있으면 회전 안함
+        
+        Touch start = mouseStartTouchCube;
+        Touch end = script;
 
         for (int i =0;i<start.GetTouchColors().Length;i++)
             for(int j=0;j<end.GetTouchColors().Length;j++)
@@ -149,11 +181,12 @@ public class CubeManager : MonoBehaviour
         // 보정을 위해 최종 회전 각도로 설정
         turnPoint.transform.localRotation = endRotation;
 
-        yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
+        yield return new WaitForFixedUpdate();
 
         foreach (GameObject position in array)
             position.GetComponent<CubePosition>().FindChild();
 
+        yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
         gameObject.GetComponent<ColorCheckManager>().BingoCheck();
         isTurning = false;

@@ -1,17 +1,111 @@
 using UnityEngine;
+using static Constants;
 
 public class ColorCheckManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray;
     private GameObject[][] colorCheckCubeArray;
 
+    [SerializeField] private GameObject[] whiteCoverArray, redCoverArray, blueCoverArray, greenCoverArray, orangeCoverArray, yellowCoverArray;
+    private GameObject[][] colorCoverArray;
+
     [SerializeField] private GameObject[] centerCubeArray;
 
+    private GameObject selectedCharacter;
+    private bool[] movableCube;
     private void Awake()
     {
         colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
+        colorCoverArray = new GameObject[][] { whiteCoverArray, redCoverArray, blueCoverArray, greenCoverArray, orangeCoverArray, yellowCoverArray };
+        movableCube = new bool[9];
     }
 
+    public void CharacterSelect(GameObject character)
+    {
+        Debug.Log("character select!");
+        selectedCharacter = character;
+        MovableCubeSetting(selectedCharacter.GetComponent<Object>().GetPosition().GetPositionIndex());
+    }
+    public bool CharacterSelectCancel(GameObject character)
+    {
+        if (selectedCharacter != character)
+            return false;
+
+        MovableCubeSetting(-1);
+        Debug.Log("character select cancel!");
+        return true;
+    }
+    private void MovableCubeSetting(int index)
+    {
+        for (int i = 0; i < 9; i++)
+            movableCube[i] = false;
+
+        switch (index)
+        {
+            case 0:
+                movableCube[1] = true;
+                movableCube[3] = true;
+                break;
+            case 1:
+                movableCube[0] = true;
+                movableCube[2] = true;
+                movableCube[4] = true;
+                break;
+            case 2:
+                movableCube[1] = true;
+                movableCube[5] = true;
+                break;
+            case 3:
+                movableCube[0] = true;
+                movableCube[4] = true;
+                movableCube[6] = true;
+                break;
+            case 4:
+                movableCube[1] = true;
+                movableCube[3] = true;
+                movableCube[5] = true;
+                movableCube[7] = true;
+                break;
+            case 5:
+                movableCube[2] = true;
+                movableCube[4] = true;
+                movableCube[8] = true;
+                break;
+            case 6:
+                movableCube[3] = true;
+                movableCube[7] = true;
+                break;
+            case 7:
+                movableCube[4] = true;
+                movableCube[6] = true;
+                movableCube[8] = true;
+                break;
+            case 8:
+                movableCube[5] = true;
+                movableCube[7] = true;
+                break;
+
+            default:
+                break;
+        }
+
+        for (int i = 0; i < 9; i++) // 이동 가능한 곳이면 cover
+            colorCoverArray[selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor().ToInt()][i].SetActive(movableCube[i]);
+    }
+    public void Move(Colors color, int index)
+    {
+        if (color != selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor())
+            return;
+        if (!movableCube[index])
+            return;
+
+        Transform parent = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().colorPointCube.transform.GetChild(0).transform;
+        
+        selectedCharacter.transform.position = parent.position;
+        selectedCharacter.transform.parent = parent;
+
+        MovableCubeSetting(index);
+    }
     public void BingoCheck()
     {
         for (int i = 0; i < 6; i++)

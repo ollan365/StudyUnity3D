@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class ColorCheckCube : MonoBehaviour
 {
+    public GameObject colorPointCube;
     private void OnTriggerEnter(Collider other)
     {
-        gameObject.layer = other.gameObject.layer;
+        colorPointCube = other.gameObject;
+        gameObject.layer = colorPointCube.layer;
     }
 }
