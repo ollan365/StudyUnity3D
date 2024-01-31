@@ -2,58 +2,45 @@ using UnityEngine;
 
 public class ColorCheckManager : MonoBehaviour
 {
-    [SerializeField] private ColorCheckCube[] whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray;
-    private ColorCheckCube[][] colorCheckCubeArray;
-    private bool[][] colorMatchCheckArray;
+    [SerializeField] private GameObject[] whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray;
+    private GameObject[][] colorCheckCubeArray;
+
+    [SerializeField] private GameObject[] centerCubeArray;
 
     private void Awake()
     {
-        colorCheckCubeArray = new ColorCheckCube[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
-
-        colorMatchCheckArray = new bool[6][];
-        for(int i = 0; i< colorMatchCheckArray.Length; i++)
-        {
-            colorMatchCheckArray[i] = new bool[9];
-            for (int j = 0; j < colorMatchCheckArray[i].Length; j++)
-                colorMatchCheckArray[i][j] = false;
-        }
+        colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
     }
 
     public void BingoCheck()
     {
-        for (int i = 0; i < colorMatchCheckArray.Length; i++)
-            for (int j = 0; j < colorMatchCheckArray[i].Length; j++)
-                colorMatchCheckArray[i][j] = colorCheckCubeArray[i][j].IsColorMatch;
-
-        for (int i = 0; i < colorMatchCheckArray.Length; i++)
+        for (int i = 0; i < 6; i++)
         {
             int count = 0;
+            bool[] isColorMatch = new bool[9];
 
-            for(int j = 0; j < colorMatchCheckArray[i].Length; j++)
-            {
-                if (!colorMatchCheckArray[i][j]) break;
-                if(j == colorMatchCheckArray[i].Length - 1)
-                {
-                    Debug.Log($"Color: {i}  Bingo: All!");
-                    return;
-                }
-            }
+            for (int j = 0; j < 9; j++)
+                isColorMatch[j] = centerCubeArray[i].layer == colorCheckCubeArray[i][j].layer;
 
-            if (colorMatchCheckArray[i][0] && colorMatchCheckArray[i][1] && colorMatchCheckArray[i][2])
+            if (isColorMatch[0] && isColorMatch[1] && isColorMatch[2])
                 count++;
-            if (colorMatchCheckArray[i][3] && colorMatchCheckArray[i][4] && colorMatchCheckArray[i][5])
+            if (isColorMatch[3] && isColorMatch[4] && isColorMatch[5])
                 count++;
-            if (colorMatchCheckArray[i][6] && colorMatchCheckArray[i][7] && colorMatchCheckArray[i][8])
+            if (isColorMatch[6] && isColorMatch[7] && isColorMatch[8])
                 count++;
-            if (colorMatchCheckArray[i][0] && colorMatchCheckArray[i][3] && colorMatchCheckArray[i][6])
+            if (isColorMatch[0] && isColorMatch[3] && isColorMatch[6])
                 count++;
-            if (colorMatchCheckArray[i][1] && colorMatchCheckArray[i][4] && colorMatchCheckArray[i][7])
+            if (isColorMatch[1] && isColorMatch[4] && isColorMatch[7])
                 count++;
-            if (colorMatchCheckArray[i][2] && colorMatchCheckArray[i][5] && colorMatchCheckArray[i][8])
+            if (isColorMatch[2] && isColorMatch[5] && isColorMatch[8])
                 count++;
 
-            if (count > 0)
-                Debug.Log($"Color: {i}  Bingo: {count}");
+            if(count == 0)
+                Debug.Log($"Color: {centerCubeArray[i].layer - 8}  No Bingo...");
+            else if (count == 6)
+                Debug.Log($"Color: {centerCubeArray[i].layer - 8}  All Bingo!!!");
+            else
+                Debug.Log($"Color: {centerCubeArray[i].layer - 8}  Bingo: {count}");
         }
     }
 }

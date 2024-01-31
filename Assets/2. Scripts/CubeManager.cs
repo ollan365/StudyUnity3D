@@ -130,6 +130,7 @@ public class CubeManager : MonoBehaviour
             position.transform.GetChild(0).parent = turnPoint.transform;
         }
         StartCoroutine(TurnEffect(turnPoint, rotation, array));
+
     }
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {
@@ -148,8 +149,11 @@ public class CubeManager : MonoBehaviour
         // 보정을 위해 최종 회전 각도로 설정
         turnPoint.transform.localRotation = endRotation;
 
+        yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
+
         foreach (GameObject position in array)
             position.GetComponent<CubePosition>().FindChild();
+
 
         gameObject.GetComponent<ColorCheckManager>().BingoCheck();
         isTurning = false;
