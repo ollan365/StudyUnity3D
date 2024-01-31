@@ -14,8 +14,7 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private float duration; // 회전에 걸리는 시간
     private bool isTurning; // 큐브가 돌아가고 있는가
     public bool isDraging; // 마우스 드래그 중인가
-    private Colors[] mouseStartColors;
-    private int[] mouseStartInt;
+    private GameObject mouseStartObject;
 
     private void Start()
     {
@@ -33,10 +32,9 @@ public class CubeManager : MonoBehaviour
             foreach (RaycastHit hit in hits)
             {
                 Touch script = hit.collider.gameObject.GetComponent<Touch>();
-                // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
-                if (script != null)
+                if (script != null) // 클릭된 객체들 중 Touch 컴포넌트를 가진 객체가 있으면
                 {
-                    MouseStart(script.GetTouchColors(), script.GetTouchInts());
+                    MouseStart(hit.collider.gameObject);
                     break;
                 }
             }
@@ -53,32 +51,42 @@ public class CubeManager : MonoBehaviour
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
                 if (script != null)
                 {
-                    MouseEnd(script.GetTouchColors(), script.GetTouchInts());
+                    MouseEnd(hit.collider.gameObject);
                     break;
                 }
             }
         }
     }
-    public void MouseStart(Colors[] mouseStartColors, int[] mouseStartInt)
+    public void MouseStart(GameObject mouseStartObject)
     {
         if (isTurning) return;
 
         isDraging = true;
-        this.mouseStartColors = mouseStartColors;
-        this.mouseStartInt = mouseStartInt;
+        this.mouseStartObject = mouseStartObject;
     }
-    public void MouseEnd(Colors[] mouseEndColors, int[] mouseEndInt)
+    public void MouseEnd(GameObject mouseEndObject)
     {
         if (!isDraging) return;
         isDraging = false;
 
-        for (int i =0;i<mouseStartColors.Length;i++)
-            for(int j=0;j<mouseEndColors.Length;j++)
-                if(mouseStartColors[i] == mouseEndColors[j])
+        if(mouseStartObject == mouseEndObject)
+        {
+            // 한 곳을 클릭했을 때
+            // 그곳에 캐릭터가 있다면 선택하는 로직으로 가겠지 아마...?
+            mouseEndObject.GetComponent<Touch>().PrintInfo();
+            return;
+        }
+
+        Touch start = mouseStartObject.GetComponent<Touch>();
+        Touch end = mouseEndObject.GetComponent<Touch>();
+
+        for (int i =0;i<start.GetTouchColors().Length;i++)
+            for(int j=0;j<end.GetTouchColors().Length;j++)
+                if(start.GetTouchColors()[i] == end.GetTouchColors()[j])
                 {
-                    int direction = mouseEndInt[j] - mouseStartInt[i];
-                    if (direction < 0) Turn(mouseEndColors[j], -1);
-                    else if (direction > 0) Turn(mouseEndColors[j], 1);
+                    int direction = end.GetTouchInts()[j] - start.GetTouchInts()[i];
+                    if (direction < 0) Turn(end.GetTouchColors()[j], -1);
+                    else if (direction > 0) Turn(end.GetTouchColors()[j], 1);
                     return;
                 }
     }
@@ -160,7 +168,7 @@ public class CubeManager : MonoBehaviour
 
             int direction = Random.Range(0, 2);
             direction = direction == 1 ? 1 : -1;
-            int value = Random.Range(0, 6);
+            int value = Random.Range(0, 9);
 
             Turn(value.ToColor(), direction);
         }
