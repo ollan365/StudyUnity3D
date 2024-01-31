@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using static Constants;
 
 public class ColorCheckManager : MonoBehaviour
@@ -98,11 +99,16 @@ public class ColorCheckManager : MonoBehaviour
             return;
         if (!movableCube[index])
             return;
-
+        StartCoroutine(MoveCoroutine(color, index));
+    }
+    private IEnumerator MoveCoroutine(Colors color, int index)
+    {
         Transform parent = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().colorPointCube.transform.GetChild(0).transform;
         
         selectedCharacter.transform.position = parent.position;
         selectedCharacter.transform.parent = parent;
+
+        yield return new WaitForFixedUpdate();
 
         MovableCubeSetting(index);
     }
