@@ -35,4 +35,7 @@ public static class Constants
             default: return Colors.NULL;
         }
     }
+
+    public enum ObjectType { Player, Enemy, Null }
+    public enum StageStatus { INIT, PLAYER, FIGHT }
 }

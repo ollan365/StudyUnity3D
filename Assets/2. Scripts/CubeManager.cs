@@ -34,6 +34,9 @@ public class CubeManager : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
+                if (hit.collider.gameObject.layer == 6) // 큐브 너머의 오브젝트는 확인 안 함
+                    break;
+
                 Object script = hit.collider.gameObject.GetComponent<Object>();
                 if (script != null) // 클릭된 객체들 중 Object 컴포넌트를 가진 객체가 있으면
                 {
@@ -60,11 +63,18 @@ public class CubeManager : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
+                if (hit.collider.gameObject.layer == 6) // 큐브 너머의 오브젝트는 확인 안 함
+                    break;
+
                 Object script = hit.collider.gameObject.GetComponent<Object>();
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
                 if (script != null && mouseStartObject == hit.collider.gameObject) // 오브젝트를 클릭했다면
                 {
-                    if (!isCharacterSelected)
+                    if(script.Type == ObjectType.Enemy)
+                    {
+                        Debug.Log("enemy");
+                    }
+                    else if (!isCharacterSelected)
                     {
                         isCharacterSelected = true;
                         gameObject.GetComponent<ColorCheckManager>().CharacterSelect(mouseStartObject);
@@ -73,17 +83,17 @@ public class CubeManager : MonoBehaviour
                     {
                         isCharacterSelected = !gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject);
                     }
+                    mouseStartObject = null;
                     return;
                 }
             }
-
             foreach (RaycastHit hit in hits)
             {
-                Touch script = hit.collider.gameObject.GetComponent<Touch>();
+                Touch touchScript = hit.collider.gameObject.GetComponent<Touch>();
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
-                if (script != null)
+                if (touchScript != null)
                 {
-                    MouseEnd(script);
+                    MouseEnd(touchScript);
                     break;
                 }
             }
@@ -98,6 +108,7 @@ public class CubeManager : MonoBehaviour
     }
     public void MouseEnd(Touch script)
     {
+        Debug.Log($"{script.GetPositionColor()} / {script.GetPositionIndex()}");
         if (!isDraging) return;
         isDraging = false;
 
@@ -107,7 +118,7 @@ public class CubeManager : MonoBehaviour
             return;
         }
 
-        if (isCharacterSelected) return; // 캐릭터 선택되어있으면 회전 안함
+        if (mouseStartTouchCube == script || isCharacterSelected) return; // 같은 곳 클릭 or 캐릭터 선택되어있으면 회전 안함
         
         Touch start = mouseStartTouchCube;
         Touch end = script;

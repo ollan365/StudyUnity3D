@@ -90,14 +90,18 @@ public class ColorCheckManager : MonoBehaviour
                 break;
         }
 
+        int selectedCharacterColor = selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor().ToInt();
         for (int i = 0; i < 9; i++) // 이동 가능한 곳이면 cover
-            colorCoverArray[selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor().ToInt()][i].SetActive(movableCube[i]);
+        {
+            if (colorCheckCubeArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType() == ObjectType.Null)
+                colorCoverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
+        }
     }
     public void Move(Colors color, int index)
     {
-        if (color != selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor())
+        if (color != selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor()) // 다른 면이면 이동 못함
             return;
-        if (!movableCube[index])
+        if (!movableCube[index]) // 같은 면의 이동 불가능한 곳이면 이동 안 함
             return;
         StartCoroutine(MoveCoroutine(color, index));
     }
