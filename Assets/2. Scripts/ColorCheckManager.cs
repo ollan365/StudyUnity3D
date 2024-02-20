@@ -93,7 +93,9 @@ public class ColorCheckManager : MonoBehaviour
         int selectedCharacterColor = selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor().ToInt();
         for (int i = 0; i < 9; i++) // 이동 가능한 곳이면 cover
         {
-            if (colorCheckCubeArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType() == ObjectType.Null)
+            colorCoverArray[selectedCharacterColor][i].SetActive(false);
+
+            if (colorCheckCubeArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType() == ObjectType.NULL)
                 colorCoverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
         }
     }

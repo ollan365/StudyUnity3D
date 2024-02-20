@@ -18,6 +18,7 @@ public class CubeManager : MonoBehaviour
     private GameObject mouseStartObject;
     private bool isCharacterSelected;
 
+    [SerializeField] private StageManager stageManager;
     private void Start()
     {
         isTurning = false;
@@ -26,7 +27,7 @@ public class CubeManager : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && stageManager.StatusOfStage == StageStatus.PLAYER)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
@@ -55,7 +56,7 @@ public class CubeManager : MonoBehaviour
                 }
             }
         }
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && stageManager.StatusOfStage == StageStatus.PLAYER)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
@@ -70,7 +71,7 @@ public class CubeManager : MonoBehaviour
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
                 if (script != null && mouseStartObject == hit.collider.gameObject) // 오브젝트를 클릭했다면
                 {
-                    if(script.Type == ObjectType.Enemy)
+                    if(script.Type == ObjectType.ENEMY)
                     {
                         Debug.Log("enemy");
                     }
@@ -200,6 +201,7 @@ public class CubeManager : MonoBehaviour
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
         gameObject.GetComponent<ColorCheckManager>().BingoCheck();
+
         isTurning = false;
     }
 

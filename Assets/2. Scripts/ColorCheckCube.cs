@@ -9,7 +9,7 @@ public class ColorCheckCube : MonoBehaviour
     {
         Transform objectPosition = colorPointCube.transform.GetChild(0);
 
-        if (objectPosition.childCount == 0) return ObjectType.Null;
+        if (objectPosition.childCount == 0) return ObjectType.NULL;
         return objectPosition.GetChild(0).GetComponent<Object>().Type;
     }
     private void OnTriggerEnter(Collider other)

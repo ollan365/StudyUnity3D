@@ -17,6 +17,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject player;
 
     private StageStatus status;
+    public StageStatus StatusOfStage { get => status; }
     private void Start()
     {
         colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
@@ -36,7 +37,7 @@ public class StageManager : MonoBehaviour
             while (true)
             {
                 cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
-                if (cube.GetObjectType() == ObjectType.Null)
+                if (cube.GetObjectType() == ObjectType.NULL)
                     break;
             }
             GameObject newEnemy = Instantiate(enemyPrefab);

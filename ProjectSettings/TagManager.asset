@@ -11,7 +11,7 @@ TagManager:
   - Cube
   - Water
   - UI
-  - 
+  - CubePosition
   - TouchCube
   - ColorPointWhite
   - ColorPointRed
