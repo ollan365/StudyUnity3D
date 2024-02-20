@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
   m_Name: AP
   m_EditorClassIdentifier: 
-  weaponType: 0
-  damage: 0
+  weaponType: 2
+  damage: 1

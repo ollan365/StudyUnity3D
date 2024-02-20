@@ -187,7 +187,7 @@ public class CubeManager : MonoBehaviour
         {
             turnPoint.transform.localRotation = Quaternion.Slerp(startRotation, endRotation, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         // 보정을 위해 최종 회전 각도로 설정
@@ -214,7 +214,7 @@ public class CubeManager : MonoBehaviour
         for (int i = 0; i < randomCount; i++)
         {
             while (isTurning)
-                yield return null;
+                yield return new WaitForFixedUpdate();
 
             int direction = Random.Range(0, 2);
             direction = direction == 1 ? 1 : -1;

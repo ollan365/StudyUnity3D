@@ -119,5 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   position: {fileID: 0}
-  height: 2
-  type: 1
+  height: 3
+  type: 2
+  hp: 3
+  weapon: {fileID: 11400000, guid: 0ca0607c39992134bb26acf79c55e459, type: 2}

@@ -119,5 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   position: {fileID: 0}
-  height: 2
+  height: 3
   type: 0
+  hp: 0
+  weapon: {fileID: 0}

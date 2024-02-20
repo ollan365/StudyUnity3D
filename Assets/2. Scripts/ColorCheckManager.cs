@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 using static Constants;
 
 public class ColorCheckManager : MonoBehaviour
@@ -9,6 +10,8 @@ public class ColorCheckManager : MonoBehaviour
 
     [SerializeField] private GameObject[] whiteCoverArray, redCoverArray, blueCoverArray, greenCoverArray, orangeCoverArray, yellowCoverArray;
     private GameObject[][] colorCoverArray;
+
+    [SerializeField] private Text[] bingoTexts;
 
     [SerializeField] private GameObject[] centerCubeArray;
 
@@ -25,7 +28,7 @@ public class ColorCheckManager : MonoBehaviour
     {
         Debug.Log("character select!");
         selectedCharacter = character;
-        MovableCubeSetting(selectedCharacter.GetComponent<Object>().GetPosition().GetPositionIndex());
+        MovableCubeSetting(selectedCharacter.GetComponent<Object>().GetPosition().Index);
     }
     public bool CharacterSelectCancel(GameObject character)
     {
@@ -90,7 +93,7 @@ public class ColorCheckManager : MonoBehaviour
                 break;
         }
 
-        int selectedCharacterColor = selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor().ToInt();
+        int selectedCharacterColor = selectedCharacter.GetComponent<Object>().GetPosition().Color.ToInt();
         for (int i = 0; i < 9; i++) // 이동 가능한 곳이면 cover
         {
             colorCoverArray[selectedCharacterColor][i].SetActive(false);
@@ -101,7 +104,7 @@ public class ColorCheckManager : MonoBehaviour
     }
     public void Move(Colors color, int index)
     {
-        if (color != selectedCharacter.GetComponent<Object>().GetPosition().GetPositionColor()) // 다른 면이면 이동 못함
+        if (color != selectedCharacter.GetComponent<Object>().GetPosition().Color) // 다른 면이면 이동 못함
             return;
         if (!movableCube[index]) // 같은 면의 이동 불가능한 곳이면 이동 안 함
             return;
@@ -141,12 +144,12 @@ public class ColorCheckManager : MonoBehaviour
             if (isColorMatch[2] && isColorMatch[5] && isColorMatch[8])
                 count++;
 
-            if(count == 0)
-                Debug.Log($"Color: {centerCubeArray[i].layer - 8}  No Bingo...");
+            if (count == 0)
+                bingoTexts[centerCubeArray[i].layer - 8].text = "NO";
             else if (count == 6)
-                Debug.Log($"Color: {centerCubeArray[i].layer - 8}  All Bingo!!!");
+                bingoTexts[centerCubeArray[i].layer - 8].text = "ALL";
             else
-                Debug.Log($"Color: {centerCubeArray[i].layer - 8}  Bingo: {count}");
+                bingoTexts[centerCubeArray[i].layer - 8].text = "ONE";
         }
     }
 }

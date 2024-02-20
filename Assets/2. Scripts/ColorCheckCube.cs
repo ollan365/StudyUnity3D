@@ -4,7 +4,10 @@ using static Constants;
 public class ColorCheckCube : MonoBehaviour
 {
     public GameObject colorPointCube;
-
+    [SerializeField] private Colors color;
+    public Colors Color { get => color; }
+    [SerializeField] private int index;
+    public int Index { get => index; }
     public ObjectType GetObjectType()
     {
         Transform objectPosition = colorPointCube.transform.GetChild(0);
