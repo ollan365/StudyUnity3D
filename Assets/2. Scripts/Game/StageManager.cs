@@ -19,7 +19,6 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject player;
 
     [SerializeField] private Text stageStatusText;
-
     private StageStatus status;
     public StageStatus StatusOfStage
     { 
@@ -41,6 +40,9 @@ public class StageManager : MonoBehaviour
             }
         }
     }
+
+    [SerializeField] private GameObject objectStatusParent;
+    [SerializeField] private GameObject objectStatusPrefab;
     private void Start()
     {
         colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
@@ -68,6 +70,9 @@ public class StageManager : MonoBehaviour
             newEnemy.transform.position = cube.colorPointCube.transform.GetChild(0).position;
             newEnemy.transform.rotation = cube.colorPointCube.transform.GetChild(0).rotation;
 
+            GameObject objectStatus = Instantiate(objectStatusPrefab);
+            objectStatus.transform.SetParent(objectStatusParent.transform, false);
+            newEnemy.GetComponent<Object>().objectStatus = objectStatus;
             enemy[i] = newEnemy;
         }
 
