@@ -11,10 +11,10 @@ public class Object : MonoBehaviour
 
     public GameObject objectStatus;
     [SerializeField] private int hp; // 일단은 object가 플레이어와 적 밖에 없다고 가정 -> 모두 hp를 가짐
-    private int HP
+    public int HP
     {
         get => hp;
-        set
+        private set
         {
             hp = value;
             objectStatus.transform.Find("ObjectHPText").GetComponent<Text>().text = hp.ToString();

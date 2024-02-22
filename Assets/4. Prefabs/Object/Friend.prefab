@@ -122,5 +122,5 @@ MonoBehaviour:
   height: 3
   type: 1
   objectStatus: {fileID: 0}
-  hp: 5
-  weapon: {fileID: 11400000, guid: 0ca0607c39992134bb26acf79c55e459, type: 2}
+  hp: 10
+  weapon: {fileID: 11400000, guid: 1f4f57d98be50384b99f7dee0c664a3e, type: 2}

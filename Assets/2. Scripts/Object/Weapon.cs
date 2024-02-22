@@ -6,6 +6,10 @@ public class Weapon : ScriptableObject
 {
     [SerializeField] private WeaponType weaponType;
     public WeaponType WeaponType { get => weaponType; }
-    [SerializeField] private int damage;
-    public int WeaponDamage { get => damage; }
+    [SerializeField] private int minDamage;
+    [SerializeField] private int maxDamage;
+    public int WeaponDamage
+    {
+        get => Random.Range(minDamage, maxDamage + 1);
+    }
 }

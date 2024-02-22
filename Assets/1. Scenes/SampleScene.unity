@@ -26679,12 +26679,12 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 9915054925414412, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
       propertyPath: hp
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9915054925414412, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
       propertyPath: weapon
       value: 
-      objectReference: {fileID: 11400000, guid: 0ca0607c39992134bb26acf79c55e459, type: 2}
+      objectReference: {fileID: 11400000, guid: c0d6c8239af37f24a8ece08fbd0c515d, type: 2}
     - target: {fileID: 9915054925414412, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
       propertyPath: objectStatus
       value: 

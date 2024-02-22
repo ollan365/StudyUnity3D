@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.UI;
 using static Constants;
 
@@ -96,34 +97,54 @@ public class StageManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.1f);
         }
-        // 동료 공격
-        for(int i = 0; i < 3; i++)
+
+        List<KeyValuePair<int, int>> enemyAttackOrder = new List<KeyValuePair<int, int>>();
+        for(int i = 0;i<enemyCount;i++)
         {
-            if(friend[i] != null)
+            Object enemyObject = enemy[i].GetComponent<Object>();
+            if (enemyObject.HP > 0)
+                enemyAttackOrder.Add(new KeyValuePair<int, int>(enemyObject.GetDamage(), i));
+            else // enemyAttackOrder의 크기가 friendAttackOrder 보다 커야하므로 죽은 애들도 일단 list에 넣기
+                enemyAttackOrder.Add(new KeyValuePair<int, int>(0, i));
+        }
+        List<KeyValuePair<int, int>> friendAttackOrder = new List<KeyValuePair<int, int>>();
+        for (int i = 0; i < 3; i++)
+        {
+            if (friend[i] == null) continue;
+            Object friendObject = friend[i].GetComponent<Object>();
+            if (friendObject.HP > 0)
+                friendAttackOrder.Add(new KeyValuePair<int, int>(friendObject.GetDamage(), i));
+        }
+        enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
+        friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
+
+        for (int i = 0; i < enemyAttackOrder.Count; i++)
+        {
+            if (i < friendAttackOrder.Count) // 동료도 있다면
             {
-                Object friendObj = friend[i].GetComponent<Object>();
+                Object friendObj = friend[friendAttackOrder[i].Value].GetComponent<Object>();
                 attackableEnemy = AttackableObject(friendObj.GetWeaponType(), friendObj.GetPosition().Color, friendObj.GetPosition().Index, ObjectType.ENEMY);
 
+                Debug.Log($"friend: {friendAttackOrder[i].Key}");
                 foreach (GameObject enemy in attackableEnemy)
                 {
-                    enemy.GetComponent<Object>().OnHit(playerObj.GetDamage());
+                    enemy.GetComponent<Object>().OnHit(friendAttackOrder[i].Key);
                     yield return new WaitForFixedUpdate();
 
                     yield return new WaitForSeconds(0.1f);
                 }
             }
-        }
-        // 적 공격
-        foreach (GameObject enemyGameObject in enemy)
-        {
-            Object enemyObj = enemyGameObject.GetComponent<Object>();
+
+            // 적 공격
+            Object enemyObj = enemy[enemyAttackOrder[i].Value].GetComponent<Object>();
             List<GameObject> attackablePlayerTeam;
 
             attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.PLAYER);
 
+            Debug.Log($"enemy: {enemyAttackOrder[i].Key}");
             foreach (GameObject p in attackablePlayerTeam)
             {
-                p.GetComponent<Object>().OnHit(enemyObj.GetDamage());
+                p.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
                 yield return new WaitForFixedUpdate();
 
                 yield return new WaitForSeconds(0.1f);
@@ -132,12 +153,13 @@ public class StageManager : MonoBehaviour
             attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.FRIEND);
             foreach (GameObject pTeam in attackablePlayerTeam)
             {
-                pTeam.GetComponent<Object>().OnHit(enemyObj.GetDamage());
+                pTeam.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
                 yield return new WaitForFixedUpdate();
 
                 yield return new WaitForSeconds(0.1f);
             }
         }
+
         // statge statue를 바꾼다
         StatusOfStage = StageStatus.PLAYER;
     }
