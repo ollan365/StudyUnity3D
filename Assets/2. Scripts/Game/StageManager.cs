@@ -10,12 +10,13 @@ public class StageManager : MonoBehaviour
     private GameObject[][] colorCheckCubeArray;
 
     [SerializeField] private CubeManager cubeManager;
+    [SerializeField] private ObjectManager objectManager;
+
     [SerializeField] private int startRandomTurnCount;
-    [SerializeField] private GameObject enemyPrefab;
 
     [SerializeField] private int enemyCount;
     public GameObject[] enemy; // 일단은 public
-
+    public GameObject[] friend; // 얘도 일단은 public
     [SerializeField] private GameObject player;
 
     [SerializeField] private Text stageStatusText;
@@ -41,13 +42,14 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    [SerializeField] private GameObject objectStatusParent;
-    [SerializeField] private GameObject objectStatusPrefab;
     private void Start()
     {
         colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
-        enemy = new GameObject[enemyCount];
         StatusOfStage = StageStatus.INIT;
+
+        enemy = new GameObject[enemyCount];
+        friend = new GameObject[3];
+
         StartCoroutine(StartStage());
     }
     private IEnumerator StartStage()
@@ -65,15 +67,8 @@ public class StageManager : MonoBehaviour
                 if (cube.GetObjectType() == ObjectType.NULL)
                     break;
             }
-            GameObject newEnemy = Instantiate(enemyPrefab);
-            newEnemy.transform.parent = cube.colorPointCube.transform.GetChild(0);
-            newEnemy.transform.position = cube.colorPointCube.transform.GetChild(0).position;
-            newEnemy.transform.rotation = cube.colorPointCube.transform.GetChild(0).rotation;
-
-            GameObject objectStatus = Instantiate(objectStatusPrefab);
-            objectStatus.transform.SetParent(objectStatusParent.transform, false);
-            newEnemy.GetComponent<Object>().objectStatus = objectStatus;
-            enemy[i] = newEnemy;
+            
+            enemy[i] = objectManager.Summons(cube, ObjectType.ENEMY);
         }
 
         StatusOfStage = StageStatus.PLAYER;
@@ -100,6 +95,23 @@ public class StageManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
 
             yield return new WaitForSeconds(0.1f);
+        }
+        // 동료 공격
+        for(int i = 0; i < 3; i++)
+        {
+            if(friend[i] != null)
+            {
+                Object friendObj = friend[i].GetComponent<Object>();
+                attackableEnemy = AttackableObject(friendObj.GetWeaponType(), friendObj.GetPosition().Color, friendObj.GetPosition().Index, ObjectType.ENEMY);
+
+                foreach (GameObject enemy in attackableEnemy)
+                {
+                    enemy.GetComponent<Object>().OnHit(playerObj.GetDamage());
+                    yield return new WaitForFixedUpdate();
+
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
         }
         // 적 공격
         foreach (GameObject enemyGameObject in enemy)
@@ -146,6 +158,25 @@ public class StageManager : MonoBehaviour
             {
                 if (playerPosition.Color != color && playerPosition.Index == index)
                     attackable.Add(player);
+            }
+        }
+        else if (objType == ObjectType.FRIEND)
+        {
+            for(int i = 0;i<3;i++)
+            {
+                if (friend[i] == null) continue;
+
+                ColorCheckCube friendPosition = friend[i].GetComponent<Object>().GetPosition();
+                if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
+                {
+                    if (friendPosition.Color == color && AttackableRange(weaponType, index)[friendPosition.Index])
+                        attackable.Add(friend[i]);
+                }
+                else if (weaponType == WeaponType.AP)
+                {
+                    if (friendPosition.Color != color && friendPosition.Index == index)
+                        attackable.Add(friend[i]);
+                }
             }
         }
         else if(objType == ObjectType.ENEMY)
@@ -268,5 +299,22 @@ public class StageManager : MonoBehaviour
         }
 
         return attackable;
+    }
+
+    public bool SummonsFriend(Colors color, int index)
+    {
+        ColorCheckCube cube = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>();
+        if (cube.GetObjectType() != ObjectType.NULL)
+            return false;
+        for (int i = 0; i < 3; i++)
+        {
+            if (friend[i] == null)
+            {
+                friend[i] = objectManager.Summons(cube, ObjectType.FRIEND);
+                Debug.Log("summons success!");
+                return true;
+            }
+        }
+        return false;
     }
 }

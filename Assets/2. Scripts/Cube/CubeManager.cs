@@ -17,12 +17,14 @@ public class CubeManager : MonoBehaviour
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private bool isCharacterSelected;
+    private bool isSummonsSelected;
 
     [SerializeField] private StageManager stageManager;
     private void Start()
     {
         isTurning = false;
         isCharacterSelected = false;
+        isSummonsSelected = false;
         colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
     }
     private void Update()
@@ -71,16 +73,20 @@ public class CubeManager : MonoBehaviour
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
                 if (script != null && mouseStartObject == hit.collider.gameObject) // 오브젝트를 클릭했다면
                 {
-                    if(script.Type == ObjectType.ENEMY)
+                    if (isSummonsSelected)
+                    {
+                        Debug.Log("Already object");
+                    }
+                    else if(script.Type == ObjectType.ENEMY)
                     {
                         Debug.Log("enemy");
                     }
-                    else if (!isCharacterSelected)
+                    else if (!isCharacterSelected && !isSummonsSelected)
                     {
                         isCharacterSelected = true;
                         gameObject.GetComponent<ColorCheckManager>().CharacterSelect(mouseStartObject);
                     }
-                    else
+                    else if(isCharacterSelected)
                     {
                         isCharacterSelected = !gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject);
                     }
@@ -113,14 +119,15 @@ public class CubeManager : MonoBehaviour
         if (!isDraging) return;
         isDraging = false;
 
-        if(mouseStartTouchCube == script && isCharacterSelected)
+        if (mouseStartTouchCube == script)
         {
-            GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex());
+            if (isCharacterSelected)
+                GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex());
+
+            if (isSummonsSelected)
+                isSummonsSelected = !stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex());
             return;
         }
-
-        if (mouseStartTouchCube == script || isCharacterSelected) return; // 같은 곳 클릭 or 캐릭터 선택되어있으면 회전 안함
-        
         Touch start = mouseStartTouchCube;
         Touch end = script;
 
@@ -222,5 +229,18 @@ public class CubeManager : MonoBehaviour
 
             Turn(value.ToColor(), direction);
         }
+    }
+
+    public void SelectSummonsButton()
+    {
+        if (!isCharacterSelected && !isSummonsSelected)
+        {
+            isSummonsSelected = true;
+            Debug.Log("summons btn selected!");
+        }
+        else if (isSummonsSelected)
+            isSummonsSelected = false;
+        else
+            Debug.Log("Character selected!");
     }
 }
