@@ -16,8 +16,10 @@ public class StageManager : MonoBehaviour
     [SerializeField] private int startRandomTurnCount;
 
     [SerializeField] private int enemyCount;
+    [SerializeField] private int treasureCount;
     public GameObject[] enemy; // 일단은 public
     public GameObject[] friend; // 얘도 일단은 public
+    public GameObject[] treasure; // 얘도 일단은 public
     [SerializeField] private GameObject player;
 
     [SerializeField] private Text stageStatusText;
@@ -39,6 +41,9 @@ public class StageManager : MonoBehaviour
                 case StageStatus.FIGHT:
                     stageStatusText.text = "FIGHT";
                     break;
+                case StageStatus.END:
+                    stageStatusText.text = "END";
+                    break;
             }
         }
     }
@@ -50,6 +55,7 @@ public class StageManager : MonoBehaviour
 
         enemy = new GameObject[enemyCount];
         friend = new GameObject[3];
+        treasure = new GameObject[treasureCount];
 
         StartCoroutine(StartStage());
     }
@@ -68,8 +74,21 @@ public class StageManager : MonoBehaviour
                 if (cube.GetObjectType() == ObjectType.NULL)
                     break;
             }
-            
             enemy[i] = objectManager.Summons(cube, ObjectType.ENEMY);
+            yield return new WaitForFixedUpdate();
+        }
+
+        for (int i = 0; i < treasureCount; i++) // enemy 배치
+        {
+            ColorCheckCube cube;
+            while (true)
+            {
+                cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
+                if (cube.GetObjectType() == ObjectType.NULL)
+                    break;
+            }
+            treasure[i] = objectManager.Summons(cube, ObjectType.TREASURE);
+            yield return new WaitForFixedUpdate();
         }
 
         StatusOfStage = StageStatus.PLAYER;
@@ -89,7 +108,6 @@ public class StageManager : MonoBehaviour
         // 플레이어부터 공격
         Object playerObj = player.GetComponent<Object>();
         List<GameObject> attackableEnemy = AttackableObject(playerObj.GetWeaponType(), playerObj.GetPosition().Color, playerObj.GetPosition().Index, ObjectType.ENEMY);
-
         foreach (GameObject enemy in attackableEnemy)
         {
             enemy.GetComponent<Object>().OnHit(playerObj.GetDamage());
@@ -97,7 +115,17 @@ public class StageManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.1f);
         }
+        List<GameObject> attackableTreasure = AttackableObject(playerObj.GetWeaponType(), playerObj.GetPosition().Color, playerObj.GetPosition().Index, ObjectType.TREASURE);
+        foreach (GameObject treasure in attackableTreasure)
+        {
+            treasure.GetComponent<Object>().OnHit(playerObj.GetDamage());
+            yield return new WaitForFixedUpdate();
 
+            yield return new WaitForSeconds(0.1f);
+        }
+
+
+        // 적과 동료의 공격 순서 결정을 위해 List 생성
         List<KeyValuePair<int, int>> enemyAttackOrder = new List<KeyValuePair<int, int>>();
         for(int i = 0;i<enemyCount;i++)
         {
@@ -125,7 +153,6 @@ public class StageManager : MonoBehaviour
                 Object friendObj = friend[friendAttackOrder[i].Value].GetComponent<Object>();
                 attackableEnemy = AttackableObject(friendObj.GetWeaponType(), friendObj.GetPosition().Color, friendObj.GetPosition().Index, ObjectType.ENEMY);
 
-                Debug.Log($"friend: {friendAttackOrder[i].Key}");
                 foreach (GameObject enemy in attackableEnemy)
                 {
                     enemy.GetComponent<Object>().OnHit(friendAttackOrder[i].Key);
@@ -141,7 +168,6 @@ public class StageManager : MonoBehaviour
 
             attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.PLAYER);
 
-            Debug.Log($"enemy: {enemyAttackOrder[i].Key}");
             foreach (GameObject p in attackablePlayerTeam)
             {
                 p.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
@@ -215,6 +241,23 @@ public class StageManager : MonoBehaviour
                 {
                     if (enemyPosition.Color != color && enemyPosition.Index == index)
                         attackable.Add(enemyObj);
+                }
+            }
+        }
+        else if (objType == ObjectType.TREASURE)
+        {
+            foreach (GameObject treasureObj in treasure)
+            {
+                ColorCheckCube treasurePosition = treasureObj.GetComponent<Object>().GetPosition();
+                if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
+                {
+                    if (treasurePosition.Color == color && AttackableRange(weaponType, index)[treasurePosition.Index])
+                        attackable.Add(treasureObj);
+                }
+                else if (weaponType == WeaponType.AP)
+                {
+                    if (treasurePosition.Color != color && treasurePosition.Index == index)
+                        attackable.Add(treasureObj);
                 }
             }
         }

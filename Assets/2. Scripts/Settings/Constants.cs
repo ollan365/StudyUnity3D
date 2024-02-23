@@ -36,7 +36,7 @@ public static class Constants
         }
     }
 
-    public enum ObjectType { PLAYER, FRIEND, ENEMY, NULL }
-    public enum StageStatus { INIT, PLAYER, FIGHT }
+    public enum ObjectType { PLAYER, FRIEND, ENEMY, TREASURE, NPC, NULL }
+    public enum StageStatus { INIT, PLAYER, FIGHT, END }
     public enum WeaponType { MELEE, AD, AP, NULL }
 }

@@ -17,13 +17,15 @@ public class Object : MonoBehaviour
         private set
         {
             hp = value;
-            objectStatus.transform.Find("ObjectHPText").GetComponent<Text>().text = hp.ToString();
+            if (objectStatus != null) // 보물상자나 상인은 이게 없음
+                objectStatus.transform.Find("ObjectHPText").GetComponent<Text>().text = hp.ToString();
         }
     }
-    [SerializeField] private Weapon weapon; // 일단은 object가 플레이어와 적 밖에 없다고 가정 -> 모두 공격 패턴을 가짐
+    [SerializeField] private Weapon weapon; // 일단은 object 중 NPC는 나중에 생각하자...
     private void Start()
     {
         HP = hp;
+        GetComponent<MeshRenderer>().material = weapon.ObjectMaterial;
     }
     //private void FixedUpdate()
     //{
@@ -56,6 +58,11 @@ public class Object : MonoBehaviour
     public void OnHit(int damage)
     {
         HP -= damage;
-        if (HP <= 0) gameObject.SetActive(false);
+        if (HP <= 0)
+        {
+            if (type == ObjectType.TREASURE) Debug.Log($"Open Treasure Box!");
+            if (objectStatus != null) objectStatus.SetActive(false);
+            gameObject.SetActive(false);
+        }
     }
 }

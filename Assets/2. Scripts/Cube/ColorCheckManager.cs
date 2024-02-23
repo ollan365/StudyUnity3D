@@ -24,6 +24,14 @@ public class ColorCheckManager : MonoBehaviour
         movableCube = new bool[9];
     }
 
+    public ObjectType CheckCubeObject(Colors color, int index)
+    {
+        return colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().GetObjectType();
+    }
+    public GameObject GetCubeObject(Colors color, int index)
+    {
+        return colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().GetObject();
+    }
     public void CharacterSelect(GameObject character)
     {
         Debug.Log("character select!");

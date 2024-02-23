@@ -77,9 +77,9 @@ public class CubeManager : MonoBehaviour
                     {
                         Debug.Log("Already object");
                     }
-                    else if(script.Type == ObjectType.ENEMY)
+                    else if(script.Type != ObjectType.PLAYER)
                     {
-                        Debug.Log("enemy");
+                        Debug.Log($"{script.Type}");
                     }
                     else if (!isCharacterSelected && !isSummonsSelected)
                     {
@@ -115,17 +115,42 @@ public class CubeManager : MonoBehaviour
     }
     public void MouseEnd(Touch script)
     {
-        Debug.Log($"{script.GetPositionColor()} / {script.GetPositionIndex()}");
         if (!isDraging) return;
         isDraging = false;
 
-        if (mouseStartTouchCube == script)
+        if (mouseStartTouchCube == script) // 같은 곳을 클릭했을 때
         {
-            if (isCharacterSelected)
-                GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex());
+            Debug.Log($"{script.GetPositionColor()} / {script.GetPositionIndex()}");
+            ObjectType type = GetComponent<ColorCheckManager>().CheckCubeObject(script.GetPositionColor(), script.GetPositionIndex());
+            if (type == ObjectType.NULL)
+            {
+                if (isCharacterSelected)
+                    GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex());
 
-            if (isSummonsSelected)
-                isSummonsSelected = !stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex());
+                if (isSummonsSelected)
+                    isSummonsSelected = !stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex());
+            }
+            else
+            {
+                if (isSummonsSelected)
+                {
+                    Debug.Log("Already object");
+                }
+                else if (type != ObjectType.PLAYER)
+                {
+                    Debug.Log($"{type}");
+                }
+                else if (!isCharacterSelected && !isSummonsSelected)
+                {
+                    isCharacterSelected = true;
+                    gameObject.GetComponent<ColorCheckManager>().CharacterSelect(GetComponent<ColorCheckManager>().GetCubeObject(script.GetPositionColor(), script.GetPositionIndex()));
+                }
+                else if (isCharacterSelected)
+                {
+                    isCharacterSelected = !gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(GetComponent<ColorCheckManager>().GetCubeObject(script.GetPositionColor(), script.GetPositionIndex()));
+                }
+                mouseStartObject = null;
+            }
             return;
         }
         Touch start = mouseStartTouchCube;

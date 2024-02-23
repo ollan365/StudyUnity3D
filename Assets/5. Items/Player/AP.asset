@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: AP
   m_EditorClassIdentifier: 
   weaponType: 2
-  damage: 1
+  minDamage: 0
+  maxDamage: 0
+  objectMaterial: {fileID: 2100000, guid: 3a0139cc364562448ba6b451cb9ec358, type: 2}

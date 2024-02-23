@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
-  m_Name: Melee 1
+  m_Name: Melee
   m_EditorClassIdentifier: 
   weaponType: 0
-  minDamage: 3
-  maxDamage: 5
+  minDamage: 1
+  maxDamage: 3
+  objectMaterial: {fileID: 2100000, guid: 379906b404abf7d4690b6b200edc32d5, type: 2}

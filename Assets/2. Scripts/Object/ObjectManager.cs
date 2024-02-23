@@ -5,6 +5,7 @@ public class ObjectManager : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject friendPrefab;
+    [SerializeField] private GameObject treasurePrefabs;
 
     [SerializeField] private GameObject objectStatusParent;
     [SerializeField] private GameObject objectStatusPrefab;
@@ -18,10 +19,19 @@ public class ObjectManager : MonoBehaviour
             case ObjectType.ENEMY:
                 newObject = Instantiate(enemyPrefab);
                 objectStatus.GetComponent<Image>().color = Color.blue;
+
+                objectStatus.transform.SetParent(objectStatusParent.transform, false);
+                newObject.GetComponent<Object>().objectStatus = objectStatus;
                 break;
             case ObjectType.FRIEND:
                 newObject = Instantiate(friendPrefab);
                 objectStatus.GetComponent<Image>().color = Color.green;
+
+                objectStatus.transform.SetParent(objectStatusParent.transform, false);
+                newObject.GetComponent<Object>().objectStatus = objectStatus;
+                break;
+            case ObjectType.TREASURE:
+                newObject = Instantiate(treasurePrefabs);
                 break;
             default:
                 newObject = null;
@@ -31,9 +41,6 @@ public class ObjectManager : MonoBehaviour
         newObject.transform.parent = cube.colorPointCube.transform.GetChild(0);
         newObject.transform.position = cube.colorPointCube.transform.GetChild(0).position;
         newObject.transform.rotation = cube.colorPointCube.transform.GetChild(0).rotation;
-
-        objectStatus.transform.SetParent(objectStatusParent.transform, false);
-        newObject.GetComponent<Object>().objectStatus = objectStatus;
 
         return newObject;
     }
