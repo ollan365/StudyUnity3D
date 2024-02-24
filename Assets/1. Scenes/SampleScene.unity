@@ -123,6 +123,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &685962
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 685963}
+  m_Layer: 0
+  m_Name: DieObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &685963
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685962}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -100, y: -100, z: -100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 924632}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &924631
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,6 +190,7 @@ Transform:
   - {fileID: 328689505}
   - {fileID: 733481644}
   - {fileID: 1680215730}
+  - {fileID: 685963}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &924633
@@ -274,7 +306,6 @@ MonoBehaviour:
   - {fileID: 1390448567}
   - {fileID: 2147346132}
   duration: 0.3
-  isDraging: 0
   stageManager: {fileID: 502851759}
 --- !u!114 &924634
 MonoBehaviour:
@@ -7181,7 +7212,7 @@ MonoBehaviour:
   cubeManager: {fileID: 924633}
   objectManager: {fileID: 502851761}
   startRandomTurnCount: 13
-  enemyCount: 10
+  enemyCount: 1
   treasureCount: 3
   enemy: []
   friend: []
@@ -7220,6 +7251,7 @@ MonoBehaviour:
   treasurePrefabs: {fileID: 360777001147702422, guid: 2760ecf787b1bd34aabe0b7874e52e20, type: 3}
   objectStatusParent: {fileID: 2068828103}
   objectStatusPrefab: {fileID: 2639649761610920941, guid: 66b968909b6188143ac077cfc039df85, type: 3}
+  dieObject: {fileID: 685963}
 --- !u!1001 &508162074
 PrefabInstance:
   m_ObjectHideFlags: 0

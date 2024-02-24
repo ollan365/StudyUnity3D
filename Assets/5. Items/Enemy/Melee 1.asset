@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Melee 1
   m_EditorClassIdentifier: 
   weaponType: 0
-  minDamage: 3
+  minDamage: 1
   maxDamage: 5
   objectMaterial: {fileID: 2100000, guid: 8cf1c1bf6c8b7ce499a07e7fe87e4960, type: 2}

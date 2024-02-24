@@ -10,6 +10,8 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private GameObject objectStatusParent;
     [SerializeField] private GameObject objectStatusPrefab;
 
+    [SerializeField] private Transform dieObject;
+
     public GameObject Summons(ColorCheckCube cube, ObjectType objectType)
     {
         GameObject newObject;
@@ -42,6 +44,16 @@ public class ObjectManager : MonoBehaviour
         newObject.transform.position = cube.colorPointCube.transform.GetChild(0).position;
         newObject.transform.rotation = cube.colorPointCube.transform.GetChild(0).rotation;
 
+        newObject.GetComponent<Object>().objectManager = this;
+
         return newObject;
+    }
+
+    public void ObjectDie(GameObject obj)
+    {
+        // 죽은 애들은 현재 그 개수 맞추기를 위해서 일단은 다른 곳에 옮겨둔다
+        // 나중에 공격 시스템만 어째 바꾸면 그냥 destroy 해도 될듯
+        obj.transform.position = dieObject.position;
+        obj.transform.parent = dieObject;
     }
 }

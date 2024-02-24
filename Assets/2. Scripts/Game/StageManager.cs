@@ -103,6 +103,16 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    private void ClearStage()
+    {
+        StatusOfStage = StageStatus.END;
+    }
+
+    private void GameOver()
+    {
+        Time.timeScale = 0f;
+    }
+
     private IEnumerator Attack()
     {
         // 플레이어부터 공격
@@ -130,7 +140,7 @@ public class StageManager : MonoBehaviour
         for(int i = 0;i<enemyCount;i++)
         {
             Object enemyObject = enemy[i].GetComponent<Object>();
-            if (enemyObject.HP > 0)
+            if (enemyObject.gameObject.activeSelf)
                 enemyAttackOrder.Add(new KeyValuePair<int, int>(enemyObject.GetDamage(), i));
             else // enemyAttackOrder의 크기가 friendAttackOrder 보다 커야하므로 죽은 애들도 일단 list에 넣기
                 enemyAttackOrder.Add(new KeyValuePair<int, int>(0, i));
@@ -140,11 +150,17 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null) continue;
             Object friendObject = friend[i].GetComponent<Object>();
-            if (friendObject.HP > 0)
+            if (friendObject.gameObject.activeSelf)
                 friendAttackOrder.Add(new KeyValuePair<int, int>(friendObject.GetDamage(), i));
         }
         enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
         friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
+
+        if(!enemy[enemyAttackOrder[0].Value].activeSelf) // 살아있는 enemy가 없으면
+        {
+            ClearStage();
+            yield break;
+        }
 
         for (int i = 0; i < enemyAttackOrder.Count; i++)
         {
@@ -176,6 +192,12 @@ public class StageManager : MonoBehaviour
                 yield return new WaitForSeconds(0.1f);
             }
 
+            if(!player.activeSelf) // 플레이어가 죽으면 게임 종료
+            {
+                GameOver();
+                yield break;
+            }
+
             attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.FRIEND);
             foreach (GameObject pTeam in attackablePlayerTeam)
             {
@@ -194,7 +216,7 @@ public class StageManager : MonoBehaviour
     {
         List<GameObject> attackable = new List<GameObject>();
 
-        if(objType == ObjectType.PLAYER)
+        if(objType == ObjectType.PLAYER && player.activeSelf)
         {
             ColorCheckCube playerPosition = player.GetComponent<Object>().GetPosition();
             if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
@@ -212,7 +234,7 @@ public class StageManager : MonoBehaviour
         {
             for(int i = 0;i<3;i++)
             {
-                if (friend[i] == null) continue;
+                if (friend[i] == null || !friend[i].activeSelf) continue;
 
                 ColorCheckCube friendPosition = friend[i].GetComponent<Object>().GetPosition();
                 if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
@@ -231,6 +253,8 @@ public class StageManager : MonoBehaviour
         {
             foreach(GameObject enemyObj in enemy)
             {
+                if (!enemyObj.activeSelf) continue;
+
                 ColorCheckCube enemyPosition = enemyObj.GetComponent<Object>().GetPosition();
                 if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
                 {
@@ -248,6 +272,8 @@ public class StageManager : MonoBehaviour
         {
             foreach (GameObject treasureObj in treasure)
             {
+                if (!treasureObj.activeSelf) continue;
+
                 ColorCheckCube treasurePosition = treasureObj.GetComponent<Object>().GetPosition();
                 if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
                 {

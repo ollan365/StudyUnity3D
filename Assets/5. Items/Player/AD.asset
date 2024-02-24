@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: AD
   m_EditorClassIdentifier: 
   weaponType: 1
-  minDamage: 0
-  maxDamage: 0
+  minDamage: 10
+  maxDamage: 16
   objectMaterial: {fileID: 2100000, guid: 3a0139cc364562448ba6b451cb9ec358, type: 2}

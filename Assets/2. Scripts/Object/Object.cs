@@ -4,6 +4,8 @@ using static Constants;
 
 public class Object : MonoBehaviour
 {
+    public ObjectManager objectManager;
+
     [SerializeField] private ColorCheckCube position; // 일단은 보이게...
     [SerializeField] private float height;
     [SerializeField] private ObjectType type;
@@ -62,6 +64,7 @@ public class Object : MonoBehaviour
         {
             if (type == ObjectType.TREASURE) Debug.Log($"Open Treasure Box!");
             if (objectStatus != null) objectStatus.SetActive(false);
+            objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }
     }
