@@ -5,12 +5,17 @@ public class ObjectManager : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject friendPrefab;
-    [SerializeField] private GameObject treasurePrefabs;
+    [SerializeField] private GameObject treasurePrefab;
+    [SerializeField] private GameObject merchantPrefab;
+    [SerializeField] private GameObject portalPrefab;
 
     [SerializeField] private GameObject objectStatusParent;
     [SerializeField] private GameObject objectStatusPrefab;
 
     [SerializeField] private Transform dieObject;
+
+    [SerializeField] private GameObject merchantInventory;
+    [SerializeField] private GameObject playerInventory;
 
     public GameObject Summons(ColorCheckCube cube, ObjectType objectType)
     {
@@ -33,7 +38,13 @@ public class ObjectManager : MonoBehaviour
                 newObject.GetComponent<Object>().objectStatus = objectStatus;
                 break;
             case ObjectType.TREASURE:
-                newObject = Instantiate(treasurePrefabs);
+                newObject = Instantiate(treasurePrefab);
+                break;
+            case ObjectType.MERCHANT:
+                newObject = Instantiate(merchantPrefab);
+                break;
+            case ObjectType.PORTAL:
+                newObject = Instantiate(portalPrefab);
                 break;
             default:
                 newObject = null;
@@ -55,5 +66,10 @@ public class ObjectManager : MonoBehaviour
         // 나중에 공격 시스템만 어째 바꾸면 그냥 destroy 해도 될듯
         obj.transform.position = dieObject.position;
         obj.transform.parent = dieObject;
+    }
+
+    public void OpenMerchantInventory()
+    {
+        merchantInventory.SetActive(true);
     }
 }

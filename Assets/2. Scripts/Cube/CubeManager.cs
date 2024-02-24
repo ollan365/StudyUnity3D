@@ -18,6 +18,7 @@ public class CubeManager : MonoBehaviour
     private PlayerTurnStatus playerTurnStatus;
 
     [SerializeField] private StageManager stageManager;
+    [SerializeField] private ObjectManager objectManager;
     private void Start()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
@@ -73,6 +74,20 @@ public class CubeManager : MonoBehaviour
                     {
                         Debug.Log("Already object");
                     }
+                    else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.MERCHANT)
+                    {
+                        if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, false))
+                            objectManager.OpenMerchantInventory();
+                        else
+                            Debug.Log($"{script.Type}");
+                    }
+                    else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.PORTAL)
+                    {
+                        if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, true))
+                            stageManager.NextStage();
+                        else
+                            Debug.Log($"{script.Type}");
+                    }
                     else if(script.Type != ObjectType.PLAYER) // 일단은 player 말고는 이동이 불가능
                     {
                         Debug.Log($"{script.Type}");
@@ -123,7 +138,7 @@ public class CubeManager : MonoBehaviour
             if (type == ObjectType.NULL)
             {
                 if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
-                    GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex());
+                    GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true);
 
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
                     playerTurnStatus = stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex())
@@ -134,6 +149,20 @@ public class CubeManager : MonoBehaviour
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
                 {
                     Debug.Log("Already object");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.MERCHANT)
+                {
+                    if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), false))
+                        objectManager.OpenMerchantInventory();
+                    else
+                        Debug.Log($"{type}");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.PORTAL)
+                {
+                    if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
+                        stageManager.NextStage();
+                    else
+                        Debug.Log($"{type}");
                 }
                 else if (type != ObjectType.PLAYER)
                 {

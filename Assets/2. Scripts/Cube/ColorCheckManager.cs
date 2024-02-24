@@ -110,13 +110,15 @@ public class ColorCheckManager : MonoBehaviour
                 colorCoverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
         }
     }
-    public void Move(Colors color, int index)
+    public bool Move(Colors color, int index, bool wantMove)
     {
         if (color != selectedCharacter.GetComponent<Object>().GetPosition().Color) // 다른 면이면 이동 못함
-            return;
+            return false;
         if (!movableCube[index]) // 같은 면의 이동 불가능한 곳이면 이동 안 함
-            return;
-        StartCoroutine(MoveCoroutine(color, index));
+            return false;
+        if (wantMove)
+            StartCoroutine(MoveCoroutine(color, index));
+        return true;
     }
     private IEnumerator MoveCoroutine(Colors color, int index)
     {

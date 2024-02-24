@@ -22,6 +22,8 @@ public class StageManager : MonoBehaviour
     public GameObject[] treasure; // æÍµµ ¿œ¥‹¿∫ public
     [SerializeField] private GameObject player;
 
+    [SerializeField] private GameObject gameOverPanel;
+
     [SerializeField] private Text stageStatusText;
     private StageStatus status;
     public StageStatus StatusOfStage
@@ -106,11 +108,33 @@ public class StageManager : MonoBehaviour
     private void ClearStage()
     {
         StatusOfStage = StageStatus.END;
-    }
 
+        while (true)
+        {
+            ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
+            if (cube.GetObjectType() == ObjectType.NULL)
+            {
+                objectManager.Summons(cube, ObjectType.MERCHANT);
+                break;
+            }
+        }
+        while (true)
+        {
+            ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
+            if (cube.GetObjectType() == ObjectType.NULL)
+            {
+                objectManager.Summons(cube, ObjectType.PORTAL);
+                break;
+            }
+        }
+    }
+    public void NextStage()
+    {
+        Debug.Log("Next Stage!");
+    }
     private void GameOver()
     {
-        Time.timeScale = 0f;
+        gameOverPanel.SetActive(true);
     }
 
     private IEnumerator Attack()
