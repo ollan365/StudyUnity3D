@@ -109,6 +109,9 @@ public class StageManager : MonoBehaviour
     {
         StatusOfStage = StageStatus.END;
 
+        foreach(GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
+            t.GetComponent<Object>().OnHit(9999);
+        
         while (true)
         {
             ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
@@ -149,15 +152,6 @@ public class StageManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.1f);
         }
-        List<GameObject> attackableTreasure = AttackableObject(playerObj.GetWeaponType(), playerObj.GetPosition().Color, playerObj.GetPosition().Index, ObjectType.TREASURE);
-        foreach (GameObject treasure in attackableTreasure)
-        {
-            treasure.GetComponent<Object>().OnHit(playerObj.GetDamage());
-            yield return new WaitForFixedUpdate();
-
-            yield return new WaitForSeconds(0.1f);
-        }
-
 
         // 적과 동료의 공격 순서 결정을 위해 List 생성
         List<KeyValuePair<int, int>> enemyAttackOrder = new List<KeyValuePair<int, int>>();
@@ -289,25 +283,6 @@ public class StageManager : MonoBehaviour
                 {
                     if (enemyPosition.Color != color && enemyPosition.Index == index)
                         attackable.Add(enemyObj);
-                }
-            }
-        }
-        else if (objType == ObjectType.TREASURE)
-        {
-            foreach (GameObject treasureObj in treasure)
-            {
-                if (!treasureObj.activeSelf) continue;
-
-                ColorCheckCube treasurePosition = treasureObj.GetComponent<Object>().GetPosition();
-                if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
-                {
-                    if (treasurePosition.Color == color && AttackableRange(weaponType, index)[treasurePosition.Index])
-                        attackable.Add(treasureObj);
-                }
-                else if (weaponType == WeaponType.AP)
-                {
-                    if (treasurePosition.Color != color && treasurePosition.Index == index)
-                        attackable.Add(treasureObj);
                 }
             }
         }

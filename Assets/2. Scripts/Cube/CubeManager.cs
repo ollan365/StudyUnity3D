@@ -76,8 +76,15 @@ public class CubeManager : MonoBehaviour
                     }
                     else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.MERCHANT)
                     {
-                        if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, false))
+                        if(GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, false))
                             objectManager.OpenMerchantInventory();
+                        else
+                            Debug.Log($"{script.Type}");
+                    }
+                    else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.TREASURE)
+                    {
+                        if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, true))
+                            objectManager.OpenTreasureBox();
                         else
                             Debug.Log($"{script.Type}");
                     }
@@ -154,6 +161,13 @@ public class CubeManager : MonoBehaviour
                 {
                     if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), false))
                         objectManager.OpenMerchantInventory();
+                    else
+                        Debug.Log($"{type}");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.TREASURE)
+                {
+                    if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
+                        objectManager.OpenTreasureBox();
                     else
                         Debug.Log($"{type}");
                 }

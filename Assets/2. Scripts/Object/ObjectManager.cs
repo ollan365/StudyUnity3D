@@ -20,20 +20,22 @@ public class ObjectManager : MonoBehaviour
     public GameObject Summons(ColorCheckCube cube, ObjectType objectType)
     {
         GameObject newObject;
-        GameObject objectStatus = Instantiate(objectStatusPrefab);
+        GameObject objectStatus;
 
         switch (objectType) {
             case ObjectType.ENEMY:
                 newObject = Instantiate(enemyPrefab);
-                objectStatus.GetComponent<Image>().color = Color.blue;
+                objectStatus = Instantiate(objectStatusPrefab);
 
+                objectStatus.GetComponent<Image>().color = Color.blue;
                 objectStatus.transform.SetParent(objectStatusParent.transform, false);
                 newObject.GetComponent<Object>().objectStatus = objectStatus;
                 break;
             case ObjectType.FRIEND:
                 newObject = Instantiate(friendPrefab);
-                objectStatus.GetComponent<Image>().color = Color.green;
+                objectStatus = Instantiate(objectStatusPrefab);
 
+                objectStatus.GetComponent<Image>().color = Color.green;
                 objectStatus.transform.SetParent(objectStatusParent.transform, false);
                 newObject.GetComponent<Object>().objectStatus = objectStatus;
                 break;
@@ -71,5 +73,9 @@ public class ObjectManager : MonoBehaviour
     public void OpenMerchantInventory()
     {
         merchantInventory.SetActive(true);
+    }
+    public void OpenTreasureBox()
+    {
+        Debug.Log("Open treasure box!");
     }
 }

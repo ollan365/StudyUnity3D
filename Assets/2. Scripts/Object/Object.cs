@@ -62,7 +62,6 @@ public class Object : MonoBehaviour
         HP -= damage;
         if (HP <= 0)
         {
-            if (type == ObjectType.TREASURE) Debug.Log($"Open Treasure Box!");
             if (objectStatus != null) objectStatus.SetActive(false);
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
