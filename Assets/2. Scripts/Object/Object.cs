@@ -23,7 +23,7 @@ public class Object : MonoBehaviour
                 objectStatus.transform.Find("ObjectHPText").GetComponent<Text>().text = hp.ToString();
         }
     }
-    [SerializeField] private Weapon weapon; // 일단은 object 중 NPC는 나중에 생각하자...
+    [SerializeField] private Weapon weapon;
     private void Start()
     {
         HP = hp;
@@ -66,5 +66,11 @@ public class Object : MonoBehaviour
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }
+    }
+
+    public void ChangeWeapon(Weapon newWeapon)
+    {
+        if (type == ObjectType.PLAYER) // 플레이어만 무기를 바꿀 수 있음
+            weapon = newWeapon;
     }
 }

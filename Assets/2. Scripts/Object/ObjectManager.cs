@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 using static Constants;
 public class ObjectManager : MonoBehaviour
 {
@@ -14,9 +15,11 @@ public class ObjectManager : MonoBehaviour
 
     [SerializeField] private Transform dieObject;
 
-    [SerializeField] private GameObject merchantInventory;
-    [SerializeField] private GameObject playerInventory;
-
+    [SerializeField] private Object player;
+    [SerializeField] private Weapon[] allPlayerWeapons;
+    [SerializeField] private GameObject[] inventorySlotButton;
+    [SerializeField] private List<Weapon> inventoryWeaponList;
+    [SerializeField] private CubeManager cubeManager;
     public GameObject Summons(ColorCheckCube cube, ObjectType objectType)
     {
         GameObject newObject;
@@ -70,12 +73,21 @@ public class ObjectManager : MonoBehaviour
         obj.transform.parent = dieObject;
     }
 
-    public void OpenMerchantInventory()
-    {
-        merchantInventory.SetActive(true);
-    }
-    public void OpenTreasureBox()
+    public void OpenTreasureBox(GameObject obj)
     {
         Debug.Log("Open treasure box!");
+        obj.transform.position = dieObject.position;
+        obj.transform.parent = dieObject;
+    }
+
+    public void ChangePlayerInventory()
+    {
+        for (int i = 0; i < inventoryWeaponList.Count; i++)
+            inventorySlotButton[i].SetActive(true);
+    }
+    public void ChangePlayerWeapon(int index)
+    {
+        if (cubeManager.CanChangeWeapon())
+            player.ChangeWeapon(inventoryWeaponList[index]);
     }
 }

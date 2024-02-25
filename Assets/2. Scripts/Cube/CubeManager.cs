@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using static Constants;
 
@@ -19,6 +20,13 @@ public class CubeManager : MonoBehaviour
 
     [SerializeField] private StageManager stageManager;
     [SerializeField] private ObjectManager objectManager;
+
+    [SerializeField] private Text stageCountText;
+    private int rotateCount;
+    private int moveCount;
+    private int changeCount;
+
+    [SerializeField] private GameObject shopPopup;
     private void Start()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
@@ -77,14 +85,14 @@ public class CubeManager : MonoBehaviour
                     else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.MERCHANT)
                     {
                         if(GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, false))
-                            objectManager.OpenMerchantInventory();
+                            OpenMerchantInventory();
                         else
                             Debug.Log($"{script.Type}");
                     }
                     else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.TREASURE)
                     {
                         if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, true))
-                            objectManager.OpenTreasureBox();
+                            objectManager.OpenTreasureBox(script.gameObject);
                         else
                             Debug.Log($"{script.Type}");
                     }
@@ -145,7 +153,8 @@ public class CubeManager : MonoBehaviour
             if (type == ObjectType.NULL)
             {
                 if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
-                    GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true);
+                    if (moveCount > 0 && GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
+                        StageCountTextChange(rotateCount, moveCount - 1, changeCount);
 
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
                     playerTurnStatus = stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex())
@@ -160,14 +169,14 @@ public class CubeManager : MonoBehaviour
                 else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.MERCHANT)
                 {
                     if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), false))
-                        objectManager.OpenMerchantInventory();
+                        OpenMerchantInventory();
                     else
                         Debug.Log($"{type}");
                 }
                 else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.TREASURE)
                 {
                     if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
-                        objectManager.OpenTreasureBox();
+                        objectManager.OpenTreasureBox(GetComponent<ColorCheckManager>().GetCubeObject(script.GetPositionColor(), script.GetPositionIndex()));
                     else
                         Debug.Log($"{type}");
                 }
@@ -212,9 +221,25 @@ public class CubeManager : MonoBehaviour
                     return;
                 }
     }
+    public void StageCountTextChange(int rotate, int move, int change)
+    {
+        rotateCount = rotate;
+        moveCount = move;
+        changeCount = change;
+
+        stageCountText.text = $"{rotateCount} / {moveCount} / {changeCount}";
+    }
+    public bool CanChangeWeapon()
+    {
+        if (changeCount <= 0) return false;
+
+        StageCountTextChange(rotateCount, moveCount, changeCount - 1);
+        return true;
+    }
     private void Turn(Colors color, int direction)
     {
-        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL) return;
+        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL || (rotateCount <= 0 && stageManager.StatusOfStage == StageStatus.PLAYER)) return;
+        if (stageManager.StatusOfStage == StageStatus.PLAYER) StageCountTextChange(rotateCount - 1, moveCount, changeCount);
         playerTurnStatus = PlayerTurnStatus.TURN;
 
         GameObject turnPoint = turnPoints[color.ToInt()];
@@ -311,5 +336,10 @@ public class CubeManager : MonoBehaviour
         }
         else if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
             playerTurnStatus = PlayerTurnStatus.NORMAL;
+    }
+
+    private void OpenMerchantInventory()
+    {
+        shopPopup.SetActive(true);
     }
 }

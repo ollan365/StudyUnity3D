@@ -14,12 +14,15 @@ public class StageManager : MonoBehaviour
     [SerializeField] private ObjectManager objectManager;
 
     [SerializeField] private int startRandomTurnCount;
+    [SerializeField] private int rotateCountPerTurn;
+    [SerializeField] private int moveCountPerTurn;
+    [SerializeField] private int changeWeaponCountPerTurn;
 
     [SerializeField] private int enemyCount;
     [SerializeField] private int treasureCount;
-    public GameObject[] enemy; // 일단은 public
-    public GameObject[] friend; // 얘도 일단은 public
-    public GameObject[] treasure; // 얘도 일단은 public
+    private GameObject[] enemy;
+    private GameObject[] friend;
+    private GameObject[] treasure;
     [SerializeField] private GameObject player;
 
     [SerializeField] private GameObject gameOverPanel;
@@ -39,6 +42,7 @@ public class StageManager : MonoBehaviour
                     break;
                 case StageStatus.PLAYER:
                     stageStatusText.text = "PLAYER";
+                    cubeManager.StageCountTextChange(rotateCountPerTurn, moveCountPerTurn, changeWeaponCountPerTurn);
                     break;
                 case StageStatus.FIGHT:
                     stageStatusText.text = "FIGHT";
@@ -398,7 +402,7 @@ public class StageManager : MonoBehaviour
             return false;
         for (int i = 0; i < 3; i++)
         {
-            if (friend[i] == null)
+            if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
                 friend[i] = objectManager.Summons(cube, ObjectType.FRIEND);
                 Debug.Log("summons success!");
