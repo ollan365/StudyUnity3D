@@ -79,7 +79,7 @@ public class StageManager : MonoBehaviour
         if(StatusOfStage == StageStatus.PLAYER)
         {
             StatusOfStage = StageStatus.FIGHT;
-            StartCoroutine(Attack());
+            StartCoroutine(Attack()); 
         }
     }
 
