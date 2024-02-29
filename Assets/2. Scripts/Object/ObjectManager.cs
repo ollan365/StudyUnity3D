@@ -16,9 +16,8 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private Transform dieObject;
 
     [SerializeField] private Object player;
-    [SerializeField] private Weapon[] allPlayerWeapons;
     [SerializeField] private GameObject[] inventorySlotButton;
-    [SerializeField] private List<Weapon> inventoryWeaponList;
+    [SerializeField] private List<ItemObject> inventoryList;
     [SerializeField] private CubeManager cubeManager;
     public GameObject Summons(ColorCheckCube cube, ObjectType objectType)
     {
@@ -82,12 +81,20 @@ public class ObjectManager : MonoBehaviour
 
     public void ChangePlayerInventory()
     {
-        for (int i = 0; i < inventoryWeaponList.Count; i++)
+        for (int i = 0; i < inventoryList.Count; i++)
             inventorySlotButton[i].SetActive(true);
     }
-    public void ChangePlayerWeapon(int index)
+    public void ClickInventoryBTN(int index)
     {
-        if (cubeManager.CanChangeWeapon())
-            player.ChangeWeapon(inventoryWeaponList[index]);
+        switch (inventoryList[index].itemType)
+        {
+            case ItemType.WEAPON:
+                if (cubeManager.CanChangeWeapon()) player.ChangeWeapon((Weapon)inventoryList[index]);
+                break;
+            case ItemType.PORTION:
+                break;
+            case ItemType.ETC:
+                break;
+        }
     }
 }
