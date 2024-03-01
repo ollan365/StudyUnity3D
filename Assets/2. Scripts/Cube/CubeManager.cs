@@ -340,6 +340,7 @@ public class CubeManager : MonoBehaviour
 
     private void OpenMerchantInventory()
     {
+        objectManager.ChangeShop();
         shopPopup.SetActive(true);
     }
 }
