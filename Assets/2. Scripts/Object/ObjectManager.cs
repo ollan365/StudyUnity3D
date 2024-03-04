@@ -52,7 +52,7 @@ public class ObjectManager : MonoBehaviour
         
         shopItemArray = new KeyValuePair<ItemObject, int>[16];
     }
-    public GameObject Summons(ColorCheckCube cube, ObjectType objectType)
+    public GameObject Summons(ColorCheckCube cube, ObjectType objectType, int objectIndex)
     {
         GameObject newObject;
         GameObject objectStatus;
@@ -65,6 +65,7 @@ public class ObjectManager : MonoBehaviour
                 objectStatus.GetComponent<Image>().color = Color.blue;
                 objectStatus.transform.SetParent(objectStatusParent.transform, false);
                 newObject.GetComponent<Object>().objectStatus = objectStatus;
+                newObject.GetComponent<Object>().weapon = enemyWeapons[objectIndex];
                 break;
             case ObjectType.FRIEND:
                 newObject = Instantiate(friendPrefab);
@@ -73,6 +74,7 @@ public class ObjectManager : MonoBehaviour
                 objectStatus.GetComponent<Image>().color = Color.green;
                 objectStatus.transform.SetParent(objectStatusParent.transform, false);
                 newObject.GetComponent<Object>().objectStatus = objectStatus;
+                newObject.GetComponent<Object>().weapon = friendWeapons[objectIndex];
                 break;
             case ObjectType.TREASURE:
                 newObject = Instantiate(treasurePrefab);

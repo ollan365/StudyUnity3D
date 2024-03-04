@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
   m_Name: AP
   m_EditorClassIdentifier: 
+  id: 0
+  itemType: 0
+  cost: 20
+  description: 
   weaponType: 2
   minDamage: 10
   maxDamage: 20

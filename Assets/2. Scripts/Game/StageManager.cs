@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,15 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] private CubeManager cubeManager;
     [SerializeField] private ObjectManager objectManager;
+    [SerializeField] private StaticManager staticManager;
 
-    [SerializeField] private int startRandomTurnCount;
-    [SerializeField] private int rotateCountPerTurn;
-    [SerializeField] private int moveCountPerTurn;
-    [SerializeField] private int changeWeaponCountPerTurn;
+    private int startRandomTurnCount;
+    private int rotateCountPerTurn;
+    private int moveCountPerTurn;
+    private int changeWeaponCountPerTurn;
 
-    [SerializeField] private int enemyCount;
-    [SerializeField] private int treasureCount;
+    private int enemyCount;
+    private int treasureCount;
     private GameObject[] enemy;
     private GameObject[] friend;
     private GameObject[] treasure;
@@ -57,7 +59,25 @@ public class StageManager : MonoBehaviour
     private void Start()
     {
         colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
+        StageInit();
+    }
+    private void StageInit()
+    {
         StatusOfStage = StageStatus.INIT;
+
+        TextAsset textFile = Resources.Load("StageInfo") as TextAsset;
+        StringReader stringReader = new StringReader(textFile.text);
+
+        string line = stringReader.ReadLine();
+        for (int i = 0; i <= staticManager.Stage; i++)
+            line = stringReader.ReadLine();
+
+        startRandomTurnCount = int.Parse(line.Split(',')[1]);
+        rotateCountPerTurn = int.Parse(line.Split(',')[2]);
+        moveCountPerTurn = int.Parse(line.Split(',')[3]);
+        changeWeaponCountPerTurn = int.Parse(line.Split(',')[4]);
+        enemyCount = int.Parse(line.Split(',')[5]);
+        treasureCount = int.Parse(line.Split(',')[6]);
 
         enemy = new GameObject[enemyCount];
         friend = new GameObject[3];
@@ -71,17 +91,34 @@ public class StageManager : MonoBehaviour
 
         yield return new WaitForSeconds(5f);
 
-        for (int i = 0; i < enemyCount; i++) // enemy 배치
+        TextAsset textFile = Resources.Load("StageEnemy") as TextAsset;
+        StringReader stringReader = new StringReader(textFile.text);
+
+        string line = stringReader.ReadLine();
+
+        do { line = stringReader.ReadLine(); }
+        while (line != null && int.Parse(line.Split(',')[0]) != staticManager.Stage);
+
+        int index = 0;
+        while (index < enemyCount && line != null && int.Parse(line.Split(',')[0]) == staticManager.Stage) // enemy 배치
         {
             ColorCheckCube cube;
-            while (true)
+
+            for (int i = 0; i < int.Parse(line.Split(',')[2]); i++)
             {
-                cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
-                if (cube.GetObjectType() == ObjectType.NULL)
-                    break;
+                while (true)
+                {
+                    cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
+                    if (cube.GetObjectType() == ObjectType.NULL)
+                        break;
+                }
+
+                enemy[index + i] = objectManager.Summons(cube, ObjectType.ENEMY, int.Parse(line.Split(',')[1]));
+                yield return new WaitForFixedUpdate();
             }
-            enemy[i] = objectManager.Summons(cube, ObjectType.ENEMY);
-            yield return new WaitForFixedUpdate();
+
+            index += int.Parse(line.Split(',')[2]);
+            line = stringReader.ReadLine();
         }
 
         for (int i = 0; i < treasureCount; i++) // enemy 배치
@@ -93,7 +130,7 @@ public class StageManager : MonoBehaviour
                 if (cube.GetObjectType() == ObjectType.NULL)
                     break;
             }
-            treasure[i] = objectManager.Summons(cube, ObjectType.TREASURE);
+            treasure[i] = objectManager.Summons(cube, ObjectType.TREASURE, 0);
             yield return new WaitForFixedUpdate();
         }
 
@@ -121,7 +158,7 @@ public class StageManager : MonoBehaviour
             ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
             if (cube.GetObjectType() == ObjectType.NULL)
             {
-                objectManager.Summons(cube, ObjectType.MERCHANT);
+                objectManager.Summons(cube, ObjectType.MERCHANT, 0);
                 break;
             }
         }
@@ -130,7 +167,7 @@ public class StageManager : MonoBehaviour
             ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
             if (cube.GetObjectType() == ObjectType.NULL)
             {
-                objectManager.Summons(cube, ObjectType.PORTAL);
+                objectManager.Summons(cube, ObjectType.PORTAL, 0);
                 break;
             }
         }
@@ -404,7 +441,7 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
-                friend[i] = objectManager.Summons(cube, ObjectType.FRIEND);
+                friend[i] = objectManager.Summons(cube, ObjectType.FRIEND, 0);
                 Debug.Log("summons success!");
                 return true;
             }

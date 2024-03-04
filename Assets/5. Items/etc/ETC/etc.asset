@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   itemType: 2
-  cost: 0
+  cost: 15
   description: 
   value: 0
   objectMaterial: {fileID: 0}
