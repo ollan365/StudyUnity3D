@@ -24,8 +24,8 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private GameObject merchantPrefab;
     [SerializeField] private GameObject portalPrefab;
 
-    [SerializeField] private GameObject objectStatusParent;
-    [SerializeField] private GameObject objectStatusPrefab;
+    [SerializeField] private GameObject[] friendObjectStatus;
+    [SerializeField] private Slider[] friendHpSlider;
 
     [SerializeField] private Transform dieObject;
 
@@ -55,25 +55,22 @@ public class ObjectManager : MonoBehaviour
     public GameObject Summons(ColorCheckCube cube, ObjectType objectType, int objectIndex)
     {
         GameObject newObject;
-        GameObject objectStatus;
 
         switch (objectType) {
             case ObjectType.ENEMY:
                 newObject = Instantiate(enemyPrefab);
-                objectStatus = Instantiate(objectStatusPrefab);
-
-                objectStatus.GetComponent<Image>().color = Color.blue;
-                objectStatus.transform.SetParent(objectStatusParent.transform, false);
-                newObject.GetComponent<Object>().objectStatus = objectStatus;
                 newObject.GetComponent<Object>().weapon = enemyWeapons[objectIndex];
                 break;
             case ObjectType.FRIEND:
                 newObject = Instantiate(friendPrefab);
-                objectStatus = Instantiate(objectStatusPrefab);
 
-                objectStatus.GetComponent<Image>().color = Color.green;
-                objectStatus.transform.SetParent(objectStatusParent.transform, false);
-                newObject.GetComponent<Object>().objectStatus = objectStatus;
+                for (int i = 0; i < 3; i++)
+                    if (!friendObjectStatus[i].activeSelf)
+                    {
+                        newObject.GetComponent<Object>().hpSlider = friendHpSlider[i];
+                        friendObjectStatus[i].SetActive(true);
+                        break;
+                    }
                 newObject.GetComponent<Object>().weapon = friendWeapons[objectIndex];
                 break;
             case ObjectType.TREASURE:

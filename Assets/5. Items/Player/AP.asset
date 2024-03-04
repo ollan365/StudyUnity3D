@@ -17,6 +17,7 @@ MonoBehaviour:
   cost: 20
   description: 
   weaponType: 2
+  maxHP: 20
   minDamage: 10
   maxDamage: 20
   objectMaterial: {fileID: 2100000, guid: 3a0139cc364562448ba6b451cb9ec358, type: 2}

@@ -6,25 +6,26 @@ public class Object : MonoBehaviour
 {
     public ObjectManager objectManager;
     public Weapon weapon;
-    public GameObject objectStatus;
+    public Slider hpSlider;
 
     private ColorCheckCube position; // 일단은 보이게...
     [SerializeField] private ObjectType type;
     public ObjectType Type { get => type; }
 
-    private int hp; // 일단은 object가 플레이어와 적 밖에 없다고 가정 -> 모두 hp를 가짐
-    public int HP
+    [SerializeField] private float hp; // 일단은 object가 플레이어와 적 밖에 없다고 가정 -> 모두 hp를 가짐
+    public float HP
     {
         get => hp;
         private set
         {
             hp = value;
-            if (objectStatus != null) // 보물상자나 상인은 이게 없음
-                objectStatus.transform.Find("ObjectHPText").GetComponent<Text>().text = hp.ToString();
+            if (hpSlider != null) // 보물상자나 상인은 이게 없음
+                hpSlider.value = hp / weapon.MaxHP;
         }
     }
     private void Start()
     {
+        hp = weapon.MaxHP;
         HP = hp;
         GetComponent<MeshRenderer>().material = weapon.ObjectMaterial;
     }
@@ -61,7 +62,7 @@ public class Object : MonoBehaviour
         HP -= damage;
         if (HP <= 0)
         {
-            if (objectStatus != null) objectStatus.SetActive(false);
+            if (hpSlider != null) hpSlider.gameObject.SetActive(false);
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }
