@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 348f4d3159843fb459b6681fb256e7cf, type: 3}
-  m_Name: etc
+  m_Name: Scroll
   m_EditorClassIdentifier: 
   id: 0
   itemType: 2
   cost: 15
   description: 
+  icon: {r: 0, g: 0, b: 1, a: 1}
   value: 0
   objectMaterial: {fileID: 0}

@@ -47,7 +47,8 @@ public class ObjectManager : MonoBehaviour
         Gold = 999;
 
         inventoryItemArray = new KeyValuePair<ItemObject, int>[16]; // 일단은 저장이 없음
-        for(int i = 0; i < inventoryItemArray.Length; i++)
+        inventoryItemArray[0] = new(player.weapon, 1);
+        for (int i = 1; i < inventoryItemArray.Length; i++)
             inventoryItemArray[i] = new(nullObject, 0);
         
         shopItemArray = new KeyValuePair<ItemObject, int>[16];
@@ -98,6 +99,14 @@ public class ObjectManager : MonoBehaviour
 
     public void ObjectDie(GameObject obj)
     {
+        if (obj.GetComponent<Object>().Type == ObjectType.FRIEND)
+            for (int i = 0; i < 3; i++)
+                if (obj.GetComponent<Object>().hpSlider == friendHpSlider[i])
+                {
+                    friendObjectStatus[i].SetActive(false);
+                    break;
+                }
+
         // 죽은 애들은 현재 그 개수 맞추기를 위해서 일단은 다른 곳에 옮겨둔다
         // 나중에 공격 시스템만 어째 바꾸면 그냥 destroy 해도 될듯
         obj.transform.position = dieObject.position;
@@ -114,19 +123,27 @@ public class ObjectManager : MonoBehaviour
     public void ChangePlayerInventory()
     {
         for (int i = 0; i < inventoryItemArray.Length; i++)
+        {
+            if (inventoryItemArray[i].Value == 0) inventoryItemArray[i] = new(nullObject, 1);
+
             switch (inventoryItemArray[i].Key.ItemType)
             {
                 case ItemType.WEAPON:
-                    inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                        = inventoryItemArray[i].Value.ToString();
+                    inventorySlotButton[i].GetComponent<Image>().color = inventoryItemArray[i].Key.Icon;
+                    if (player.weapon == (Weapon)inventoryItemArray[i].Key)
+                        inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text = "use";
+                    else
+                        inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text = "";
                     inventorySlotButton[i].SetActive(true);
                     break;
                 case ItemType.PORTION:
+                    inventorySlotButton[i].GetComponent<Image>().color = inventoryItemArray[i].Key.Icon;
                     inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
                         = inventoryItemArray[i].Value.ToString();
                     inventorySlotButton[i].SetActive(true);
                     break;
-                case ItemType.ETC:
+                case ItemType.SCROLL:
+                    inventorySlotButton[i].GetComponent<Image>().color = inventoryItemArray[i].Key.Icon;
                     inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
                         = inventoryItemArray[i].Value.ToString();
                     inventorySlotButton[i].SetActive(true);
@@ -135,19 +152,32 @@ public class ObjectManager : MonoBehaviour
                     inventorySlotButton[i].SetActive(false);
                     break;
             }
+        }
     }
     public void ClickInventoryBTN(int index)
     {
         switch (inventoryItemArray[index].Key.ItemType)
         {
             case ItemType.WEAPON:
-                if (cubeManager.CanChangeWeapon()) player.ChangeWeapon((Weapon)inventoryItemArray[index].Key);
+                if (player.weapon != (Weapon)inventoryItemArray[index].Key && cubeManager.CanChangeWeapon())
+                    player.ChangeWeapon((Weapon)inventoryItemArray[index].Key);
                 break;
             case ItemType.PORTION:
+                Portion p = (Portion)inventoryItemArray[index].Key;
+                switch (p.StatusEffectType)
+                {
+                    case StatusEffect.HP:
+                        player.HP += p.Value;
+                        inventoryItemArray[index] = new(inventoryItemArray[index].Key, inventoryItemArray[index].Value - 1);
+                        break;
+                }
                 break;
-            case ItemType.ETC:
+            case ItemType.SCROLL:
+                Scroll s = (Scroll)inventoryItemArray[index].Key;
+                cubeManager.SelectSummonsButton(s.FriendIndex);
                 break;
         }
+        ChangePlayerInventory();
     }
     public void ChangeShop()
     {
@@ -158,6 +188,7 @@ public class ObjectManager : MonoBehaviour
                 int random = Random.Range(0, allShopWeapon.Length);
 
                 shopItemArray[i] = new(allShopWeapon[random], allShopWeapon[random].Cost);
+                shopSlotButton[i].GetComponent<Image>().color = allShopWeapon[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
                     = allShopWeapon[random].Cost.ToString(); 
             }
@@ -166,6 +197,7 @@ public class ObjectManager : MonoBehaviour
                 int random = Random.Range(0, allShopPortion.Length);
 
                 shopItemArray[i] = new(allShopPortion[random], allShopPortion[random].Cost);
+                shopSlotButton[i].GetComponent<Image>().color = allShopPortion[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
                     = allShopPortion[random].Cost.ToString();
             }
@@ -174,6 +206,7 @@ public class ObjectManager : MonoBehaviour
                 int random = Random.Range(0, allShopETC.Length);
 
                 shopItemArray[i] = new(allShopETC[random], allShopETC[random].Cost);
+                shopSlotButton[i].GetComponent<Image>().color = allShopETC[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
                     = allShopETC[random].Cost.ToString();
             }
@@ -187,6 +220,8 @@ public class ObjectManager : MonoBehaviour
         {
             if (inventoryItemArray[i].Key == shopItemArray[index].Key)
             {
+                if (shopItemArray[index].Key.ItemType == ItemType.WEAPON) return; // 무기는 하나만 소유 가능
+
                 inventoryItemArray[i] = new(inventoryItemArray[i].Key, inventoryItemArray[i].Value + 1);
                 inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
                     = inventoryItemArray[i].Value.ToString();

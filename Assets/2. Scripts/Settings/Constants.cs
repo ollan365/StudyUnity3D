@@ -40,5 +40,6 @@ public static class Constants
     public enum ObjectType { PLAYER, FRIEND, ENEMY, TREASURE, MERCHANT, PORTAL, NULL }
     public enum StageStatus { INIT, PLAYER, FIGHT, END }
     public enum WeaponType { MELEE, AD, AP, NULL }
-    public enum ItemType { WEAPON, PORTION, ETC, NULL }
+    public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
+    public enum StatusEffect { HP, ALL }
 }

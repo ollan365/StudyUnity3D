@@ -432,7 +432,7 @@ public class StageManager : MonoBehaviour
         return attackable;
     }
 
-    public bool SummonsFriend(Colors color, int index)
+    public bool SummonsFriend(Colors color, int index, int friendIndex)
     {
         ColorCheckCube cube = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>();
         if (cube.GetObjectType() != ObjectType.NULL)
@@ -441,7 +441,7 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
-                friend[i] = objectManager.Summons(cube, ObjectType.FRIEND, 0);
+                friend[i] = objectManager.Summons(cube, ObjectType.FRIEND, friendIndex);
                 Debug.Log("summons success!");
                 return true;
             }

@@ -16,7 +16,7 @@ public class Object : MonoBehaviour
     public float HP
     {
         get => hp;
-        private set
+        set
         {
             hp = value;
             if (hpSlider != null) // 보물상자나 상인은 이게 없음
@@ -62,7 +62,6 @@ public class Object : MonoBehaviour
         HP -= damage;
         if (HP <= 0)
         {
-            if (hpSlider != null) hpSlider.gameObject.SetActive(false);
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }

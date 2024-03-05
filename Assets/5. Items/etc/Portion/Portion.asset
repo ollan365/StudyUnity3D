@@ -16,5 +16,6 @@ MonoBehaviour:
   itemType: 1
   cost: 100
   description: 
+  icon: {r: 0, g: 1, b: 0, a: 1}
   value: 0
   objectMaterial: {fileID: 0}

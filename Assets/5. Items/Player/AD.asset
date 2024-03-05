@@ -16,6 +16,7 @@ MonoBehaviour:
   itemType: 0
   cost: 10
   description: 
+  icon: {r: 1, g: 0, b: 0, a: 1}
   weaponType: 1
   maxHP: 20
   minDamage: 10

@@ -17,6 +17,7 @@ public class CubeManager : MonoBehaviour
     private GameObject mouseStartObject;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, SUMMONS_SELECTED }
     private PlayerTurnStatus playerTurnStatus;
+    private int summonsIndex;
 
     [SerializeField] private StageManager stageManager;
     [SerializeField] private ObjectManager objectManager;
@@ -157,7 +158,7 @@ public class CubeManager : MonoBehaviour
                         StageCountTextChange(rotateCount, moveCount - 1, changeCount);
 
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                    playerTurnStatus = stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex())
+                    playerTurnStatus = stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex(), summonsIndex)
                         ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.SUMMONS_SELECTED;
             }
             else
@@ -327,11 +328,12 @@ public class CubeManager : MonoBehaviour
         }
     }
 
-    public void SelectSummonsButton()
+    public void SelectSummonsButton(int friendIndex)
     {
         if (playerTurnStatus == PlayerTurnStatus.NORMAL && stageManager.StatusOfStage == StageStatus.PLAYER)
         {
             playerTurnStatus = PlayerTurnStatus.SUMMONS_SELECTED;
+            summonsIndex = friendIndex;
             Debug.Log("summons btn selected!");
         }
         else if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
