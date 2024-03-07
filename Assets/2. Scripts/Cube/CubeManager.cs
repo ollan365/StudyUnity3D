@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using static Constants;
 
@@ -17,14 +16,10 @@ public class CubeManager : MonoBehaviour
     private GameObject mouseStartObject;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, SUMMONS_SELECTED }
     private PlayerTurnStatus playerTurnStatus;
+    private int summonsIndex;
 
     [SerializeField] private StageManager stageManager;
     [SerializeField] private ObjectManager objectManager;
-
-    [SerializeField] private Text stageCountText;
-    private int rotateCount;
-    private int moveCount;
-    private int changeCount;
 
     [SerializeField] private GameObject shopPopup;
     private void Start()
@@ -153,11 +148,11 @@ public class CubeManager : MonoBehaviour
             if (type == ObjectType.NULL)
             {
                 if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
-                    if (moveCount > 0 && GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
-                        StageCountTextChange(rotateCount, moveCount - 1, changeCount);
+                    if (stageManager.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
+                        stageManager.StageTextChange(true, StageText.MOVE, -1);
 
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                    playerTurnStatus = stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex())
+                    playerTurnStatus = stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex(), summonsIndex)
                         ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.SUMMONS_SELECTED;
             }
             else
@@ -221,25 +216,12 @@ public class CubeManager : MonoBehaviour
                     return;
                 }
     }
-    public void StageCountTextChange(int rotate, int move, int change)
-    {
-        rotateCount = rotate;
-        moveCount = move;
-        changeCount = change;
-
-        stageCountText.text = $"{rotateCount} / {moveCount} / {changeCount}";
-    }
-    public bool CanChangeWeapon()
-    {
-        if (changeCount <= 0) return false;
-
-        StageCountTextChange(rotateCount, moveCount, changeCount - 1);
-        return true;
-    }
     private void Turn(Colors color, int direction)
     {
-        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL || (rotateCount <= 0 && stageManager.StatusOfStage == StageStatus.PLAYER)) return;
-        if (stageManager.StatusOfStage == StageStatus.PLAYER) StageCountTextChange(rotateCount - 1, moveCount, changeCount);
+        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL || (!stageManager.StageTextChange(false, StageText.ROTATE, -1) && stageManager.StatusOfStage == StageStatus.PLAYER)) return;
+        if (stageManager.StatusOfStage == StageStatus.PLAYER)
+            if(!stageManager.StageTextChange(true, StageText.ROTATE, -1)) return;
+
         playerTurnStatus = PlayerTurnStatus.TURN;
 
         GameObject turnPoint = turnPoints[color.ToInt()];
@@ -327,11 +309,12 @@ public class CubeManager : MonoBehaviour
         }
     }
 
-    public void SelectSummonsButton()
+    public void SelectSummonsButton(int friendIndex)
     {
         if (playerTurnStatus == PlayerTurnStatus.NORMAL && stageManager.StatusOfStage == StageStatus.PLAYER)
         {
             playerTurnStatus = PlayerTurnStatus.SUMMONS_SELECTED;
+            summonsIndex = friendIndex;
             Debug.Log("summons btn selected!");
         }
         else if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
@@ -340,6 +323,7 @@ public class CubeManager : MonoBehaviour
 
     private void OpenMerchantInventory()
     {
+        objectManager.ChangeShop();
         shopPopup.SetActive(true);
     }
 }

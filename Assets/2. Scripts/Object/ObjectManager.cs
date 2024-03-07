@@ -4,42 +4,80 @@ using System.Collections.Generic;
 using static Constants;
 public class ObjectManager : MonoBehaviour
 {
+    [SerializeField] private CubeManager cubeManager;
+    [SerializeField] private StageManager stageManager;
+    [SerializeField] private Object player;
+    [SerializeField] private Text goldText;
+    private int gold;
+    public int Gold
+    {
+        get => gold;
+        set
+        {
+            gold = value;
+            goldText.text = gold.ToString();
+        }
+    }
+
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject treasurePrefab;
     [SerializeField] private GameObject merchantPrefab;
     [SerializeField] private GameObject portalPrefab;
 
-    [SerializeField] private GameObject objectStatusParent;
-    [SerializeField] private GameObject objectStatusPrefab;
+    [SerializeField] private GameObject[] friendObjectStatus;
+    [SerializeField] private Slider[] friendHpSlider;
 
     [SerializeField] private Transform dieObject;
 
-    [SerializeField] private Object player;
+    [SerializeField] private Weapon[] enemyWeapons;
+    [SerializeField] private Weapon[] friendWeapons;
+
+    [SerializeField] private ItemObject[] allShopWeapon;
+    [SerializeField] private ItemObject[] allShopPortion;
+    [SerializeField] private ItemObject[] allShopScroll;
+    [SerializeField] private ItemObject nullObject;
+
     [SerializeField] private GameObject[] inventorySlotButton;
-    [SerializeField] private List<ItemObject> inventoryList;
-    [SerializeField] private CubeManager cubeManager;
-    public GameObject Summons(ColorCheckCube cube, ObjectType objectType)
+    private KeyValuePair<ItemObject, int>[] inventoryItemArray;
+    [SerializeField] private GameObject[] shopSlotButton;
+    private KeyValuePair<ItemObject, int>[] shopItemArray;
+
+    private void Awake()
+    {
+        Gold = 999;
+
+        inventoryItemArray = new KeyValuePair<ItemObject, int>[16]; // 일단은 저장이 없음
+        for (int i = 0; i < inventoryItemArray.Length; i++)
+            inventoryItemArray[i] = new(nullObject, 0);
+        inventoryItemArray[0] = new(player.weapon, 1);
+        inventoryItemArray[1] = new(allShopPortion[0], 1);
+        inventoryItemArray[2] = new(allShopScroll[0], 4);
+
+        shopItemArray = new KeyValuePair<ItemObject, int>[16];
+    }
+    public GameObject Summons(ColorCheckCube cube, ObjectType objectType, int objectIndex)
     {
         GameObject newObject;
-        GameObject objectStatus;
 
         switch (objectType) {
             case ObjectType.ENEMY:
                 newObject = Instantiate(enemyPrefab);
-                objectStatus = Instantiate(objectStatusPrefab);
-
-                objectStatus.GetComponent<Image>().color = Color.blue;
-                objectStatus.transform.SetParent(objectStatusParent.transform, false);
-                newObject.GetComponent<Object>().objectStatus = objectStatus;
+                newObject.GetComponent<Object>().weapon = enemyWeapons[objectIndex];
                 break;
             case ObjectType.FRIEND:
                 newObject = Instantiate(friendPrefab);
-                objectStatus = Instantiate(objectStatusPrefab);
 
-                objectStatus.GetComponent<Image>().color = Color.green;
-                objectStatus.transform.SetParent(objectStatusParent.transform, false);
-                newObject.GetComponent<Object>().objectStatus = objectStatus;
+                for (int i = 0; i < 3; i++)
+                    if (!friendObjectStatus[i].activeSelf)
+                    {
+                        newObject.GetComponent<Object>().hpSlider = friendHpSlider[i];
+                        friendObjectStatus[i].SetActive(true);
+                        break;
+                    }
+                newObject.GetComponent<Object>().weapon = friendWeapons[objectIndex];
+                UseItem(ItemType.SCROLL, objectIndex);
+                ChangePlayerInventory();
                 break;
             case ObjectType.TREASURE:
                 newObject = Instantiate(treasurePrefab);
@@ -66,6 +104,14 @@ public class ObjectManager : MonoBehaviour
 
     public void ObjectDie(GameObject obj)
     {
+        if (obj.GetComponent<Object>().Type == ObjectType.FRIEND)
+            for (int i = 0; i < 3; i++)
+                if (obj.GetComponent<Object>().hpSlider == friendHpSlider[i])
+                {
+                    friendObjectStatus[i].SetActive(false);
+                    break;
+                }
+
         // 죽은 애들은 현재 그 개수 맞추기를 위해서 일단은 다른 곳에 옮겨둔다
         // 나중에 공격 시스템만 어째 바꾸면 그냥 destroy 해도 될듯
         obj.transform.position = dieObject.position;
@@ -81,20 +127,134 @@ public class ObjectManager : MonoBehaviour
 
     public void ChangePlayerInventory()
     {
-        for (int i = 0; i < inventoryList.Count; i++)
-            inventorySlotButton[i].SetActive(true);
+        for (int i = 0; i < inventoryItemArray.Length; i++)
+        {
+            if (inventoryItemArray[i].Value == 0) inventoryItemArray[i] = new(nullObject, 1);
+
+            switch (inventoryItemArray[i].Key.ItemType)
+            {
+                case ItemType.WEAPON:
+                    inventorySlotButton[i].GetComponent<Image>().color = inventoryItemArray[i].Key.Icon;
+                    if (player.weapon == (Weapon)inventoryItemArray[i].Key)
+                        inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text = "use";
+                    else
+                        inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text = "";
+                    inventorySlotButton[i].SetActive(true);
+                    break;
+                case ItemType.PORTION:
+                    inventorySlotButton[i].GetComponent<Image>().color = inventoryItemArray[i].Key.Icon;
+                    inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
+                        = inventoryItemArray[i].Value.ToString();
+                    inventorySlotButton[i].SetActive(true);
+                    break;
+                case ItemType.SCROLL:
+                    inventorySlotButton[i].GetComponent<Image>().color = inventoryItemArray[i].Key.Icon;
+                    inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
+                        = inventoryItemArray[i].Value.ToString();
+                    inventorySlotButton[i].SetActive(true);
+                    break;
+                case ItemType.NULL:
+                    inventorySlotButton[i].SetActive(false);
+                    break;
+            }
+        }
     }
     public void ClickInventoryBTN(int index)
     {
-        switch (inventoryList[index].itemType)
+        switch (inventoryItemArray[index].Key.ItemType)
         {
             case ItemType.WEAPON:
-                if (cubeManager.CanChangeWeapon()) player.ChangeWeapon((Weapon)inventoryList[index]);
+                if (player.weapon != (Weapon)inventoryItemArray[index].Key && stageManager.StageTextChange(true, StageText.WEAPON_CHANGE, -1))
+                    player.weapon = ((Weapon)inventoryItemArray[index].Key);
                 break;
             case ItemType.PORTION:
+                Portion p = (Portion)inventoryItemArray[index].Key;
+                switch (p.StatusEffectType)
+                {
+                    case StatusEffect.HP:
+                        player.HP += p.Value;
+                        inventoryItemArray[index] = new(inventoryItemArray[index].Key, inventoryItemArray[index].Value - 1);
+                        break;
+                }
                 break;
-            case ItemType.ETC:
+            case ItemType.SCROLL:
+                cubeManager.SelectSummonsButton(inventoryItemArray[index].Key.ID);
                 break;
+        }
+        ChangePlayerInventory();
+    }
+    private void UseItem(ItemType itemType, int itemIndex)
+    {
+        for(int i = 0; i < inventoryItemArray.Length; i++)
+        {
+            if(itemType== inventoryItemArray[i].Key.ItemType && itemIndex == inventoryItemArray[i].Key.ID)
+            {
+                inventoryItemArray[i] = new(inventoryItemArray[i].Key, inventoryItemArray[i].Value - 1);
+                break;
+            }
+        }
+    }
+    public void ChangeShop()
+    {
+        for(int i = 0; i<shopItemArray.Length; i++)
+        {
+            if (i < 4)
+            {
+                int random = Random.Range(0, allShopWeapon.Length);
+
+                shopItemArray[i] = new(allShopWeapon[random], allShopWeapon[random].Cost);
+                shopSlotButton[i].GetComponent<Image>().color = allShopWeapon[random].Icon;
+                shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
+                    = allShopWeapon[random].Cost.ToString(); 
+            }
+            else if (i < 8)
+            {
+                int random = Random.Range(0, allShopPortion.Length);
+
+                shopItemArray[i] = new(allShopPortion[random], allShopPortion[random].Cost);
+                shopSlotButton[i].GetComponent<Image>().color = allShopPortion[random].Icon;
+                shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
+                    = allShopPortion[random].Cost.ToString();
+            }
+            else
+            {
+                int random = Random.Range(0, allShopScroll.Length);
+
+                shopItemArray[i] = new(allShopScroll[random], allShopScroll[random].Cost);
+                shopSlotButton[i].GetComponent<Image>().color = allShopScroll[random].Icon;
+                shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
+                    = allShopScroll[random].Cost.ToString();
+            }
+        }
+    }
+    public void Buy(int index)
+    {
+        if (Gold < shopItemArray[index].Value) return;
+
+        for (int i = 0; i < inventoryItemArray.Length; i++)
+        {
+            if (inventoryItemArray[i].Key == shopItemArray[index].Key)
+            {
+                if (shopItemArray[index].Key.ItemType == ItemType.WEAPON) return; // 무기는 하나만 소유 가능
+
+                inventoryItemArray[i] = new(inventoryItemArray[i].Key, inventoryItemArray[i].Value + 1);
+                inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
+                    = inventoryItemArray[i].Value.ToString();
+                Gold -= shopItemArray[index].Value;
+                shopSlotButton[index].SetActive(false);
+                ChangePlayerInventory();
+                break;
+            }
+            else if (inventoryItemArray[i].Key.ItemType == ItemType.NULL)
+            {
+                inventoryItemArray[i] = new(shopItemArray[index].Key, 1);
+                inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
+                    = inventoryItemArray[i].Value.ToString();
+                Gold -= shopItemArray[index].Value;
+                shopSlotButton[index].SetActive(false);
+                ChangePlayerInventory();
+                break;
+            }
         }
     }
 }

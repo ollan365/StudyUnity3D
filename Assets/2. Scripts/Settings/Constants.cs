@@ -1,5 +1,6 @@
 public static class Constants
 {
+    public const int InventorySize = 16;
     public enum Colors { WHITE, RED, BLUE, GREEN, ORANGE, YELLOW, WY, RO, BG, NULL }
     public static int ToInt(this Colors color)
     {
@@ -39,5 +40,7 @@ public static class Constants
     public enum ObjectType { PLAYER, FRIEND, ENEMY, TREASURE, MERCHANT, PORTAL, NULL }
     public enum StageStatus { INIT, PLAYER, FIGHT, END }
     public enum WeaponType { MELEE, AD, AP, NULL }
-    public enum ItemType { WEAPON, PORTION, ETC }
+    public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
+    public enum StatusEffect { HP, ALL }
+    public enum StageText { MONSTER, MOVE, ROTATE, WEAPON_CHANGE, ALL }
 }
