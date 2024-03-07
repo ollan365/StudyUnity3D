@@ -17,5 +17,5 @@ MonoBehaviour:
   cost: 100
   description: 
   icon: {r: 0, g: 1, b: 0, a: 1}
-  value: 0
-  objectMaterial: {fileID: 0}
+  statusEffect: 0
+  value: 10

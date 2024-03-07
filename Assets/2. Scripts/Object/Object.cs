@@ -18,7 +18,7 @@ public class Object : MonoBehaviour
         get => hp;
         set
         {
-            hp = value;
+            hp = Mathf.Clamp(value, 0, weapon.MaxHP);
             if (hpSlider != null) // 보물상자나 상인은 이게 없음
                 hpSlider.value = hp / weapon.MaxHP;
         }
@@ -65,11 +65,5 @@ public class Object : MonoBehaviour
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }
-    }
-
-    public void ChangeWeapon(Weapon newWeapon)
-    {
-        if (type == ObjectType.PLAYER) // 플레이어만 무기를 바꿀 수 있음
-            weapon = newWeapon;
     }
 }

@@ -5,6 +5,7 @@ using static Constants;
 public class ObjectManager : MonoBehaviour
 {
     [SerializeField] private CubeManager cubeManager;
+    [SerializeField] private StageManager stageManager;
     [SerializeField] private Object player;
     [SerializeField] private Text goldText;
     private int gold;
@@ -34,7 +35,7 @@ public class ObjectManager : MonoBehaviour
 
     [SerializeField] private ItemObject[] allShopWeapon;
     [SerializeField] private ItemObject[] allShopPortion;
-    [SerializeField] private ItemObject[] allShopETC;
+    [SerializeField] private ItemObject[] allShopScroll;
     [SerializeField] private ItemObject nullObject;
 
     [SerializeField] private GameObject[] inventorySlotButton;
@@ -47,10 +48,12 @@ public class ObjectManager : MonoBehaviour
         Gold = 999;
 
         inventoryItemArray = new KeyValuePair<ItemObject, int>[16]; // 일단은 저장이 없음
-        inventoryItemArray[0] = new(player.weapon, 1);
-        for (int i = 1; i < inventoryItemArray.Length; i++)
+        for (int i = 0; i < inventoryItemArray.Length; i++)
             inventoryItemArray[i] = new(nullObject, 0);
-        
+        inventoryItemArray[0] = new(player.weapon, 1);
+        inventoryItemArray[1] = new(allShopPortion[0], 1);
+        inventoryItemArray[2] = new(allShopScroll[0], 4);
+
         shopItemArray = new KeyValuePair<ItemObject, int>[16];
     }
     public GameObject Summons(ColorCheckCube cube, ObjectType objectType, int objectIndex)
@@ -73,6 +76,8 @@ public class ObjectManager : MonoBehaviour
                         break;
                     }
                 newObject.GetComponent<Object>().weapon = friendWeapons[objectIndex];
+                UseItem(ItemType.SCROLL, objectIndex);
+                ChangePlayerInventory();
                 break;
             case ObjectType.TREASURE:
                 newObject = Instantiate(treasurePrefab);
@@ -159,8 +164,8 @@ public class ObjectManager : MonoBehaviour
         switch (inventoryItemArray[index].Key.ItemType)
         {
             case ItemType.WEAPON:
-                if (player.weapon != (Weapon)inventoryItemArray[index].Key && cubeManager.CanChangeWeapon())
-                    player.ChangeWeapon((Weapon)inventoryItemArray[index].Key);
+                if (player.weapon != (Weapon)inventoryItemArray[index].Key && stageManager.StageTextChange(true, StageText.WEAPON_CHANGE, -1))
+                    player.weapon = ((Weapon)inventoryItemArray[index].Key);
                 break;
             case ItemType.PORTION:
                 Portion p = (Portion)inventoryItemArray[index].Key;
@@ -173,11 +178,21 @@ public class ObjectManager : MonoBehaviour
                 }
                 break;
             case ItemType.SCROLL:
-                Scroll s = (Scroll)inventoryItemArray[index].Key;
-                cubeManager.SelectSummonsButton(s.FriendIndex);
+                cubeManager.SelectSummonsButton(inventoryItemArray[index].Key.ID);
                 break;
         }
         ChangePlayerInventory();
+    }
+    private void UseItem(ItemType itemType, int itemIndex)
+    {
+        for(int i = 0; i < inventoryItemArray.Length; i++)
+        {
+            if(itemType== inventoryItemArray[i].Key.ItemType && itemIndex == inventoryItemArray[i].Key.ID)
+            {
+                inventoryItemArray[i] = new(inventoryItemArray[i].Key, inventoryItemArray[i].Value - 1);
+                break;
+            }
+        }
     }
     public void ChangeShop()
     {
@@ -203,12 +218,12 @@ public class ObjectManager : MonoBehaviour
             }
             else
             {
-                int random = Random.Range(0, allShopETC.Length);
+                int random = Random.Range(0, allShopScroll.Length);
 
-                shopItemArray[i] = new(allShopETC[random], allShopETC[random].Cost);
-                shopSlotButton[i].GetComponent<Image>().color = allShopETC[random].Icon;
+                shopItemArray[i] = new(allShopScroll[random], allShopScroll[random].Cost);
+                shopSlotButton[i].GetComponent<Image>().color = allShopScroll[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = allShopETC[random].Cost.ToString();
+                    = allShopScroll[random].Cost.ToString();
             }
         }
     }

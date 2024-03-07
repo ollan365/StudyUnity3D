@@ -42,4 +42,5 @@ public static class Constants
     public enum WeaponType { MELEE, AD, AP, NULL }
     public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
     public enum StatusEffect { HP, ALL }
+    public enum StageText { MONSTER, MOVE, ROTATE, WEAPON_CHANGE, ALL }
 }

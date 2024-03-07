@@ -15,10 +15,14 @@ public class StageManager : MonoBehaviour
     [SerializeField] private ObjectManager objectManager;
     [SerializeField] private StaticManager staticManager;
 
+    [SerializeField] private Text[] stageTexts;
     private int startRandomTurnCount;
     private int rotateCountPerTurn;
     private int moveCountPerTurn;
     private int changeWeaponCountPerTurn;
+    private int moveCount;
+    private int rotateCount;
+    private int changeCount;
 
     private int enemyCount;
     private int treasureCount;
@@ -29,7 +33,6 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] private GameObject gameOverPanel;
 
-    [SerializeField] private Text stageStatusText;
     private StageStatus status;
     public StageStatus StatusOfStage
     { 
@@ -40,17 +43,17 @@ public class StageManager : MonoBehaviour
             switch (value)
             {
                 case StageStatus.INIT:
-                    stageStatusText.text = "INIT";
+                    stageTexts[0].text = $"{staticManager.Stage}類 INIT";
                     break;
                 case StageStatus.PLAYER:
-                    stageStatusText.text = "PLAYER";
-                    cubeManager.StageCountTextChange(rotateCountPerTurn, moveCountPerTurn, changeWeaponCountPerTurn);
+                    stageTexts[0].text = $"{staticManager.Stage}類 PLAYER";
+                    StageTextChange(true, StageText.ALL, 0);
                     break;
                 case StageStatus.FIGHT:
-                    stageStatusText.text = "FIGHT";
+                    stageTexts[0].text = $"{staticManager.Stage}類 FIGHT";
                     break;
                 case StageStatus.END:
-                    stageStatusText.text = "END";
+                    stageTexts[0].text = $"{staticManager.Stage}類 END";
                     break;
             }
         }
@@ -84,6 +87,51 @@ public class StageManager : MonoBehaviour
         treasure = new GameObject[treasureCount];
 
         StartCoroutine(StartStage());
+    }
+    public bool StageTextChange(bool wantChange, StageText text, int value)
+    {
+        switch (text)
+        {
+            case StageText.MONSTER:
+                int nowEnemyCount = 0;
+                for (int i = 0; i < enemy.Length; i++)
+                    if (enemy[i].activeSelf) nowEnemyCount++;
+                stageTexts[1].text = $"{nowEnemyCount} / {enemyCount}";
+                return true;
+            case StageText.MOVE:
+                if (moveCount + value < 0 || moveCount + value > moveCountPerTurn) return false;
+                if (!wantChange) return true;
+                moveCount += value;
+                break;
+            case StageText.ROTATE:
+                if (rotateCount + value < 0 || rotateCount + value > rotateCountPerTurn) return false;
+                if (!wantChange) return true;
+                rotateCount += value;
+                break;
+            case StageText.WEAPON_CHANGE:
+                if (changeCount + value < 0 || changeCount + value > changeWeaponCountPerTurn) return false;
+                if (!wantChange) return true;
+                changeCount += value;
+                break;
+            case StageText.ALL:
+                if (value != 0) return false;
+
+                nowEnemyCount = 0;
+                for (int i = 0; i < enemy.Length; i++)
+                    if (enemy[i].activeSelf) nowEnemyCount++;
+                stageTexts[1].text = $"{nowEnemyCount} / {enemyCount}";
+
+                moveCount = moveCountPerTurn;
+                rotateCount = rotateCountPerTurn;
+                changeCount = changeWeaponCountPerTurn;
+                break;
+            default:
+                return false;
+        }
+        stageTexts[2].text = $"{moveCount} / {moveCountPerTurn}";
+        stageTexts[3].text = $"{rotateCount} / {rotateCountPerTurn}";
+        stageTexts[4].text = $"{changeCount} / {changeWeaponCountPerTurn}";
+        return true;
     }
     private IEnumerator StartStage()
     {
