@@ -123,9 +123,28 @@ public class ColorCheckManager : MonoBehaviour
     private IEnumerator MoveCoroutine(Colors color, int index)
     {
         Transform parent = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().colorPointCube.transform.GetChild(0).transform;
-        
-        selectedCharacter.transform.position = parent.position;
+
         selectedCharacter.transform.parent = parent;
+
+        Vector3 originPos = selectedCharacter.transform.localPosition;
+        Vector3 middlePos = Vector3.Lerp(originPos, Vector3.zero, 0.5f);
+
+        float travelTIme = 0f;
+
+
+        while (travelTIme < 0.15f)
+        {
+            selectedCharacter.transform.localPosition = Vector3.Lerp(originPos, middlePos, travelTIme / 0.15f);
+            travelTIme += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+        while (travelTIme < 0.5f)
+        {
+            selectedCharacter.transform.localPosition = Vector3.Lerp(middlePos, Vector3.zero, travelTIme / 0.5f);
+            travelTIme += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
 
         yield return new WaitForFixedUpdate();
 
