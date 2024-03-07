@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
   m_Name: AD
   m_EditorClassIdentifier: 
+  id: 0
+  itemType: 0
+  cost: 10
+  description: 
+  icon: {r: 1, g: 0, b: 0, a: 1}
   weaponType: 1
+  maxHP: 20
   minDamage: 10
   maxDamage: 16
   objectMaterial: {fileID: 2100000, guid: 3a0139cc364562448ba6b451cb9ec358, type: 2}

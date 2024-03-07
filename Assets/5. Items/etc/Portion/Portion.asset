@@ -9,15 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
-  m_Name: Melee
+  m_Script: {fileID: 11500000, guid: 6a1dbeff0241fb247be60d3335d11e9a, type: 3}
+  m_Name: Portion
   m_EditorClassIdentifier: 
   id: 0
-  itemType: 0
-  cost: 0
+  itemType: 1
+  cost: 100
   description: 
-  weaponType: 0
-  maxHP: 10
-  minDamage: 1
-  maxDamage: 3
-  objectMaterial: {fileID: 2100000, guid: 379906b404abf7d4690b6b200edc32d5, type: 2}
+  icon: {r: 0, g: 1, b: 0, a: 1}
+  statusEffect: 0
+  value: 10

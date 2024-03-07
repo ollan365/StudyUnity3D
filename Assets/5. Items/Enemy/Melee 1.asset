@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
   m_Name: Melee 1
   m_EditorClassIdentifier: 
+  id: 0
+  itemType: 0
+  cost: 0
+  description: 
   weaponType: 0
+  maxHP: 10
   minDamage: 1
   maxDamage: 5
   objectMaterial: {fileID: 2100000, guid: 8cf1c1bf6c8b7ce499a07e7fe87e4960, type: 2}
