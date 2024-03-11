@@ -12,6 +12,9 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject[] whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray;
     private GameObject[][] colorCheckCubeArray;
 
+    [SerializeField] private Transform cube;
+    private bool isCubeMove;
+
     [SerializeField] private CubeManager cubeManager;
     [SerializeField] private ColorCheckManager colorCheckManager;
     [SerializeField] private ObjectManager objectManager;
@@ -225,13 +228,62 @@ public class StageManager : MonoBehaviour
         gameOverPanel.SetActive(true);
     }
 
+    private IEnumerator CubeRotate(Colors color)
+    {
+        isCubeMove = true;
+
+        Quaternion startRotation = cube.transform.localRotation;
+        Vector3 endRotationVector = new();
+
+        switch (color)
+        {
+            case Colors.WHITE:
+                endRotationVector = new(0, 0, 0);
+                break;
+            case Colors.RED:
+                endRotationVector = new(0, 0, 90);
+                break;
+            case Colors.BLUE:
+                endRotationVector = new(-90, 0, 90);
+                break;
+            case Colors.GREEN:
+                endRotationVector = new(90, 0, -90);
+                break;
+            case Colors.ORANGE:
+                endRotationVector = new(0, 0, -90);
+                break;
+            case Colors.YELLOW:
+                endRotationVector = new(0, 0, -180);
+                break;
+        }
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < 1)
+        {
+            cube.transform.localRotation = Quaternion.Slerp(startRotation, Quaternion.Euler(endRotationVector), elapsedTime / 1);
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        // 보정을 위해 최종 회전 각도로 설정
+        cube.transform.localRotation = Quaternion.Euler(endRotationVector);
+        isCubeMove = false;
+    }
+
     private IEnumerator Attack()
     {
         additionalMoveCount = 0;
         for(int i = 0; i < 6; i++) // 빙고 확인
         {
+
             int bingo = colorCheckManager.BingoCheck(i, true);
             int random = Random.Range(0, 2);
+
+            if (bingo == BINGO_DEFAULT) continue;
+
+            StartCoroutine(CubeRotate(i.ToColor())); // 빙고 완성 시 그 면으로 회전
+            while (isCubeMove) yield return new WaitForFixedUpdate();
 
             if (random == 0)
             {
@@ -250,9 +302,16 @@ public class StageManager : MonoBehaviour
                 if (bingo == BINGO_ONE) additionalMoveCount++;
                 else changeCount++;
             }
+
+            yield return new WaitForSeconds(0.5f);
         }
+        
         // 플레이어부터 공격
         Object playerObj = player.GetComponent<Object>();
+
+        StartCoroutine(CubeRotate(playerObj.GetPosition().Color));
+        while (isCubeMove) yield return new WaitForFixedUpdate();
+
         List<GameObject> attackableEnemy = AttackableObject(playerObj.GetWeaponType(), playerObj.GetPosition().Color, playerObj.GetPosition().Index, ObjectType.ENEMY);
         foreach (GameObject enemy in attackableEnemy)
         {
@@ -295,6 +354,9 @@ public class StageManager : MonoBehaviour
             {
                 Object friendObj = friend[friendAttackOrder[i].Value].GetComponent<Object>();
                 attackableEnemy = AttackableObject(friendObj.GetWeaponType(), friendObj.GetPosition().Color, friendObj.GetPosition().Index, ObjectType.ENEMY);
+                
+                StartCoroutine(CubeRotate(friendObj.GetPosition().Color));
+                while (isCubeMove) yield return new WaitForFixedUpdate();
 
                 foreach (GameObject enemy in attackableEnemy)
                 {
@@ -310,6 +372,9 @@ public class StageManager : MonoBehaviour
             List<GameObject> attackablePlayerTeam;
 
             attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.PLAYER);
+
+            StartCoroutine(CubeRotate(enemyObj.GetPosition().Color));
+            while (isCubeMove) yield return new WaitForFixedUpdate();
 
             foreach (GameObject p in attackablePlayerTeam)
             {

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using static Constants;
 
@@ -112,6 +113,7 @@ public class ColorCheckManager : MonoBehaviour
 
             if (colorCheckCubeArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType() == ObjectType.NULL)
                 colorCoverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
+            
         }
     }
     public bool Move(Colors color, int index, bool wantMove)
@@ -154,6 +156,86 @@ public class ColorCheckManager : MonoBehaviour
 
         MovableCubeSetting(index);
     }
+    //private IEnumerator MouseCheck()
+    //{
+    //    Colors selectedColor = selectedCharacter.GetComponent<Object>().GetPosition().Color;
+
+    //    while (isCover)
+    //    {
+    //        // 마우스의 스크린 좌표를 월드 좌표로 변환
+    //        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //        RaycastHit[] hits = Physics.RaycastAll(ray);
+
+    //        // 모든 레이 충돌점에 대해 반복
+            
+    //        foreach (GameObject cube in nowCover)
+    //        {
+    //            bool isMouse = false;
+    //            foreach(RaycastHit hit in hits)
+    //            {
+    //                if(cube == hit.collider.gameObject)
+    //                {
+    //                    isMouse = true; break;
+    //                }
+    //            }
+    //            if (!isMouse)
+    //            {
+    //                switch (selectedColor)
+    //                {
+    //                    case Colors.WHITE:
+    //                    case Colors.YELLOW:
+    //                        cube.transform.localScale = new(1f, 0.01f, 1f);
+    //                        break;
+    //                    case Colors.RED:
+    //                    case Colors.ORANGE:
+    //                        cube.transform.localScale = new(0.01f, 1f, 1f);
+    //                        break;
+    //                    case Colors.BLUE:
+    //                    case Colors.GREEN:
+    //                        cube.transform.localScale = new(1f, 1f, 0.01f);
+    //                        break;
+    //                }
+    //                continue;
+    //            }
+
+    //            switch (selectedColor)
+    //            {
+    //                case Colors.WHITE:
+    //                case Colors.YELLOW:
+    //                    cube.transform.localScale = new(1.1f, 0.03f, 1.1f);
+    //                    break;
+    //                case Colors.RED:
+    //                case Colors.ORANGE:
+    //                    cube.transform.localScale = new(0.03f, 1.1f, 1.1f);
+    //                    break;
+    //                case Colors.BLUE:
+    //                case Colors.GREEN:
+    //                    cube.transform.localScale = new(1.1f, 1.1f, 0.03f);
+    //                    break;
+    //            }
+    //            break;
+    //        }
+            
+    //        yield return new WaitForFixedUpdate();
+    //    }
+    //    foreach(GameObject cube in nowCover)
+    //        switch (selectedColor)
+    //        {
+    //            case Colors.WHITE:
+    //            case Colors.YELLOW:
+    //                cube.transform.localScale = new(1f, 0.01f, 1f);
+    //                break;
+    //            case Colors.RED:
+    //            case Colors.ORANGE:
+    //                cube.transform.localScale = new(0.01f, 1f, 1f);
+    //                break;
+    //            case Colors.BLUE:
+    //            case Colors.GREEN:
+    //                cube.transform.localScale = new(1f, 1f, 0.01f);
+    //                break;
+    //        }
+    //    yield return new WaitForFixedUpdate();
+    //}
     public int BingoCheck(int color, bool turnChange)
     {
         int count = 0;

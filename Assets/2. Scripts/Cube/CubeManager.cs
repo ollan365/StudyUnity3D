@@ -12,6 +12,7 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private GameObject[] turnPoints;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
+    [SerializeField] private float rotateSpeed;
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, SUMMONS_SELECTED }
@@ -27,8 +28,15 @@ public class CubeManager : MonoBehaviour
         playerTurnStatus = PlayerTurnStatus.NORMAL;
         colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
     }
-    private void Update()
+
+    void Update()
     {
+        if (Input.GetMouseButton(2))
+        {
+            transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
+            transform.Rotate(Input.GetAxis("Mouse Y") * rotateSpeed, 0f, Input.GetAxis("Mouse Y") * rotateSpeed, Space.World);
+        }
+    
         if (Input.GetMouseButtonDown(0) && (stageManager.StatusOfStage == StageStatus.PLAYER || stageManager.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -290,6 +298,7 @@ public class CubeManager : MonoBehaviour
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
+
 
     public void StartRandomTurn(int randomCount)
     {
