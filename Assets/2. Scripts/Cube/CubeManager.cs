@@ -98,7 +98,7 @@ public class CubeManager : MonoBehaviour
                         else
                             Debug.Log($"{script.Type}");
                     }
-                    else if(script.Type != ObjectType.PLAYER) // 일단은 player 말고는 이동이 불가능
+                    else if(script.Type != ObjectType.PLAYER && script.Type != ObjectType.FRIEND) // 일단은 player 말고는 이동이 불가능
                     {
                         Debug.Log($"{script.Type}");
                     }
@@ -182,7 +182,7 @@ public class CubeManager : MonoBehaviour
                     else
                         Debug.Log($"{type}");
                 }
-                else if (type != ObjectType.PLAYER)
+                else if (type != ObjectType.PLAYER && type != ObjectType.FRIEND)
                 {
                     Debug.Log($"{type}");
                 }
@@ -285,7 +285,8 @@ public class CubeManager : MonoBehaviour
 
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
-        gameObject.GetComponent<ColorCheckManager>().BingoCheck();
+        for (int i = 0; i < 6; i++)
+            gameObject.GetComponent<ColorCheckManager>().BingoCheck(i, false);
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }

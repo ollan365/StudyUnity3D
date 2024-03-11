@@ -10173,6 +10173,7 @@ MonoBehaviour:
   - {fileID: 147245321}
   - {fileID: 872603391}
   cubeManager: {fileID: 924633}
+  colorCheckManager: {fileID: 924634}
   objectManager: {fileID: 502851761}
   staticManager: {fileID: 1424684504}
   stageTexts:
@@ -26925,7 +26926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c98dd558d420440b51ae7434f8cbbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stage: 0
+  stage: 2
 --- !u!4 &1424684505
 Transform:
   m_ObjectHideFlags: 0

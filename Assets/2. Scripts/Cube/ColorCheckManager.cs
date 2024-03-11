@@ -12,6 +12,7 @@ public class ColorCheckManager : MonoBehaviour
     private GameObject[][] colorCoverArray;
 
     [SerializeField] private Text[] bingoTexts;
+    private BingoStatus[] bingoStatus;
 
     [SerializeField] private GameObject[] centerCubeArray;
 
@@ -21,6 +22,9 @@ public class ColorCheckManager : MonoBehaviour
     {
         colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
         colorCoverArray = new GameObject[][] { whiteCoverArray, redCoverArray, blueCoverArray, greenCoverArray, orangeCoverArray, yellowCoverArray };
+        bingoStatus = new BingoStatus[9];
+        for (int i = 0; i < 9; i++)
+            bingoStatus[i] = BingoStatus.DEFAULT;
         movableCube = new bool[9];
     }
 
@@ -150,35 +154,76 @@ public class ColorCheckManager : MonoBehaviour
 
         MovableCubeSetting(index);
     }
-    public void BingoCheck()
+    public int BingoCheck(int color, bool turnChange)
     {
-        for (int i = 0; i < 6; i++)
+        int count = 0;
+        bool[] isColorMatch = new bool[9];
+
+        for (int j = 0; j < 9; j++)
+            isColorMatch[j] = centerCubeArray[color].layer == colorCheckCubeArray[color][j].layer;
+
+        if (isColorMatch[0] && isColorMatch[1] && isColorMatch[2])
+            count++;
+        if (isColorMatch[3] && isColorMatch[4] && isColorMatch[5])
+            count++;
+        if (isColorMatch[6] && isColorMatch[7] && isColorMatch[8])
+            count++;
+        if (isColorMatch[0] && isColorMatch[3] && isColorMatch[6])
+            count++;
+        if (isColorMatch[1] && isColorMatch[4] && isColorMatch[7])
+            count++;
+        if (isColorMatch[2] && isColorMatch[5] && isColorMatch[8])
+            count++;
+
+        if (!IsAllCoolTime(bingoStatus[color]) && count == 6)
+            bingoTexts[centerCubeArray[color].layer - 8].text = "ALL";
+        else if (bingoStatus[color] != BingoStatus.DEFAULT)
+            bingoTexts[centerCubeArray[color].layer - 8].text = "COOL TIME";
+        else if (count > 0)
+            bingoTexts[centerCubeArray[color].layer - 8].text = "ONE";
+        else
+            bingoTexts[centerCubeArray[color].layer - 8].text = "NO";
+
+        if (turnChange)
         {
-            int count = 0;
-            bool[] isColorMatch = new bool[9];
+            if (!IsAllCoolTime(bingoStatus[color]) && count == 6)
+            {
+                bingoStatus[color] = BingoStatus.ALL_1;
+                return BINGO_ALL;
+            }
+            else if(bingoStatus[color] == BingoStatus.DEFAULT && count > 0)
+            {
+                bingoStatus[color] = BingoStatus.ONE_1;
+                return BINGO_ONE;
+            }
+            ToNext(bingoStatus[color]);
+        }
+        return BINGO_DEFAULT;
+    }
+    private BingoStatus ToNext(BingoStatus bingoStatus)
+    {
+        switch (bingoStatus)
+        {
+            case BingoStatus.ONE_1: return BingoStatus.ONE_2;
+            case BingoStatus.ONE_2: return BingoStatus.ONE_2;
+            case BingoStatus.ONE_3: return BingoStatus.DEFAULT;
 
-            for (int j = 0; j < 9; j++)
-                isColorMatch[j] = centerCubeArray[i].layer == colorCheckCubeArray[i][j].layer;
+            case BingoStatus.ALL_1: return BingoStatus.ALL_2;
+            case BingoStatus.ALL_2: return BingoStatus.ALL_3;
+            case BingoStatus.ALL_3: return BingoStatus.DEFAULT;
 
-            if (isColorMatch[0] && isColorMatch[1] && isColorMatch[2])
-                count++;
-            if (isColorMatch[3] && isColorMatch[4] && isColorMatch[5])
-                count++;
-            if (isColorMatch[6] && isColorMatch[7] && isColorMatch[8])
-                count++;
-            if (isColorMatch[0] && isColorMatch[3] && isColorMatch[6])
-                count++;
-            if (isColorMatch[1] && isColorMatch[4] && isColorMatch[7])
-                count++;
-            if (isColorMatch[2] && isColorMatch[5] && isColorMatch[8])
-                count++;
+            default: return BingoStatus.DEFAULT;
+        }
+    }
+    private bool IsAllCoolTime(BingoStatus bingoStatus)
+    {
+        switch (bingoStatus)
+        {
+            case BingoStatus.ALL_1:
+            case BingoStatus.ALL_2:
+            case BingoStatus.ALL_3: return true;
 
-            if (count == 0)
-                bingoTexts[centerCubeArray[i].layer - 8].text = "NO";
-            else if (count == 6)
-                bingoTexts[centerCubeArray[i].layer - 8].text = "ALL";
-            else
-                bingoTexts[centerCubeArray[i].layer - 8].text = "ONE";
+            default: return false;
         }
     }
 }
