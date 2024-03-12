@@ -14,7 +14,7 @@ public class CameraMouseOrbit : MonoBehaviour
 
     public float targetDistance;
 
-    private Camera _camera;                     //reference to the camera itself
+    [SerializeField] private Transform cube;
 
     [Tooltip("Which target are we looking at?")]
     [SerializeField] private Transform _target = null;
@@ -32,15 +32,13 @@ public class CameraMouseOrbit : MonoBehaviour
 
     void Awake()
     {
-        _camera = Camera.main;
-
         //set some default values based on the current camera's position
-        _xRotation = _targetXRotation = _camera.transform.eulerAngles.x;
-        _yRotation = _targetYRotation = _camera.transform.eulerAngles.y;
-        _distance = targetDistance = Vector3.Distance(_camera.transform.position, _target.position + _worldLookAtOffsetFromTarget);
+        _xRotation = _targetXRotation = cube.eulerAngles.x;
+        _yRotation = _targetYRotation = cube.eulerAngles.y;
+        _distance = targetDistance = Vector3.Distance(cube.position, _target.position + _worldLookAtOffsetFromTarget);
 
         //set the camera to the position we calculate based on the values above so that we don't start out easing right away
-        _camera.transform.position = getCurrentTargetPosition();
+        cube.position = getCurrentTargetPosition();
         //_camera.transform.LookAt(target.position + worldLookAtOffsetFromTarget);
     }
 
@@ -63,8 +61,8 @@ public class CameraMouseOrbit : MonoBehaviour
         _distance += (targetDistance - _distance) * _easeSpeed * Time.deltaTime;
 
         //and lastly update the camera position and make sure we look at our target
-        _camera.transform.position = getCurrentTargetPosition();
-        _camera.transform.LookAt(_target.position + _worldLookAtOffsetFromTarget);
+        cube.position = getCurrentTargetPosition();
+        cube.LookAt(_target.position + _worldLookAtOffsetFromTarget);
     }
 
     private Vector3 getCurrentTargetPosition()

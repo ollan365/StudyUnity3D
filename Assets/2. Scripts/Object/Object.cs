@@ -29,10 +29,7 @@ public class Object : MonoBehaviour
         HP = hp;
         GetComponent<MeshRenderer>().material = weapon.ObjectMaterial;
     }
-    //private void FixedUpdate()
-    //{
-    //    Debug.DrawRay(transform.position, transform.up * height, Color.red, 1f);
-    //}
+    
     public ColorCheckCube GetPosition()
     {
         RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.up, 30);
@@ -65,5 +62,15 @@ public class Object : MonoBehaviour
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }
+    }
+
+    public void HP_Percent(int percent)
+    {
+        if(percent < 0)
+            HP -= weapon.MaxHP * percent / 100;
+        else
+            HP += weapon.MaxHP * percent / 100;
+
+        Debug.Log($"{HP}");
     }
 }

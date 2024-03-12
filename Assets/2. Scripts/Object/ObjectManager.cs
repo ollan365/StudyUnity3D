@@ -120,7 +120,7 @@ public class ObjectManager : MonoBehaviour
 
     public void OpenTreasureBox(GameObject obj)
     {
-        Debug.Log("Open treasure box!");
+        Gold += obj.GetComponent<Object>().GetDamage();
         obj.transform.position = dieObject.position;
         obj.transform.parent = dieObject;
     }

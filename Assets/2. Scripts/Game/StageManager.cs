@@ -5,30 +5,27 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 using static Constants;
+using static Excel;
 
 public class StageManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray;
     private GameObject[][] colorCheckCubeArray;
 
+    [SerializeField] private Transform cube;
+    private bool isCubeMove;
+
     [SerializeField] private CubeManager cubeManager;
+    [SerializeField] private ColorCheckManager colorCheckManager;
     [SerializeField] private ObjectManager objectManager;
     [SerializeField] private StaticManager staticManager;
 
     [SerializeField] private Text[] stageTexts;
-    private int startRandomTurnCount;
-    private int rotateCountPerTurn;
-    private int moveCountPerTurn;
-    private int changeWeaponCountPerTurn;
-    private int moveCount;
-    private int rotateCount;
-    private int changeCount;
+    private int[] stageDatas;
+    private int moveCount, rotateCount, changeCount;
+    private int additionalMoveCount;
 
-    private int enemyCount;
-    private int treasureCount;
-    private GameObject[] enemy;
-    private GameObject[] friend;
-    private GameObject[] treasure;
+    private GameObject[] enemy, friend, treasure;
     [SerializeField] private GameObject player;
 
     [SerializeField] private GameObject gameOverPanel;
@@ -46,6 +43,8 @@ public class StageManager : MonoBehaviour
                     stageTexts[0].text = $"{staticManager.Stage}층 INIT";
                     break;
                 case StageStatus.PLAYER:
+                    for (int i = 0; i < 6; i++)
+                        colorCheckManager.BingoCheck(i, false);
                     stageTexts[0].text = $"{staticManager.Stage}층 PLAYER";
                     StageTextChange(true, StageText.ALL, 0);
                     break;
@@ -75,16 +74,18 @@ public class StageManager : MonoBehaviour
         for (int i = 0; i <= staticManager.Stage; i++)
             line = stringReader.ReadLine();
 
-        startRandomTurnCount = int.Parse(line.Split(',')[1]);
-        rotateCountPerTurn = int.Parse(line.Split(',')[2]);
-        moveCountPerTurn = int.Parse(line.Split(',')[3]);
-        changeWeaponCountPerTurn = int.Parse(line.Split(',')[4]);
-        enemyCount = int.Parse(line.Split(',')[5]);
-        treasureCount = int.Parse(line.Split(',')[6]);
+        string[] stageDateString = line.Split(',');
+        stageDatas = new int[stageDateString.Length];
+        for (int i = 0; i < stageDateString.Length; i++)
+            stageDatas[i] = int.Parse(stageDateString[i]);
 
-        enemy = new GameObject[enemyCount];
+        stageDatas[ROTATE_COUNT] = 10; // 나중에 계산 공식으로 바꾸기!
+        stageDatas[MOVE_COUNT] = 10;
+        changeCount = stageDatas[WEAPON_CHANGE];
+
+        enemy = new GameObject[stageDatas[ENEMY_COUNT]];
         friend = new GameObject[3];
-        treasure = new GameObject[treasureCount];
+        treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
         StartCoroutine(StartStage());
     }
@@ -96,20 +97,20 @@ public class StageManager : MonoBehaviour
                 int nowEnemyCount = 0;
                 for (int i = 0; i < enemy.Length; i++)
                     if (enemy[i].activeSelf) nowEnemyCount++;
-                stageTexts[1].text = $"{nowEnemyCount} / {enemyCount}";
+                stageTexts[1].text = $"{nowEnemyCount} / {stageDatas[ENEMY_COUNT]}";
                 return true;
             case StageText.MOVE:
-                if (moveCount + value < 0 || moveCount + value > moveCountPerTurn) return false;
+                if (moveCount + value < 0) return false;
                 if (!wantChange) return true;
                 moveCount += value;
                 break;
             case StageText.ROTATE:
-                if (rotateCount + value < 0 || rotateCount + value > rotateCountPerTurn) return false;
+                if (rotateCount + value < 0) return false;
                 if (!wantChange) return true;
                 rotateCount += value;
                 break;
             case StageText.WEAPON_CHANGE:
-                if (changeCount + value < 0 || changeCount + value > changeWeaponCountPerTurn) return false;
+                if (changeCount + value < 0) return false;
                 if (!wantChange) return true;
                 changeCount += value;
                 break;
@@ -119,25 +120,24 @@ public class StageManager : MonoBehaviour
                 nowEnemyCount = 0;
                 for (int i = 0; i < enemy.Length; i++)
                     if (enemy[i].activeSelf) nowEnemyCount++;
-                stageTexts[1].text = $"{nowEnemyCount} / {enemyCount}";
+                stageTexts[1].text = $"{nowEnemyCount} / {stageDatas[ENEMY_COUNT]}";
 
-                moveCount = moveCountPerTurn;
-                rotateCount = rotateCountPerTurn;
-                changeCount = changeWeaponCountPerTurn;
+                moveCount = stageDatas[MOVE_COUNT] + additionalMoveCount;
+                rotateCount = stageDatas[ROTATE_COUNT];
                 break;
             default:
                 return false;
         }
-        stageTexts[2].text = $"{moveCount} / {moveCountPerTurn}";
-        stageTexts[3].text = $"{rotateCount} / {rotateCountPerTurn}";
-        stageTexts[4].text = $"{changeCount} / {changeWeaponCountPerTurn}";
+        stageTexts[2].text = $"{moveCount} / {stageDatas[MOVE_COUNT] + additionalMoveCount}";
+        stageTexts[3].text = $"{rotateCount} / {stageDatas[ROTATE_COUNT]}";
+        stageTexts[4].text = $"{changeCount} / 3";
         return true;
     }
     private IEnumerator StartStage()
     {
-        cubeManager.StartRandomTurn(startRandomTurnCount); // 큐브를 섞는다
+        cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(10f);
 
         TextAsset textFile = Resources.Load("StageEnemy") as TextAsset;
         StringReader stringReader = new StringReader(textFile.text);
@@ -148,7 +148,7 @@ public class StageManager : MonoBehaviour
         while (line != null && int.Parse(line.Split(',')[0]) != staticManager.Stage);
 
         int index = 0;
-        while (index < enemyCount && line != null && int.Parse(line.Split(',')[0]) == staticManager.Stage) // enemy 배치
+        while (index < stageDatas[ENEMY_COUNT] && line != null && int.Parse(line.Split(',')[0]) == staticManager.Stage) // enemy 배치
         {
             ColorCheckCube cube;
 
@@ -169,7 +169,7 @@ public class StageManager : MonoBehaviour
             line = stringReader.ReadLine();
         }
 
-        for (int i = 0; i < treasureCount; i++) // enemy 배치
+        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // enemy 배치
         {
             ColorCheckCube cube;
             while (true)
@@ -179,12 +179,12 @@ public class StageManager : MonoBehaviour
                     break;
             }
             treasure[i] = objectManager.Summons(cube, ObjectType.TREASURE, 0);
+            treasure[i].GetComponent<Object>().weapon.SetDamage(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX]);
             yield return new WaitForFixedUpdate();
         }
 
         StatusOfStage = StageStatus.PLAYER;
     }
-
     public void ChangeStatus()
     {
         if(StatusOfStage == StageStatus.PLAYER)
@@ -193,7 +193,6 @@ public class StageManager : MonoBehaviour
             StartCoroutine(Attack());
         }
     }
-
     private void ClearStage()
     {
         StatusOfStage = StageStatus.END;
@@ -229,10 +228,90 @@ public class StageManager : MonoBehaviour
         gameOverPanel.SetActive(true);
     }
 
+    private IEnumerator CubeRotate(Colors color)
+    {
+        isCubeMove = true;
+
+        Quaternion startRotation = cube.transform.localRotation;
+        Vector3 endRotationVector = new();
+
+        switch (color)
+        {
+            case Colors.WHITE:
+                endRotationVector = new(0, 0, 0);
+                break;
+            case Colors.RED:
+                endRotationVector = new(0, 0, 90);
+                break;
+            case Colors.BLUE:
+                endRotationVector = new(-90, 0, 90);
+                break;
+            case Colors.GREEN:
+                endRotationVector = new(90, 0, -90);
+                break;
+            case Colors.ORANGE:
+                endRotationVector = new(0, 0, -90);
+                break;
+            case Colors.YELLOW:
+                endRotationVector = new(0, 0, -180);
+                break;
+        }
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < 1)
+        {
+            cube.transform.localRotation = Quaternion.Slerp(startRotation, Quaternion.Euler(endRotationVector), elapsedTime / 1);
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        // 보정을 위해 최종 회전 각도로 설정
+        cube.transform.localRotation = Quaternion.Euler(endRotationVector);
+        isCubeMove = false;
+    }
+
     private IEnumerator Attack()
     {
+        additionalMoveCount = 0;
+        for(int i = 0; i < 6; i++) // 빙고 확인
+        {
+
+            int bingo = colorCheckManager.BingoCheck(i, true);
+            int random = Random.Range(0, 2);
+
+            if (bingo == BINGO_DEFAULT) continue;
+
+            StartCoroutine(CubeRotate(i.ToColor())); // 빙고 완성 시 그 면으로 회전
+            while (isCubeMove) yield return new WaitForFixedUpdate();
+
+            if (random == 0)
+            {
+                if (bingo == BINGO_ALL || player.GetComponent<Object>().GetPosition().Color.ToInt() == i)
+                    player.GetComponent<Object>().HP_Percent(10);
+                foreach(GameObject f in friend)
+                {
+                    if (f == null || !f.activeSelf) continue;
+
+                    if (bingo == BINGO_ALL || f.GetComponent<Object>().GetPosition().Color.ToInt() == i)
+                        f.GetComponent<Object>().HP_Percent(10);
+                }
+            }
+            else
+            {
+                if (bingo == BINGO_ONE) additionalMoveCount++;
+                else changeCount++;
+            }
+
+            yield return new WaitForSeconds(0.5f);
+        }
+        
         // 플레이어부터 공격
         Object playerObj = player.GetComponent<Object>();
+
+        StartCoroutine(CubeRotate(playerObj.GetPosition().Color));
+        while (isCubeMove) yield return new WaitForFixedUpdate();
+
         List<GameObject> attackableEnemy = AttackableObject(playerObj.GetWeaponType(), playerObj.GetPosition().Color, playerObj.GetPosition().Index, ObjectType.ENEMY);
         foreach (GameObject enemy in attackableEnemy)
         {
@@ -244,7 +323,7 @@ public class StageManager : MonoBehaviour
 
         // 적과 동료의 공격 순서 결정을 위해 List 생성
         List<KeyValuePair<int, int>> enemyAttackOrder = new List<KeyValuePair<int, int>>();
-        for(int i = 0;i<enemyCount;i++)
+        for (int i = 0; i < stageDatas[ENEMY_COUNT]; i++)
         {
             Object enemyObject = enemy[i].GetComponent<Object>();
             if (enemyObject.gameObject.activeSelf)
@@ -275,6 +354,9 @@ public class StageManager : MonoBehaviour
             {
                 Object friendObj = friend[friendAttackOrder[i].Value].GetComponent<Object>();
                 attackableEnemy = AttackableObject(friendObj.GetWeaponType(), friendObj.GetPosition().Color, friendObj.GetPosition().Index, ObjectType.ENEMY);
+                
+                StartCoroutine(CubeRotate(friendObj.GetPosition().Color));
+                while (isCubeMove) yield return new WaitForFixedUpdate();
 
                 foreach (GameObject enemy in attackableEnemy)
                 {
@@ -290,6 +372,9 @@ public class StageManager : MonoBehaviour
             List<GameObject> attackablePlayerTeam;
 
             attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.PLAYER);
+
+            StartCoroutine(CubeRotate(enemyObj.GetPosition().Color));
+            while (isCubeMove) yield return new WaitForFixedUpdate();
 
             foreach (GameObject p in attackablePlayerTeam)
             {
@@ -318,7 +403,6 @@ public class StageManager : MonoBehaviour
         // statge statue를 바꾼다
         StatusOfStage = StageStatus.PLAYER;
     }
-
     private List<GameObject> AttackableObject(WeaponType weaponType, Colors color, int index, ObjectType objType)
     {
         List<GameObject> attackable = new List<GameObject>();
@@ -377,7 +461,6 @@ public class StageManager : MonoBehaviour
         }
         return attackable;
     }
-
     private bool[] AttackableRange(WeaponType weaponType, int index)
     {
         bool[] attackable = new bool[9];
