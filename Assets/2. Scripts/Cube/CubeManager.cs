@@ -12,6 +12,7 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private GameObject[] turnPoints;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
+    [SerializeField] private float rotateSpeed;
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, SUMMONS_SELECTED }
@@ -27,8 +28,15 @@ public class CubeManager : MonoBehaviour
         playerTurnStatus = PlayerTurnStatus.NORMAL;
         colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
     }
-    private void Update()
+
+    void Update()
     {
+        if (Input.GetMouseButton(2))
+        {
+            transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
+            transform.Rotate(Input.GetAxis("Mouse Y") * rotateSpeed, 0f, Input.GetAxis("Mouse Y") * rotateSpeed, Space.World);
+        }
+    
         if (Input.GetMouseButtonDown(0) && (stageManager.StatusOfStage == StageStatus.PLAYER || stageManager.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -98,7 +106,7 @@ public class CubeManager : MonoBehaviour
                         else
                             Debug.Log($"{script.Type}");
                     }
-                    else if(script.Type != ObjectType.PLAYER) // 일단은 player 말고는 이동이 불가능
+                    else if(script.Type != ObjectType.PLAYER && script.Type != ObjectType.FRIEND) // 일단은 player 말고는 이동이 불가능
                     {
                         Debug.Log($"{script.Type}");
                     }
@@ -182,7 +190,7 @@ public class CubeManager : MonoBehaviour
                     else
                         Debug.Log($"{type}");
                 }
-                else if (type != ObjectType.PLAYER)
+                else if (type != ObjectType.PLAYER && type != ObjectType.FRIEND)
                 {
                     Debug.Log($"{type}");
                 }
@@ -285,10 +293,12 @@ public class CubeManager : MonoBehaviour
 
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
-        gameObject.GetComponent<ColorCheckManager>().BingoCheck();
+        for (int i = 0; i < 6; i++)
+            gameObject.GetComponent<ColorCheckManager>().BingoCheck(i, false);
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
+
 
     public void StartRandomTurn(int randomCount)
     {

@@ -16,4 +16,9 @@ public class Weapon : ItemObject
     {
         get => Random.Range(minDamage, maxDamage + 1);
     }
+    public void SetDamage(int min, int max)
+    {
+        minDamage = min;
+        maxDamage = max;
+    }
 }

@@ -4,20 +4,29 @@ using UnityEngine;
 
 public class MouseOver : MonoBehaviour
 {
-    Renderer cubeColor;
+    MeshRenderer cubeColor;
+    
 
     private void Start()
     {
-        cubeColor = gameObject.GetComponent<Renderer>();
+        cubeColor = gameObject.GetComponent<MeshRenderer>();
     }
 
-    private void OnMouseEnter()
+    void OnMouseOver()
     {
+        Debug.Log("Mouse Enter");
         cubeColor.material.color = Color.blue;
     }
-
-    private void OnMouseExit()
+     
+    void OnMouseExit()
     {
+        Debug.Log("Mouse Exit");
+        cubeColor.material.color = Color.black;
+    }
+
+    private void OnMouseUp()
+    {
+        Debug.Log("Mouse Clicked");
         cubeColor.material.color = Color.black;
     }
 
