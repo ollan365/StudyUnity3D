@@ -128,6 +128,8 @@ public class ColorCheckManager : MonoBehaviour
     }
     private IEnumerator MoveCoroutine(Colors color, int index)
     {
+        MovableCubeSetting(-1);
+
         Transform parent = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().colorPointCube.transform.GetChild(0).transform;
 
         selectedCharacter.transform.parent = parent;
