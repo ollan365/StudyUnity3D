@@ -23,7 +23,7 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private ObjectManager objectManager;
 
     [SerializeField] private GameObject shopPopup;
-    private void Start()
+    private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
         colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
@@ -87,21 +87,21 @@ public class CubeManager : MonoBehaviour
                     }
                     else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.MERCHANT)
                     {
-                        if(GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, false))
+                        if(GetComponent<ColorCheckManager>().Move(script.Color, script.Index, false))
                             OpenMerchantInventory();
                         else
                             Debug.Log($"{script.Type}");
                     }
                     else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.TREASURE)
                     {
-                        if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, true))
+                        if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
                             objectManager.OpenTreasureBox(script.gameObject);
                         else
                             Debug.Log($"{script.Type}");
                     }
                     else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.PORTAL)
                     {
-                        if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, true))
+                        if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
                             stageManager.NextStage();
                         else
                             Debug.Log($"{script.Type}");
@@ -267,7 +267,6 @@ public class CubeManager : MonoBehaviour
             position.transform.GetChild(0).parent = turnPoint.transform;
         }
         StartCoroutine(TurnEffect(turnPoint, rotation, array));
-
     }
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {

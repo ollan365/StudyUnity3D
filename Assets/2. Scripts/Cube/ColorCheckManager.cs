@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using static Constants;
 
@@ -41,7 +40,7 @@ public class ColorCheckManager : MonoBehaviour
     {
         Debug.Log("character select!");
         selectedCharacter = character;
-        MovableCubeSetting(selectedCharacter.GetComponent<Object>().GetPosition().Index);
+        MovableCubeSetting(selectedCharacter.GetComponent<Object>().Index);
     }
     public bool CharacterSelectCancel(GameObject character)
     {
@@ -106,19 +105,18 @@ public class ColorCheckManager : MonoBehaviour
                 break;
         }
 
-        int selectedCharacterColor = selectedCharacter.GetComponent<Object>().GetPosition().Color.ToInt();
+        int selectedCharacterColor = selectedCharacter.GetComponent<Object>().Color.ToInt();
         for (int i = 0; i < 9; i++) // 이동 가능한 곳이면 cover
         {
             colorCoverArray[selectedCharacterColor][i].SetActive(false);
 
             if (colorCheckCubeArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType() == ObjectType.NULL)
                 colorCoverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
-            
         }
     }
     public bool Move(Colors color, int index, bool wantMove)
     {
-        if (color != selectedCharacter.GetComponent<Object>().GetPosition().Color) // 다른 면이면 이동 못함
+        if (color != selectedCharacter.GetComponent<Object>().Color) // 다른 면이면 이동 못함
             return false;
         if (!movableCube[index]) // 같은 면의 이동 불가능한 곳이면 이동 안 함
             return false;
