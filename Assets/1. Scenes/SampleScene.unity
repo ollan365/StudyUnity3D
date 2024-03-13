@@ -10215,7 +10215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cubeManager: {fileID: 924633}
   stageManager: {fileID: 502851759}
-  staticManager: {fileID: 0}
+  staticManager: {fileID: 1424684504}
   player: {fileID: 1463790526}
   goldText: {fileID: 1185456634}
   enemyPrefab: {fileID: 360777001147702422, guid: 8f91185271672b6499de09a66bba49d0, type: 3}
@@ -10232,6 +10232,7 @@ MonoBehaviour:
   - {fileID: 1622419590}
   - {fileID: 2146210244}
   dieObject: {fileID: 685963}
+  nullObject: {fileID: 11400000, guid: 0aa6a85edc80a6a40b1dbdc92df16c55, type: 2}
   inventorySlotButton:
   - {fileID: 2029152997}
   - {fileID: 857325415}
@@ -26916,8 +26917,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c98dd558d420440b51ae7434f8cbbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stage: 2
+  stage: 3
   stageManager: {fileID: 502851759}
+  player: {fileID: 1463790526}
   playerWeapon: {fileID: 11400000, guid: 1df3aee14b96f2b4a99fe5a6a4bd1ae1, type: 2}
 --- !u!4 &1424684505
 Transform:

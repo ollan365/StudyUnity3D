@@ -18,23 +18,25 @@ public class Object : MonoBehaviour
     public void init(ObjectType objType, string[] datas)
     {
         type = objType;
-        if(objType == ObjectType.PLAYER)
+        if (objType == ObjectType.PLAYER)
         {
             maxHp = int.Parse(datas[0]);
         }
-        else if(objType == ObjectType.ENEMY)
+        else if (objType == ObjectType.ENEMY)
         {
             id = int.Parse(datas[ENEMY_ID]);
             name = datas[ENEMY_NAME];
             maxHp = int.Parse(datas[ENEMY_HP]);
             SetWeapon(int.Parse(datas[ENEMY_MIN]), int.Parse(datas[ENEMY_MAX]), datas[ENEMY_WEAPON_TYPE].ToEnum());
         }
-        else if(objType == ObjectType.FRIEND)
+        else if (objType == ObjectType.FRIEND)
         {
             id = int.Parse(datas[FRIEND_ID]);
             maxHp = int.Parse(datas[FRIEND_HP]);
             SetWeapon(int.Parse(datas[FRIEND_MIN]), int.Parse(datas[FRIEND_MAX]), datas[FRIEND_WEAPON_TYPE].ToEnum());
         }
+        else
+            type = objType;
 
         hp = maxHp;
         HP = hp;

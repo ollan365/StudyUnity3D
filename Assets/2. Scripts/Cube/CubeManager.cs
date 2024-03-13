@@ -29,7 +29,7 @@ public class CubeManager : MonoBehaviour
         colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetMouseButton(2))
         {

@@ -350,6 +350,8 @@ public class StageManager : MonoBehaviour
             }
 
             // Рћ АјАн
+            if (!enemy[enemyAttackOrder[i].Value].activeSelf) continue;
+
             Object enemyObj = enemy[enemyAttackOrder[i].Value].GetComponent<Object>();
             List<GameObject> attackablePlayerTeam;
 

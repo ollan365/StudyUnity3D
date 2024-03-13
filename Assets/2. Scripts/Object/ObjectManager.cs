@@ -35,7 +35,7 @@ public class ObjectManager : MonoBehaviour
     private ItemObject[] allShopWeapon;
     private ItemObject[] allShopPortion;
     private ItemObject[] allShopScroll;
-    private ItemObject nullObject;
+    [SerializeField] private ItemObject nullObject;
 
     [SerializeField] private GameObject[] inventorySlotButton;
     [SerializeField] private GameObject[] shopSlotButton;
@@ -75,12 +75,15 @@ public class ObjectManager : MonoBehaviour
                 break;
             case ObjectType.TREASURE:
                 newObject = Instantiate(treasurePrefab);
+                newObject.GetComponent<Object>().init(objectType, null);
                 break;
             case ObjectType.MERCHANT:
                 newObject = Instantiate(merchantPrefab);
+                newObject.GetComponent<Object>().init(objectType, null);
                 break;
             case ObjectType.PORTAL:
                 newObject = Instantiate(portalPrefab);
+                newObject.GetComponent<Object>().init(objectType, null);
                 break;
             default:
                 newObject = null;

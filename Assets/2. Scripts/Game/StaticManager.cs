@@ -33,6 +33,10 @@ public class StaticManager : MonoBehaviour
     {
         SaveExcelDatas();
         inventory = new KeyValuePair<ItemObject, int>[16]; // 일단은 저장이 없음
+        for(int i = 0; i < 16; i++)
+            inventory[i] = new(playerWeapon, 0);
+        inventory[0] = new(playerWeapon, 1);
+
         stageManager.StageInit(stageDatas[stage]);
         PlayerWeapon = playerWeapon;
     }
