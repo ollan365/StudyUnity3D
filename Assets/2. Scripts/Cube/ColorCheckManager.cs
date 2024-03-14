@@ -1,17 +1,10 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using static Constants;
 
 public class ColorCheckManager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray;
-    private GameObject[][] colorCheckCubeArray;
-
-    [SerializeField] private GameObject[] whiteCoverArray, redCoverArray, blueCoverArray, greenCoverArray, orangeCoverArray, yellowCoverArray;
-    private GameObject[][] colorCoverArray;
-
     [SerializeField] private Text[] bingoTexts;
     private BingoStatus[] bingoStatus;
 
@@ -21,8 +14,6 @@ public class ColorCheckManager : MonoBehaviour
     private bool[] movableCube;
     private void Awake()
     {
-        colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
-        colorCoverArray = new GameObject[][] { whiteCoverArray, redCoverArray, blueCoverArray, greenCoverArray, orangeCoverArray, yellowCoverArray };
         bingoStatus = new BingoStatus[9];
         for (int i = 0; i < 9; i++)
             bingoStatus[i] = BingoStatus.DEFAULT;
@@ -31,17 +22,17 @@ public class ColorCheckManager : MonoBehaviour
 
     public ObjectType CheckCubeObject(Colors color, int index)
     {
-        return colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().GetObjectType();
+        return StageCube.Instance.colorArray[color.ToInt()][index].GetComponent<ColorCheckCube>().GetObjectType();
     }
     public GameObject GetCubeObject(Colors color, int index)
     {
-        return colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().GetObject();
+        return StageCube.Instance.colorArray[color.ToInt()][index].GetComponent<ColorCheckCube>().GetObject();
     }
     public void CharacterSelect(GameObject character)
     {
         Debug.Log("character select!");
         selectedCharacter = character;
-        MovableCubeSetting(selectedCharacter.GetComponent<Object>().GetPosition().Index);
+        MovableCubeSetting(selectedCharacter.GetComponent<Object>().Index);
     }
     public bool CharacterSelectCancel(GameObject character)
     {
@@ -106,21 +97,21 @@ public class ColorCheckManager : MonoBehaviour
                 break;
         }
 
-        int selectedCharacterColor = selectedCharacter.GetComponent<Object>().GetPosition().Color.ToInt();
-        for (int i = 0; i < 9; i++) // ÀÌµ¿ °¡´ÉÇÑ °÷ÀÌ¸é cover
+        int selectedCharacterColor = selectedCharacter.GetComponent<Object>().Color.ToInt();
+        for (int i = 0; i < 9; i++) // ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ cover
         {
-            colorCoverArray[selectedCharacterColor][i].SetActive(false);
+            StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(false);
 
-            if (colorCheckCubeArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType() == ObjectType.NULL)
-                colorCoverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
-            
+            ObjectType obj = StageCube.Instance.colorArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType();
+            if (obj == ObjectType.NULL || obj == ObjectType.PORTAL || obj == ObjectType.TREASURE)
+                StageCube.Instance.colorArray[selectedCharacterColor][i].SetActive(movableCube[i]);
         }
     }
     public bool Move(Colors color, int index, bool wantMove)
     {
-        if (color != selectedCharacter.GetComponent<Object>().GetPosition().Color) // ´Ù¸¥ ¸éÀÌ¸é ÀÌµ¿ ¸øÇÔ
+        if (color != selectedCharacter.GetComponent<Object>().Color) // ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
             return false;
-        if (!movableCube[index]) // °°Àº ¸éÀÇ ÀÌµ¿ ºÒ°¡´ÉÇÑ °÷ÀÌ¸é ÀÌµ¿ ¾È ÇÔ
+        if (!movableCube[index]) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½
             return false;
         if (wantMove)
             StartCoroutine(MoveCoroutine(color, index));
@@ -130,7 +121,7 @@ public class ColorCheckManager : MonoBehaviour
     {
         MovableCubeSetting(-1);
 
-        Transform parent = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>().colorPointCube.transform.GetChild(0).transform;
+        Transform parent = StageCube.Instance.colorArray[color.ToInt()][index].GetComponent<ColorCheckCube>().colorPointCube.transform.GetChild(0).transform;
 
         selectedCharacter.transform.parent = parent;
 
@@ -164,11 +155,11 @@ public class ColorCheckManager : MonoBehaviour
 
     //    while (isCover)
     //    {
-    //        // ¸¶¿ì½ºÀÇ ½ºÅ©¸° ÁÂÇ¥¸¦ ¿ùµå ÁÂÇ¥·Î º¯È¯
+    //        // ï¿½ï¿½ï¿½ì½ºï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½È¯
     //        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     //        RaycastHit[] hits = Physics.RaycastAll(ray);
 
-    //        // ¸ðµç ·¹ÀÌ Ãæµ¹Á¡¿¡ ´ëÇØ ¹Ýº¹
+    //        // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ýºï¿½
             
     //        foreach (GameObject cube in nowCover)
     //        {
@@ -244,7 +235,7 @@ public class ColorCheckManager : MonoBehaviour
         bool[] isColorMatch = new bool[9];
 
         for (int j = 0; j < 9; j++)
-            isColorMatch[j] = centerCubeArray[color].layer == colorCheckCubeArray[color][j].layer;
+            isColorMatch[j] = centerCubeArray[color].layer == StageCube.Instance.colorArray[color][j].layer;
 
         if (isColorMatch[0] && isColorMatch[1] && isColorMatch[2])
             count++;

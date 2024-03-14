@@ -14,19 +14,16 @@ public class MouseOver : MonoBehaviour
 
     void OnMouseOver()
     {
-        Debug.Log("Mouse Enter");
         cubeColor.material.color = Color.blue;
     }
      
     void OnMouseExit()
     {
-        Debug.Log("Mouse Exit");
         cubeColor.material.color = Color.black;
     }
 
     private void OnMouseUp()
     {
-        Debug.Log("Mouse Clicked");
         cubeColor.material.color = Color.black;
     }
 
