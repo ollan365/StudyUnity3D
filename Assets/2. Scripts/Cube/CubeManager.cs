@@ -4,11 +4,6 @@ using static Constants;
 
 public class CubeManager : MonoBehaviour
 {
-    // 2차원 배열이 inspector에서 할당이 안 돼서 만든 array들
-    [SerializeField] private GameObject[] whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray;
-    [SerializeField] private GameObject[] wyArray, roArray, bgArray;
-    private GameObject[][] colorArray;
-
     [SerializeField] private GameObject[] turnPoints;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
@@ -26,7 +21,6 @@ public class CubeManager : MonoBehaviour
     private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
-        colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
     }
 
     private void Update()
@@ -233,7 +227,7 @@ public class CubeManager : MonoBehaviour
         playerTurnStatus = PlayerTurnStatus.TURN;
 
         GameObject turnPoint = turnPoints[color.ToInt()];
-        GameObject[] array = colorArray[color.ToInt()];
+        GameObject[] array = StageCube.Instance.colorArray[color.ToInt()];
         Vector3 rotation = Vector3.zero;
         switch (color.ToInt())
         {

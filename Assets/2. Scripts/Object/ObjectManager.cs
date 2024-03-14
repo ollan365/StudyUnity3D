@@ -7,19 +7,8 @@ public class ObjectManager : MonoBehaviour
 {
     [SerializeField] private CubeManager cubeManager;
     [SerializeField] private StageManager stageManager;
-    [SerializeField] private StaticManager staticManager;
     [SerializeField] private Object player;
     [SerializeField] private Text goldText;
-    private int gold;
-    public int Gold
-    {
-        get => gold;
-        set
-        {
-            gold = value;
-            goldText.text = gold.ToString();
-        }
-    }
 
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject friendPrefab;
@@ -43,7 +32,6 @@ public class ObjectManager : MonoBehaviour
 
     private void Awake()
     {
-        Gold = 999;
         shopItemArray = new KeyValuePair<ItemObject, int>[16];
     }
     
@@ -54,7 +42,7 @@ public class ObjectManager : MonoBehaviour
         switch (objectType) {
             case ObjectType.ENEMY:
                 newObject = Instantiate(enemyPrefab);
-                string value = staticManager.enemyDatas[objectID];
+                string value = StaticManager.Instance.enemyDatas[objectID];
                 newObject.GetComponent<Object>().init(objectType, value.Split(','));
                 break;
             case ObjectType.FRIEND:
@@ -67,8 +55,8 @@ public class ObjectManager : MonoBehaviour
                         break;
                     }
                 Dictionary<int, string> values;
-                staticManager.friendDatas.TryGetValue(objectID, out values);
-                values.TryGetValue(staticManager.Stage, out value);
+                StaticManager.Instance.friendDatas.TryGetValue(objectID, out values);
+                values.TryGetValue(StaticManager.Instance.Stage, out value);
                 newObject.GetComponent<Object>().init(objectType, value.Split(','));
                 UseItem(ItemType.SCROLL, objectID);
                 ChangePlayerInventory();
@@ -117,37 +105,39 @@ public class ObjectManager : MonoBehaviour
 
     public void OpenTreasureBox(GameObject obj)
     {
-        Gold += obj.GetComponent<Object>().Damage;
+        StaticManager.Instance.Gold += obj.GetComponent<Object>().Damage;
         obj.transform.position = dieObject.position;
         obj.transform.parent = dieObject;
     }
 
     public void ChangePlayerInventory()
     {
-        for (int i = 0; i < staticManager.inventory.Length; i++)
-        {
-            if (staticManager.inventory[i].Value == 0) staticManager.inventory[i] = new(nullObject, 1);
+        goldText.text = StaticManager.Instance.Gold.ToString();
 
-            switch (staticManager.inventory[i].Key.ItemType)
+        for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
+        {
+            if (StaticManager.Instance.inventory[i].Value == 0) StaticManager.Instance.inventory[i] = new(nullObject, 1);
+
+            switch (StaticManager.Instance.inventory[i].Key.ItemType)
             {
                 case ItemType.WEAPON:
-                    inventorySlotButton[i].GetComponent<Image>().color = staticManager.inventory[i].Key.Icon;
-                    if (staticManager.PlayerWeapon == (Weapon)staticManager.inventory[i].Key)
+                    inventorySlotButton[i].GetComponent<Image>().color = StaticManager.Instance.inventory[i].Key.Icon;
+                    if (StaticManager.Instance.PlayerWeapon == (Weapon)StaticManager.Instance.inventory[i].Key)
                         inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text = "use";
                     else
                         inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text = "";
                     inventorySlotButton[i].SetActive(true);
                     break;
                 case ItemType.PORTION:
-                    inventorySlotButton[i].GetComponent<Image>().color = staticManager.inventory[i].Key.Icon;
+                    inventorySlotButton[i].GetComponent<Image>().color = StaticManager.Instance.inventory[i].Key.Icon;
                     inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                        = staticManager.inventory[i].Value.ToString();
+                        = StaticManager.Instance.inventory[i].Value.ToString();
                     inventorySlotButton[i].SetActive(true);
                     break;
                 case ItemType.SCROLL:
-                    inventorySlotButton[i].GetComponent<Image>().color = staticManager.inventory[i].Key.Icon;
+                    inventorySlotButton[i].GetComponent<Image>().color = StaticManager.Instance.inventory[i].Key.Icon;
                     inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                        = staticManager.inventory[i].Value.ToString();
+                        = StaticManager.Instance.inventory[i].Value.ToString();
                     inventorySlotButton[i].SetActive(true);
                     break;
                 case ItemType.NULL:
@@ -158,35 +148,35 @@ public class ObjectManager : MonoBehaviour
     }
     public void ClickInventoryBTN(int index)
     {
-        switch (staticManager.inventory[index].Key.ItemType)
+        switch (StaticManager.Instance.inventory[index].Key.ItemType)
         {
             case ItemType.WEAPON:
-                if (staticManager.PlayerWeapon != (Weapon)staticManager.inventory[index].Key && stageManager.StageTextChange(true, StageText.WEAPON_CHANGE, -1))
-                    staticManager.PlayerWeapon = ((Weapon)staticManager.inventory[index].Key);
+                if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].Key && stageManager.StageTextChange(true, StageText.WEAPON_CHANGE, -1))
+                    StaticManager.Instance.PlayerWeapon = ((Weapon)StaticManager.Instance.inventory[index].Key);
                 break;
             case ItemType.PORTION:
-                Portion p = (Portion)staticManager.inventory[index].Key;
+                Portion p = (Portion)StaticManager.Instance.inventory[index].Key;
                 switch (p.StatusEffectType)
                 {
                     case StatusEffect.HP:
                         player.HP += p.Value;
-                        staticManager.inventory[index] = new(staticManager.inventory[index].Key, staticManager.inventory[index].Value - 1);
+                        StaticManager.Instance.inventory[index] = new(StaticManager.Instance.inventory[index].Key, StaticManager.Instance.inventory[index].Value - 1);
                         break;
                 }
                 break;
             case ItemType.SCROLL:
-                cubeManager.SelectSummonsButton(staticManager.inventory[index].Key.ID);
+                cubeManager.SelectSummonsButton(StaticManager.Instance.inventory[index].Key.ID);
                 break;
         }
         ChangePlayerInventory();
     }
     private void UseItem(ItemType itemType, int itemIndex)
     {
-        for(int i = 0; i < staticManager.inventory.Length; i++)
+        for(int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
-            if(itemType== staticManager.inventory[i].Key.ItemType && itemIndex == staticManager.inventory[i].Key.ID)
+            if(itemType== StaticManager.Instance.inventory[i].Key.ItemType && itemIndex == StaticManager.Instance.inventory[i].Key.ID)
             {
-                staticManager.inventory[i] = new(staticManager.inventory[i].Key, staticManager.inventory[i].Value - 1);
+                StaticManager.Instance.inventory[i] = new(StaticManager.Instance.inventory[i].Key, StaticManager.Instance.inventory[i].Value - 1);
                 break;
             }
         }
@@ -226,28 +216,28 @@ public class ObjectManager : MonoBehaviour
     }
     public void Buy(int index)
     {
-        if (Gold < shopItemArray[index].Value) return;
+        if (StaticManager.Instance.Gold < shopItemArray[index].Value) return;
 
-        for (int i = 0; i < staticManager.inventory.Length; i++)
+        for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
-            if (staticManager.inventory[i].Key == shopItemArray[index].Key)
+            if (StaticManager.Instance.inventory[i].Key == shopItemArray[index].Key)
             {
                 if (shopItemArray[index].Key.ItemType == ItemType.WEAPON) return; // 무기는 하나만 소유 가능
 
-                staticManager.inventory[i] = new(staticManager.inventory[i].Key, staticManager.inventory[i].Value + 1);
+                StaticManager.Instance.inventory[i] = new(StaticManager.Instance.inventory[i].Key, StaticManager.Instance.inventory[i].Value + 1);
                 inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = staticManager.inventory[i].Value.ToString();
-                Gold -= shopItemArray[index].Value;
+                    = StaticManager.Instance.inventory[i].Value.ToString();
+                StaticManager.Instance.Gold -= shopItemArray[index].Value;
                 shopSlotButton[index].SetActive(false);
                 ChangePlayerInventory();
                 break;
             }
-            else if (staticManager.inventory[i].Key.ItemType == ItemType.NULL)
+            else if (StaticManager.Instance.inventory[i].Key.ItemType == ItemType.NULL)
             {
-                staticManager.inventory[i] = new(shopItemArray[index].Key, 1);
+                StaticManager.Instance.inventory[i] = new(shopItemArray[index].Key, 1);
                 inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = staticManager.inventory[i].Value.ToString();
-                Gold -= shopItemArray[index].Value;
+                    = StaticManager.Instance.inventory[i].Value.ToString();
+                StaticManager.Instance.Gold -= shopItemArray[index].Value;
                 shopSlotButton[index].SetActive(false);
                 ChangePlayerInventory();
                 break;

@@ -4,6 +4,8 @@ using static Excel;
 
 public class StaticManager : MonoBehaviour
 {
+    public static StaticManager Instance { get; private set; }
+
     [SerializeField] private int stage;
     [SerializeField] private StageManager stageManager;
     [SerializeField] private Object player;
@@ -19,7 +21,8 @@ public class StaticManager : MonoBehaviour
             player.SetWeapon(playerWeapon.MinDamage, playerWeapon.MaxDamage, playerWeapon.WeaponType);
         }
     }
-
+    private int gold;
+    public int Gold { get => gold; set => gold = value; }
     public Dictionary<int, string> stageDatas;
     public Dictionary<int, List<string>> stageEnemyDatas;
     public Dictionary<int, string> enemyDatas;
@@ -31,7 +34,17 @@ public class StaticManager : MonoBehaviour
 
     private void Awake()
     {
-        SaveExcelDatas();
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            SaveExcelDatas();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         inventory = new KeyValuePair<ItemObject, int>[16]; // 일단은 저장이 없음
         for(int i = 0; i < 16; i++)
             inventory[i] = new(playerWeapon, 0);

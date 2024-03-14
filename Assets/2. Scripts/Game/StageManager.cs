@@ -17,7 +17,6 @@ public class StageManager : MonoBehaviour
     [SerializeField] private CubeManager cubeManager;
     [SerializeField] private ColorCheckManager colorCheckManager;
     [SerializeField] private ObjectManager objectManager;
-    [SerializeField] private StaticManager staticManager;
 
     [SerializeField] private Text[] stageTexts;
     private int[] stageDatas;
@@ -39,19 +38,19 @@ public class StageManager : MonoBehaviour
             switch (value)
             {
                 case StageStatus.INIT:
-                    stageTexts[0].text = $"{staticManager.Stage}類 INIT";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}類 INIT";
                     break;
                 case StageStatus.PLAYER:
                     for (int i = 0; i < 6; i++)
                         colorCheckManager.BingoCheck(i, false);
-                    stageTexts[0].text = $"{staticManager.Stage}類 PLAYER";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}類 PLAYER";
                     StageTextChange(true, StageText.ALL, 0);
                     break;
                 case StageStatus.FIGHT:
-                    stageTexts[0].text = $"{staticManager.Stage}類 FIGHT";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}類 FIGHT";
                     break;
                 case StageStatus.END:
-                    stageTexts[0].text = $"{staticManager.Stage}類 END";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}類 END";
                     break;
             }
         }
@@ -132,7 +131,7 @@ public class StageManager : MonoBehaviour
 
         yield return new WaitForSeconds(10f);
 
-        List<string> stageEnemy = staticManager.stageEnemyDatas[staticManager.Stage];
+        List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         int index = 0;
         for(int i = 0; i < stageEnemy.Count; i++)
         {
