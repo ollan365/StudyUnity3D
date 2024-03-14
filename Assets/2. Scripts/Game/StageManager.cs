@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +17,6 @@ public class StageManager : MonoBehaviour
     [SerializeField] private CubeManager cubeManager;
     [SerializeField] private ColorCheckManager colorCheckManager;
     [SerializeField] private ObjectManager objectManager;
-    [SerializeField] private StaticManager staticManager;
 
     [SerializeField] private Text[] stageTexts;
     private int[] stageDatas;
@@ -40,44 +38,37 @@ public class StageManager : MonoBehaviour
             switch (value)
             {
                 case StageStatus.INIT:
-                    stageTexts[0].text = $"{staticManager.Stage}층 INIT";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 INIT";
                     break;
                 case StageStatus.PLAYER:
                     for (int i = 0; i < 6; i++)
                         colorCheckManager.BingoCheck(i, false);
-                    stageTexts[0].text = $"{staticManager.Stage}층 PLAYER";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 PLAYER";
                     StageTextChange(true, StageText.ALL, 0);
                     break;
                 case StageStatus.FIGHT:
-                    stageTexts[0].text = $"{staticManager.Stage}층 FIGHT";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 FIGHT";
                     break;
                 case StageStatus.END:
-                    stageTexts[0].text = $"{staticManager.Stage}층 END";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 END";
                     break;
             }
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
-        StageInit();
     }
-    private void StageInit()
+    public void StageInit(string data)
     {
         StatusOfStage = StageStatus.INIT;
 
-        TextAsset textFile = Resources.Load("StageInfo") as TextAsset;
-        StringReader stringReader = new StringReader(textFile.text);
+        stageDatas = new int[data.Split(',').Length - 1];
+        for (int i = 0; i < data.Split(',').Length - 1; i++)
+            stageDatas[i] = int.Parse(data.Split(',')[i]);
 
-        string line = stringReader.ReadLine();
-        for (int i = 0; i <= staticManager.Stage; i++)
-            line = stringReader.ReadLine();
-
-        string[] stageDateString = line.Split(',');
-        stageDatas = new int[stageDateString.Length];
-        for (int i = 0; i < stageDateString.Length; i++)
-            stageDatas[i] = int.Parse(stageDateString[i]);
+        player.GetComponent<Object>().init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() });
 
         stageDatas[ROTATE_COUNT] = 10; // 나중에 계산 공식으로 바꾸기!
         stageDatas[MOVE_COUNT] = 10;
@@ -120,6 +111,7 @@ public class StageManager : MonoBehaviour
                 nowEnemyCount = 0;
                 for (int i = 0; i < enemy.Length; i++)
                     if (enemy[i].activeSelf) nowEnemyCount++;
+                
                 stageTexts[1].text = $"{nowEnemyCount} / {stageDatas[ENEMY_COUNT]}";
 
                 moveCount = stageDatas[MOVE_COUNT] + additionalMoveCount;
@@ -139,20 +131,13 @@ public class StageManager : MonoBehaviour
 
         yield return new WaitForSeconds(10f);
 
-        TextAsset textFile = Resources.Load("StageEnemy") as TextAsset;
-        StringReader stringReader = new StringReader(textFile.text);
-
-        string line = stringReader.ReadLine();
-
-        do { line = stringReader.ReadLine(); }
-        while (line != null && int.Parse(line.Split(',')[0]) != staticManager.Stage);
-
+        List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         int index = 0;
-        while (index < stageDatas[ENEMY_COUNT] && line != null && int.Parse(line.Split(',')[0]) == staticManager.Stage) // enemy 배치
+        for(int i = 0; i < stageEnemy.Count; i++)
         {
             ColorCheckCube cube;
 
-            for (int i = 0; i < int.Parse(line.Split(',')[2]); i++)
+            for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
             {
                 while (true)
                 {
@@ -160,13 +145,10 @@ public class StageManager : MonoBehaviour
                     if (cube.GetObjectType() == ObjectType.NULL)
                         break;
                 }
-
-                enemy[index + i] = objectManager.Summons(cube, ObjectType.ENEMY, int.Parse(line.Split(',')[1]));
+                enemy[index] = objectManager.Summons(cube, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
+                index++;
                 yield return new WaitForFixedUpdate();
             }
-
-            index += int.Parse(line.Split(',')[2]);
-            line = stringReader.ReadLine();
         }
 
         for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // enemy 배치
@@ -179,7 +161,7 @@ public class StageManager : MonoBehaviour
                     break;
             }
             treasure[i] = objectManager.Summons(cube, ObjectType.TREASURE, 0);
-            treasure[i].GetComponent<Object>().weapon.SetDamage(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX]);
+            treasure[i].GetComponent<Object>().SetWeapon(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX], WeaponType.NULL);
             yield return new WaitForFixedUpdate();
         }
 
@@ -276,7 +258,6 @@ public class StageManager : MonoBehaviour
         additionalMoveCount = 0;
         for(int i = 0; i < 6; i++) // 빙고 확인
         {
-
             int bingo = colorCheckManager.BingoCheck(i, true);
             int random = Random.Range(0, 2);
 
@@ -287,13 +268,13 @@ public class StageManager : MonoBehaviour
 
             if (random == 0)
             {
-                if (bingo == BINGO_ALL || player.GetComponent<Object>().GetPosition().Color.ToInt() == i)
+                if (bingo == BINGO_ALL || player.GetComponent<Object>().Color.ToInt() == i)
                     player.GetComponent<Object>().HP_Percent(10);
                 foreach(GameObject f in friend)
                 {
                     if (f == null || !f.activeSelf) continue;
 
-                    if (bingo == BINGO_ALL || f.GetComponent<Object>().GetPosition().Color.ToInt() == i)
+                    if (bingo == BINGO_ALL || f.GetComponent<Object>().Color.ToInt() == i)
                         f.GetComponent<Object>().HP_Percent(10);
                 }
             }
@@ -309,13 +290,13 @@ public class StageManager : MonoBehaviour
         // 플레이어부터 공격
         Object playerObj = player.GetComponent<Object>();
 
-        StartCoroutine(CubeRotate(playerObj.GetPosition().Color));
+        StartCoroutine(CubeRotate(playerObj.Color));
         while (isCubeMove) yield return new WaitForFixedUpdate();
 
-        List<GameObject> attackableEnemy = AttackableObject(playerObj.GetWeaponType(), playerObj.GetPosition().Color, playerObj.GetPosition().Index, ObjectType.ENEMY);
+        List<GameObject> attackableEnemy = AttackableObject(playerObj.AttackType, playerObj.Color, playerObj.Index, ObjectType.ENEMY);
         foreach (GameObject enemy in attackableEnemy)
         {
-            enemy.GetComponent<Object>().OnHit(playerObj.GetDamage());
+            enemy.GetComponent<Object>().OnHit(playerObj.Damage);
             yield return new WaitForFixedUpdate();
 
             yield return new WaitForSeconds(0.1f);
@@ -327,7 +308,7 @@ public class StageManager : MonoBehaviour
         {
             Object enemyObject = enemy[i].GetComponent<Object>();
             if (enemyObject.gameObject.activeSelf)
-                enemyAttackOrder.Add(new KeyValuePair<int, int>(enemyObject.GetDamage(), i));
+                enemyAttackOrder.Add(new KeyValuePair<int, int>(enemyObject.Damage, i));
             else // enemyAttackOrder의 크기가 friendAttackOrder 보다 커야하므로 죽은 애들도 일단 list에 넣기
                 enemyAttackOrder.Add(new KeyValuePair<int, int>(0, i));
         }
@@ -337,7 +318,7 @@ public class StageManager : MonoBehaviour
             if (friend[i] == null) continue;
             Object friendObject = friend[i].GetComponent<Object>();
             if (friendObject.gameObject.activeSelf)
-                friendAttackOrder.Add(new KeyValuePair<int, int>(friendObject.GetDamage(), i));
+                friendAttackOrder.Add(new KeyValuePair<int, int>(friendObject.Damage, i));
         }
         enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
         friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
@@ -353,9 +334,9 @@ public class StageManager : MonoBehaviour
             if (i < friendAttackOrder.Count) // 동료도 있다면
             {
                 Object friendObj = friend[friendAttackOrder[i].Value].GetComponent<Object>();
-                attackableEnemy = AttackableObject(friendObj.GetWeaponType(), friendObj.GetPosition().Color, friendObj.GetPosition().Index, ObjectType.ENEMY);
+                attackableEnemy = AttackableObject(friendObj.AttackType, friendObj.Color, friendObj.Index, ObjectType.ENEMY);
                 
-                StartCoroutine(CubeRotate(friendObj.GetPosition().Color));
+                StartCoroutine(CubeRotate(friendObj.Color));
                 while (isCubeMove) yield return new WaitForFixedUpdate();
 
                 foreach (GameObject enemy in attackableEnemy)
@@ -368,12 +349,14 @@ public class StageManager : MonoBehaviour
             }
 
             // 적 공격
+            if (!enemy[enemyAttackOrder[i].Value].activeSelf) continue;
+
             Object enemyObj = enemy[enemyAttackOrder[i].Value].GetComponent<Object>();
             List<GameObject> attackablePlayerTeam;
 
-            attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.PLAYER);
+            attackablePlayerTeam = AttackableObject(enemyObj.AttackType, enemyObj.Color, enemyObj.Index, ObjectType.PLAYER);
 
-            StartCoroutine(CubeRotate(enemyObj.GetPosition().Color));
+            StartCoroutine(CubeRotate(enemyObj.Color));
             while (isCubeMove) yield return new WaitForFixedUpdate();
 
             foreach (GameObject p in attackablePlayerTeam)
@@ -390,7 +373,7 @@ public class StageManager : MonoBehaviour
                 yield break;
             }
 
-            attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.FRIEND);
+            attackablePlayerTeam = AttackableObject(enemyObj.AttackType, enemyObj.Color, enemyObj.Index, ObjectType.FRIEND);
             foreach (GameObject pTeam in attackablePlayerTeam)
             {
                 pTeam.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
@@ -409,15 +392,15 @@ public class StageManager : MonoBehaviour
 
         if(objType == ObjectType.PLAYER && player.activeSelf)
         {
-            ColorCheckCube playerPosition = player.GetComponent<Object>().GetPosition();
-            if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
+            Object p = player.GetComponent<Object>();
+            if (weaponType == WeaponType.CAD || weaponType == WeaponType.LAD)
             {
-                if (playerPosition.Color == color && AttackableRange(weaponType, index)[playerPosition.Index])
+                if (p.Color == color && AttackableRange(weaponType, index)[p.Index])
                     attackable.Add(player);
             }
             else if(weaponType == WeaponType.AP)
             {
-                if (playerPosition.Color != color && playerPosition.Index == index)
+                if (p.Color != color && p.Index == index)
                     attackable.Add(player);
             }
         }
@@ -427,15 +410,15 @@ public class StageManager : MonoBehaviour
             {
                 if (friend[i] == null || !friend[i].activeSelf) continue;
 
-                ColorCheckCube friendPosition = friend[i].GetComponent<Object>().GetPosition();
-                if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
+                Object f = friend[i].GetComponent<Object>();
+                if (weaponType == WeaponType.CAD || weaponType == WeaponType.LAD)
                 {
-                    if (friendPosition.Color == color && AttackableRange(weaponType, index)[friendPosition.Index])
+                    if (f.Color == color && AttackableRange(weaponType, index)[f.Index])
                         attackable.Add(friend[i]);
                 }
                 else if (weaponType == WeaponType.AP)
                 {
-                    if (friendPosition.Color != color && friendPosition.Index == index)
+                    if (f.Color != color && f.Index == index)
                         attackable.Add(friend[i]);
                 }
             }
@@ -446,15 +429,15 @@ public class StageManager : MonoBehaviour
             {
                 if (!enemyObj.activeSelf) continue;
 
-                ColorCheckCube enemyPosition = enemyObj.GetComponent<Object>().GetPosition();
-                if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
+                Object e = enemyObj.GetComponent<Object>();
+                if (weaponType == WeaponType.CAD || weaponType == WeaponType.LAD)
                 {
-                    if (enemyPosition.Color == color && AttackableRange(weaponType, index)[enemyPosition.Index])
+                    if (e.Color == color && AttackableRange(weaponType, index)[e.Index])
                         attackable.Add(enemyObj);
                 }
                 else if (weaponType == WeaponType.AP)
                 {
-                    if (enemyPosition.Color != color && enemyPosition.Index == index)
+                    if (e.Color != color && e.Index == index)
                         attackable.Add(enemyObj);
                 }
             }
@@ -467,7 +450,7 @@ public class StageManager : MonoBehaviour
         for (int i = 0; i < 9; i++)
             attackable[i] = false;
 
-        if (weaponType == WeaponType.MELEE)
+        if (weaponType == WeaponType.CAD)
         {
             switch (index)
             {
@@ -517,7 +500,7 @@ public class StageManager : MonoBehaviour
                     break;
             }
         }
-        else if (weaponType == WeaponType.AD)
+        else if (weaponType == WeaponType.LAD)
         {
             switch (index)
             {

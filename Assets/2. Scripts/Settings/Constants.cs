@@ -39,11 +39,22 @@ public static class Constants
 
     public enum ObjectType { PLAYER, FRIEND, ENEMY, TREASURE, MERCHANT, PORTAL, NULL }
     public enum StageStatus { INIT, PLAYER, FIGHT, END }
-    public enum WeaponType { MELEE, AD, AP, NULL }
+    public enum WeaponType { CAD, LAD, AP, NULL }
+    public static WeaponType ToEnum(this string weaponType)
+    {
+        switch (weaponType)
+        {
+            case "CAD": return WeaponType.CAD;
+            case "LAD": return WeaponType.LAD;
+            case "AP": return WeaponType.AP;
+            default: return WeaponType.NULL;
+        }
+    }
     public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
-    public enum StatusEffect { HP, ALL }
+    public enum StatusEffect { HP, SLIENCE, BLIND, RESCTRICTION, BETRAYAL, ALL }
     public enum StageText { MONSTER, MOVE, ROTATE, WEAPON_CHANGE, ALL }
     public enum BingoEffect { SILENCE, RECOVERY, ADD_REWEAPON, ADD_ROTATE, GOLD, ALL_KILL }
     public enum BingoStatus { DEFAULT, ONE_1, ONE_2, ONE_3, ALL_1, ALL_2, ALL_3 }
     public const int BINGO_DEFAULT = 0, BINGO_ONE = 1, BINGO_ALL = 2;
+
 }
