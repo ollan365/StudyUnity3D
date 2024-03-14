@@ -102,9 +102,9 @@ public class ColorCheckManager : MonoBehaviour
         {
             StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(false);
 
-            ObjectType obj = colorCheckCubeArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType();
+            ObjectType obj = StageCube.Instance.colorArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType();
             if (obj == ObjectType.NULL || obj == ObjectType.PORTAL || obj == ObjectType.TREASURE)
-                colorCoverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
+                StageCube.Instance.colorArray[selectedCharacterColor][i].SetActive(movableCube[i]);
         }
     }
     public bool Move(Colors color, int index, bool wantMove)
