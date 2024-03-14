@@ -4,11 +4,6 @@ using static Constants;
 
 public class CubeManager : MonoBehaviour
 {
-    // 2차원 배열이 inspector에서 할당이 안 돼서 만든 array들
-    [SerializeField] private GameObject[] whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray;
-    [SerializeField] private GameObject[] wyArray, roArray, bgArray;
-    private GameObject[][] colorArray;
-
     [SerializeField] private GameObject[] turnPoints;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
@@ -23,13 +18,12 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private ObjectManager objectManager;
 
     [SerializeField] private GameObject shopPopup;
-    private void Start()
+    private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
-        colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetMouseButton(2))
         {
@@ -87,21 +81,21 @@ public class CubeManager : MonoBehaviour
                     }
                     else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.MERCHANT)
                     {
-                        if(GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, false))
+                        if(GetComponent<ColorCheckManager>().Move(script.Color, script.Index, false))
                             OpenMerchantInventory();
                         else
                             Debug.Log($"{script.Type}");
                     }
                     else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.TREASURE)
                     {
-                        if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, true))
+                        if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
                             objectManager.OpenTreasureBox(script.gameObject);
                         else
                             Debug.Log($"{script.Type}");
                     }
                     else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.PORTAL)
                     {
-                        if (GetComponent<ColorCheckManager>().Move(script.GetPosition().Color, script.GetPosition().Index, true))
+                        if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
                             stageManager.NextStage();
                         else
                             Debug.Log($"{script.Type}");
@@ -233,7 +227,7 @@ public class CubeManager : MonoBehaviour
         playerTurnStatus = PlayerTurnStatus.TURN;
 
         GameObject turnPoint = turnPoints[color.ToInt()];
-        GameObject[] array = colorArray[color.ToInt()];
+        GameObject[] array = StageCube.Instance.colorArray[color.ToInt()];
         Vector3 rotation = Vector3.zero;
         switch (color.ToInt())
         {
@@ -267,7 +261,6 @@ public class CubeManager : MonoBehaviour
             position.transform.GetChild(0).parent = turnPoint.transform;
         }
         StartCoroutine(TurnEffect(turnPoint, rotation, array));
-
     }
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {

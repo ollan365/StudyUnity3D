@@ -18,7 +18,5 @@ MonoBehaviour:
   description: 
   icon: {r: 1, g: 0, b: 0, a: 1}
   weaponType: 1
-  maxHP: 20
-  minDamage: 10
-  maxDamage: 16
-  objectMaterial: {fileID: 2100000, guid: 3a0139cc364562448ba6b451cb9ec358, type: 2}
+  minDamage: 1000
+  maxDamage: 1000

@@ -1,57 +1,83 @@
 using UnityEngine;
 using UnityEngine.UI;
 using static Constants;
+using static Excel;
 
 public class Object : MonoBehaviour
 {
     public ObjectManager objectManager;
-    public Weapon weapon;
     public Slider hpSlider;
 
-    private ColorCheckCube position; // 일단은 보이게...
-    [SerializeField] private ObjectType type;
-    public ObjectType Type { get => type; }
+    private int id;
+    private string objName;
+    private int minDamage;
+    private int maxDamage;
+    private ObjectType type;
+    private WeaponType weaponType;
 
-    [SerializeField] private float hp; // 일단은 object가 플레이어와 적 밖에 없다고 가정 -> 모두 hp를 가짐
+    public void init(ObjectType objType, string[] datas)
+    {
+        type = objType;
+        if (objType == ObjectType.PLAYER)
+        {
+            maxHp = int.Parse(datas[0]);
+        }
+        else if (objType == ObjectType.ENEMY)
+        {
+            id = int.Parse(datas[ENEMY_ID]);
+            name = datas[ENEMY_NAME];
+            maxHp = int.Parse(datas[ENEMY_HP]);
+            SetWeapon(int.Parse(datas[ENEMY_MIN]), int.Parse(datas[ENEMY_MAX]), datas[ENEMY_WEAPON_TYPE].ToEnum());
+        }
+        else if (objType == ObjectType.FRIEND)
+        {
+            id = int.Parse(datas[FRIEND_ID]);
+            maxHp = int.Parse(datas[FRIEND_HP]);
+            SetWeapon(int.Parse(datas[FRIEND_MIN]), int.Parse(datas[FRIEND_MAX]), datas[FRIEND_WEAPON_TYPE].ToEnum());
+        }
+        else
+            type = objType;
+
+        hp = maxHp;
+        HP = hp;
+    }
+    public int ID { get => id; }
+    public string Name { get => objName; }
+    public void SetWeapon(int min, int max, WeaponType weaponType)
+    {
+        minDamage = min;
+        maxDamage = max;
+        this.weaponType = weaponType;
+    }
+    public int Damage { get => Random.Range(minDamage, maxDamage + 1); }
+    public ObjectType Type { get => type; }
+    public WeaponType AttackType { get => weaponType; }
+
+    private float maxHp;
+    private float hp;
     public float HP
     {
         get => hp;
         set
         {
-            hp = Mathf.Clamp(value, 0, weapon.MaxHP);
+            hp = Mathf.Clamp(value, 0, maxHp);
             if (hpSlider != null) // 보물상자나 상인은 이게 없음
-                hpSlider.value = hp / weapon.MaxHP;
+                hpSlider.value = hp / maxHp;
         }
     }
-    private void Start()
-    {
-        hp = weapon.MaxHP;
-        HP = hp;
-        GetComponent<MeshRenderer>().material = weapon.ObjectMaterial;
-    }
     
-    public ColorCheckCube GetPosition()
+    public Colors Color { get => GetPosition().Color; }
+    public int Index { get => GetPosition().Index; }
+    private ColorCheckCube GetPosition()
     {
         RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.up, 30);
         foreach (RaycastHit hit in hits)
         {
             ColorCheckCube touchComponent = hit.collider.gameObject.GetComponent<ColorCheckCube>();
             if (touchComponent != null)
-            {
-                position = touchComponent;
-                break;
-            }
+                return touchComponent;
         }
-        return position;
-    }
-
-    public WeaponType GetWeaponType()
-    {
-        return weapon.WeaponType;
-    }
-    public int GetDamage()
-    {
-        return weapon.WeaponDamage;
+        return null;
     }
 
     public void OnHit(int damage)
@@ -67,9 +93,9 @@ public class Object : MonoBehaviour
     public void HP_Percent(int percent)
     {
         if(percent < 0)
-            HP -= weapon.MaxHP * percent / 100;
+            HP -= maxHp * percent / 100;
         else
-            HP += weapon.MaxHP * percent / 100;
+            HP += maxHp * percent / 100;
 
         Debug.Log($"{HP}");
     }

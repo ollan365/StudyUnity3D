@@ -10215,6 +10215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cubeManager: {fileID: 924633}
   stageManager: {fileID: 502851759}
+  staticManager: {fileID: 1424684504}
   player: {fileID: 1463790526}
   goldText: {fileID: 1185456634}
   enemyPrefab: {fileID: 360777001147702422, guid: 8f91185271672b6499de09a66bba49d0, type: 3}
@@ -10231,19 +10232,6 @@ MonoBehaviour:
   - {fileID: 1622419590}
   - {fileID: 2146210244}
   dieObject: {fileID: 685963}
-  enemyWeapons:
-  - {fileID: 11400000, guid: 1f4f57d98be50384b99f7dee0c664a3e, type: 2}
-  - {fileID: 11400000, guid: ceb11290cdced364d9bba434c8f61a75, type: 2}
-  - {fileID: 11400000, guid: c0d6c8239af37f24a8ece08fbd0c515d, type: 2}
-  friendWeapons:
-  - {fileID: 11400000, guid: 0ca0607c39992134bb26acf79c55e459, type: 2}
-  allShopWeapon:
-  - {fileID: 11400000, guid: 1df3aee14b96f2b4a99fe5a6a4bd1ae1, type: 2}
-  - {fileID: 11400000, guid: 4407e3991583f284c93a1fc0af81dcc3, type: 2}
-  allShopPortion:
-  - {fileID: 11400000, guid: 005b24de01f64e442987a2cacab2eb98, type: 2}
-  allShopScroll:
-  - {fileID: 11400000, guid: 2ae4484f2bba92a4dabdd14c42c234a5, type: 2}
   nullObject: {fileID: 11400000, guid: 0aa6a85edc80a6a40b1dbdc92df16c55, type: 2}
   inventorySlotButton:
   - {fileID: 2029152997}
@@ -26929,7 +26917,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c98dd558d420440b51ae7434f8cbbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stage: 2
+  stage: 3
+  stageManager: {fileID: 502851759}
+  player: {fileID: 1463790526}
+  playerWeapon: {fileID: 11400000, guid: 1df3aee14b96f2b4a99fe5a6a4bd1ae1, type: 2}
 --- !u!4 &1424684505
 Transform:
   m_ObjectHideFlags: 0
