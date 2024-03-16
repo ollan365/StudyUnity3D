@@ -4,32 +4,34 @@ using static Constants;
 
 public class CubeManager : MonoBehaviour
 {
-    // 2차원 배열이 inspector에서 할당이 안 돼서 만든 array들
-    [SerializeField] private GameObject[] whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray;
-    [SerializeField] private GameObject[] wyArray, roArray, bgArray;
-    private GameObject[][] colorArray;
-
     [SerializeField] private GameObject[] turnPoints;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
-    private bool isTurning; // 큐브가 돌아가고 있는가
-    public bool isDraging; // 마우스 드래그 중인가
+    [SerializeField] private float rotateSpeed;
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
-    private bool isCharacterSelected;
-    private bool isSummonsSelected;
+    private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, SUMMONS_SELECTED }
+    private PlayerTurnStatus playerTurnStatus;
+    private int summonsIndex;
 
     [SerializeField] private StageManager stageManager;
-    private void Start()
+    [SerializeField] private ObjectManager objectManager;
+
+    [SerializeField] private GameObject shopPopup;
+    private void Awake()
     {
-        isTurning = false;
-        isCharacterSelected = false;
-        isSummonsSelected = false;
-        colorArray = new GameObject[][] { whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray, wyArray, roArray, bgArray };
+        playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
+
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && stageManager.StatusOfStage == StageStatus.PLAYER)
+        if (Input.GetMouseButton(2))
+        {
+            transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
+            transform.Rotate(Input.GetAxis("Mouse Y") * rotateSpeed, 0f, Input.GetAxis("Mouse Y") * rotateSpeed, Space.World);
+        }
+    
+        if (Input.GetMouseButtonDown(0) && (stageManager.StatusOfStage == StageStatus.PLAYER || stageManager.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
@@ -58,7 +60,7 @@ public class CubeManager : MonoBehaviour
                 }
             }
         }
-        if (Input.GetMouseButtonUp(0) && stageManager.StatusOfStage == StageStatus.PLAYER)
+        if (Input.GetMouseButtonUp(0) && (stageManager.StatusOfStage == StageStatus.PLAYER || stageManager.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
@@ -73,22 +75,44 @@ public class CubeManager : MonoBehaviour
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
                 if (script != null && mouseStartObject == hit.collider.gameObject) // 오브젝트를 클릭했다면
                 {
-                    if (isSummonsSelected)
+                    if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
                     {
                         Debug.Log("Already object");
                     }
-                    else if(script.Type == ObjectType.ENEMY)
+                    else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.MERCHANT)
                     {
-                        Debug.Log("enemy");
+                        if(GetComponent<ColorCheckManager>().Move(script.Color, script.Index, false))
+                            OpenMerchantInventory();
+                        else
+                            Debug.Log($"{script.Type}");
                     }
-                    else if (!isCharacterSelected && !isSummonsSelected)
+                    else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.TREASURE)
                     {
-                        isCharacterSelected = true;
+                        if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
+                            objectManager.OpenTreasureBox(script.gameObject);
+                        else
+                            Debug.Log($"{script.Type}");
+                    }
+                    else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.PORTAL)
+                    {
+                        if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
+                            stageManager.NextStage();
+                        else
+                            Debug.Log($"{script.Type}");
+                    }
+                    else if(script.Type != ObjectType.PLAYER && script.Type != ObjectType.FRIEND) // 일단은 player 말고는 이동이 불가능
+                    {
+                        Debug.Log($"{script.Type}");
+                    }
+                    else if (playerTurnStatus == PlayerTurnStatus.NORMAL)
+                    {
+                        playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
                         gameObject.GetComponent<ColorCheckManager>().CharacterSelect(mouseStartObject);
                     }
-                    else if(isCharacterSelected)
+                    else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
                     {
-                        isCharacterSelected = !gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject);
+                        playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject)
+                            ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
                     }
                     mouseStartObject = null;
                     return;
@@ -108,26 +132,79 @@ public class CubeManager : MonoBehaviour
     }
     public void MouseStart(Touch script)
     {
-        if (isTurning) return;
-
-        isDraging = true;
+        if (playerTurnStatus == PlayerTurnStatus.TURN)
+        {
+            mouseStartObject = null;
+            mouseStartTouchCube = null;
+            return;
+        }
         mouseStartTouchCube = script;
     }
     public void MouseEnd(Touch script)
     {
-        Debug.Log($"{script.GetPositionColor()} / {script.GetPositionIndex()}");
-        if (!isDraging) return;
-        isDraging = false;
+        if (mouseStartTouchCube == null) return;
 
-        if (mouseStartTouchCube == script)
+        if (mouseStartTouchCube == script) // 같은 곳을 클릭했을 때
         {
-            if (isCharacterSelected)
-                GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex());
+            ObjectType type = GetComponent<ColorCheckManager>().CheckCubeObject(script.GetPositionColor(), script.GetPositionIndex());
+            if (type == ObjectType.NULL)
+            {
+                if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+                    if (stageManager.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
+                        stageManager.StageTextChange(true, StageText.MOVE, -1);
 
-            if (isSummonsSelected)
-                isSummonsSelected = !stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex());
+                if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
+                    playerTurnStatus = stageManager.SummonsFriend(script.GetPositionColor(), script.GetPositionIndex(), summonsIndex)
+                        ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.SUMMONS_SELECTED;
+            }
+            else
+            {
+                if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
+                {
+                    Debug.Log("Already object");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.MERCHANT)
+                {
+                    if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), false))
+                        OpenMerchantInventory();
+                    else
+                        Debug.Log($"{type}");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.TREASURE)
+                {
+                    if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
+                        objectManager.OpenTreasureBox(GetComponent<ColorCheckManager>().GetCubeObject(script.GetPositionColor(), script.GetPositionIndex()));
+                    else
+                        Debug.Log($"{type}");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.PORTAL)
+                {
+                    if (GetComponent<ColorCheckManager>().Move(script.GetPositionColor(), script.GetPositionIndex(), true))
+                        stageManager.NextStage();
+                    else
+                        Debug.Log($"{type}");
+                }
+                else if (type != ObjectType.PLAYER && type != ObjectType.FRIEND)
+                {
+                    Debug.Log($"{type}");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.NORMAL)
+                {
+                    playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
+                    gameObject.GetComponent<ColorCheckManager>().CharacterSelect(GetComponent<ColorCheckManager>().GetCubeObject(script.GetPositionColor(), script.GetPositionIndex()));
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+                {
+                    playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(GetComponent<ColorCheckManager>().GetCubeObject(script.GetPositionColor(), script.GetPositionIndex()))
+                            ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
+                }
+                mouseStartObject = null;
+            }
             return;
         }
+        else if (playerTurnStatus != PlayerTurnStatus.NORMAL)
+            return;
+
         Touch start = mouseStartTouchCube;
         Touch end = script;
 
@@ -143,11 +220,14 @@ public class CubeManager : MonoBehaviour
     }
     private void Turn(Colors color, int direction)
     {
-        if (color == Colors.NULL || isTurning) return;
-        isTurning = true;
+        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL || (!stageManager.StageTextChange(false, StageText.ROTATE, -1) && stageManager.StatusOfStage == StageStatus.PLAYER)) return;
+        if (stageManager.StatusOfStage == StageStatus.PLAYER)
+            if(!stageManager.StageTextChange(true, StageText.ROTATE, -1)) return;
+
+        playerTurnStatus = PlayerTurnStatus.TURN;
 
         GameObject turnPoint = turnPoints[color.ToInt()];
-        GameObject[] array = colorArray[color.ToInt()];
+        GameObject[] array = StageCube.Instance.colorArray[color.ToInt()];
         Vector3 rotation = Vector3.zero;
         switch (color.ToInt())
         {
@@ -181,7 +261,6 @@ public class CubeManager : MonoBehaviour
             position.transform.GetChild(0).parent = turnPoint.transform;
         }
         StartCoroutine(TurnEffect(turnPoint, rotation, array));
-
     }
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {
@@ -207,10 +286,12 @@ public class CubeManager : MonoBehaviour
 
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
-        gameObject.GetComponent<ColorCheckManager>().BingoCheck();
+        for (int i = 0; i < 6; i++)
+            gameObject.GetComponent<ColorCheckManager>().BingoCheck(i, false);
 
-        isTurning = false;
+        playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
+
 
     public void StartRandomTurn(int randomCount)
     {
@@ -220,7 +301,7 @@ public class CubeManager : MonoBehaviour
     {
         for (int i = 0; i < randomCount; i++)
         {
-            while (isTurning)
+            while (playerTurnStatus == PlayerTurnStatus.TURN)
                 yield return new WaitForFixedUpdate();
 
             int direction = Random.Range(0, 2);
@@ -231,16 +312,21 @@ public class CubeManager : MonoBehaviour
         }
     }
 
-    public void SelectSummonsButton()
+    public void SelectSummonsButton(int friendIndex)
     {
-        if (!isCharacterSelected && !isSummonsSelected)
+        if (playerTurnStatus == PlayerTurnStatus.NORMAL && stageManager.StatusOfStage == StageStatus.PLAYER)
         {
-            isSummonsSelected = true;
+            playerTurnStatus = PlayerTurnStatus.SUMMONS_SELECTED;
+            summonsIndex = friendIndex;
             Debug.Log("summons btn selected!");
         }
-        else if (isSummonsSelected)
-            isSummonsSelected = false;
-        else
-            Debug.Log("Character selected!");
+        else if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
+            playerTurnStatus = PlayerTurnStatus.NORMAL;
+    }
+
+    private void OpenMerchantInventory()
+    {
+        objectManager.ChangeShop();
+        shopPopup.SetActive(true);
     }
 }

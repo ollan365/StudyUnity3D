@@ -15,6 +15,13 @@ public class ColorCheckCube : MonoBehaviour
         if (objectPosition.childCount == 0) return ObjectType.NULL;
         return objectPosition.GetChild(0).GetComponent<Object>().Type;
     }
+    public GameObject GetObject()
+    {
+        Transform objectPosition = colorPointCube.transform.GetChild(0);
+
+        if (objectPosition.childCount == 0) return null;
+        return objectPosition.GetChild(0).gameObject;
+    }
     private void OnTriggerEnter(Collider other)
     {
         colorPointCube = other.gameObject;

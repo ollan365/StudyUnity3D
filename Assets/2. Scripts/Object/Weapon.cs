@@ -1,11 +1,13 @@
 using UnityEngine;
 using static Constants;
 
-[CreateAssetMenu(fileName = "Weapon", menuName = "Scriptable Object/Weapon", order = int.MaxValue)]
-public class Weapon : ScriptableObject
+[CreateAssetMenu(fileName = "New Weapon", menuName = "Items/Weapon", order = 0)]
+public class Weapon : ItemObject
 {
     [SerializeField] private WeaponType weaponType;
     public WeaponType WeaponType { get => weaponType; }
-    [SerializeField] private int damage;
-    public int WeaponDamage { get => damage; }
+    [SerializeField] private int minDamage;
+    public int MinDamage { get => minDamage; }
+    [SerializeField] private int maxDamage;
+    public int MaxDamage { get => maxDamage; }
 }

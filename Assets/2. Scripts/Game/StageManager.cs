@@ -1,25 +1,33 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.UI;
 using static Constants;
+using static Excel;
 
 public class StageManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray;
     private GameObject[][] colorCheckCubeArray;
 
+    [SerializeField] private Transform cube;
+    private bool isCubeMove;
+
     [SerializeField] private CubeManager cubeManager;
+    [SerializeField] private ColorCheckManager colorCheckManager;
     [SerializeField] private ObjectManager objectManager;
 
-    [SerializeField] private int startRandomTurnCount;
+    [SerializeField] private Text[] stageTexts;
+    private int[] stageDatas;
+    private int moveCount, rotateCount, changeCount;
+    private int additionalMoveCount;
 
-    [SerializeField] private int enemyCount;
-    public GameObject[] enemy; // 일단은 public
-    public GameObject[] friend; // 얘도 일단은 public
+    private GameObject[] enemy, friend, treasure;
     [SerializeField] private GameObject player;
 
-    [SerializeField] private Text stageStatusText;
+    [SerializeField] private GameObject gameOverPanel;
+
     private StageStatus status;
     public StageStatus StatusOfStage
     { 
@@ -30,35 +38,120 @@ public class StageManager : MonoBehaviour
             switch (value)
             {
                 case StageStatus.INIT:
-                    stageStatusText.text = "INIT";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 INIT";
                     break;
                 case StageStatus.PLAYER:
-                    stageStatusText.text = "PLAYER";
+                    for (int i = 0; i < 6; i++)
+                        colorCheckManager.BingoCheck(i, false);
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 PLAYER";
+                    StageTextChange(true, StageText.ALL, 0);
                     break;
                 case StageStatus.FIGHT:
-                    stageStatusText.text = "FIGHT";
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 FIGHT";
+                    break;
+                case StageStatus.END:
+                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 END";
                     break;
             }
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
+    }
+    public void StageInit(string data)
+    {
         StatusOfStage = StageStatus.INIT;
 
-        enemy = new GameObject[enemyCount];
+        stageDatas = new int[data.Split(',').Length - 1];
+        for (int i = 0; i < data.Split(',').Length - 1; i++)
+            stageDatas[i] = int.Parse(data.Split(',')[i]);
+
+        player.GetComponent<Object>().init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() });
+
+        stageDatas[ROTATE_COUNT] = 10; // 나중에 계산 공식으로 바꾸기!
+        stageDatas[MOVE_COUNT] = 10;
+        changeCount = stageDatas[WEAPON_CHANGE];
+
+        enemy = new GameObject[stageDatas[ENEMY_COUNT]];
         friend = new GameObject[3];
+        treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
         StartCoroutine(StartStage());
     }
+    public bool StageTextChange(bool wantChange, StageText text, int value)
+    {
+        switch (text)
+        {
+            case StageText.MONSTER:
+                int nowEnemyCount = 0;
+                for (int i = 0; i < enemy.Length; i++)
+                    if (enemy[i].activeSelf) nowEnemyCount++;
+                stageTexts[1].text = $"{nowEnemyCount} / {stageDatas[ENEMY_COUNT]}";
+                return true;
+            case StageText.MOVE:
+                if (moveCount + value < 0) return false;
+                if (!wantChange) return true;
+                moveCount += value;
+                break;
+            case StageText.ROTATE:
+                if (rotateCount + value < 0) return false;
+                if (!wantChange) return true;
+                rotateCount += value;
+                break;
+            case StageText.WEAPON_CHANGE:
+                if (changeCount + value < 0) return false;
+                if (!wantChange) return true;
+                changeCount += value;
+                break;
+            case StageText.ALL:
+                if (value != 0) return false;
+
+                nowEnemyCount = 0;
+                for (int i = 0; i < enemy.Length; i++)
+                    if (enemy[i].activeSelf) nowEnemyCount++;
+                
+                stageTexts[1].text = $"{nowEnemyCount} / {stageDatas[ENEMY_COUNT]}";
+
+                moveCount = stageDatas[MOVE_COUNT] + additionalMoveCount;
+                rotateCount = stageDatas[ROTATE_COUNT];
+                break;
+            default:
+                return false;
+        }
+        stageTexts[2].text = $"{moveCount} / {stageDatas[MOVE_COUNT] + additionalMoveCount}";
+        stageTexts[3].text = $"{rotateCount} / {stageDatas[ROTATE_COUNT]}";
+        stageTexts[4].text = $"{changeCount} / 3";
+        return true;
+    }
     private IEnumerator StartStage()
     {
-        cubeManager.StartRandomTurn(startRandomTurnCount); // 큐브를 섞는다
+        cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(10f);
 
-        for (int i = 0; i < enemyCount; i++) // enemy 배치
+        List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
+        int index = 0;
+        for(int i = 0; i < stageEnemy.Count; i++)
+        {
+            ColorCheckCube cube;
+
+            for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
+            {
+                while (true)
+                {
+                    cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
+                    if (cube.GetObjectType() == ObjectType.NULL)
+                        break;
+                }
+                enemy[index] = objectManager.Summons(cube, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
+                index++;
+                yield return new WaitForFixedUpdate();
+            }
+        }
+
+        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // enemy 배치
         {
             ColorCheckCube cube;
             while (true)
@@ -67,13 +160,13 @@ public class StageManager : MonoBehaviour
                 if (cube.GetObjectType() == ObjectType.NULL)
                     break;
             }
-            
-            enemy[i] = objectManager.Summons(cube, ObjectType.ENEMY);
+            treasure[i] = objectManager.Summons(cube, ObjectType.TREASURE, 0);
+            treasure[i].GetComponent<Object>().SetWeapon(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX], WeaponType.NULL);
+            yield return new WaitForFixedUpdate();
         }
 
         StatusOfStage = StageStatus.PLAYER;
     }
-
     public void ChangeStatus()
     {
         if(StatusOfStage == StageStatus.PLAYER)
@@ -82,81 +175,232 @@ public class StageManager : MonoBehaviour
             StartCoroutine(Attack()); 
         }
     }
+    private void ClearStage()
+    {
+        StatusOfStage = StageStatus.END;
+
+        foreach(GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
+            t.GetComponent<Object>().OnHit(9999);
+        
+        while (true)
+        {
+            ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
+            if (cube.GetObjectType() == ObjectType.NULL)
+            {
+                objectManager.Summons(cube, ObjectType.MERCHANT, 0);
+                break;
+            }
+        }
+        while (true)
+        {
+            ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
+            if (cube.GetObjectType() == ObjectType.NULL)
+            {
+                objectManager.Summons(cube, ObjectType.PORTAL, 0);
+                break;
+            }
+        }
+    }
+    public void NextStage()
+    {
+        Debug.Log("Next Stage!");
+    }
+    private void GameOver()
+    {
+        gameOverPanel.SetActive(true);
+    }
+
+    private IEnumerator CubeRotate(Colors color)
+    {
+        isCubeMove = true;
+
+        Quaternion startRotation = cube.transform.localRotation;
+        Vector3 endRotationVector = new();
+
+        switch (color)
+        {
+            case Colors.WHITE:
+                endRotationVector = new(0, 0, 0);
+                break;
+            case Colors.RED:
+                endRotationVector = new(0, 0, 90);
+                break;
+            case Colors.BLUE:
+                endRotationVector = new(-90, 0, 90);
+                break;
+            case Colors.GREEN:
+                endRotationVector = new(90, 0, -90);
+                break;
+            case Colors.ORANGE:
+                endRotationVector = new(0, 0, -90);
+                break;
+            case Colors.YELLOW:
+                endRotationVector = new(0, 0, -180);
+                break;
+        }
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < 1)
+        {
+            cube.transform.localRotation = Quaternion.Slerp(startRotation, Quaternion.Euler(endRotationVector), elapsedTime / 1);
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        // 보정을 위해 최종 회전 각도로 설정
+        cube.transform.localRotation = Quaternion.Euler(endRotationVector);
+        isCubeMove = false;
+    }
 
     private IEnumerator Attack()
     {
+        additionalMoveCount = 0;
+        for(int i = 0; i < 6; i++) // 빙고 확인
+        {
+            int bingo = colorCheckManager.BingoCheck(i, true);
+            int random = Random.Range(0, 2);
+
+            if (bingo == BINGO_DEFAULT) continue;
+
+            StartCoroutine(CubeRotate(i.ToColor())); // 빙고 완성 시 그 면으로 회전
+            while (isCubeMove) yield return new WaitForFixedUpdate();
+
+            if (random == 0)
+            {
+                if (bingo == BINGO_ALL || player.GetComponent<Object>().Color.ToInt() == i)
+                    player.GetComponent<Object>().HP_Percent(10);
+                foreach(GameObject f in friend)
+                {
+                    if (f == null || !f.activeSelf) continue;
+
+                    if (bingo == BINGO_ALL || f.GetComponent<Object>().Color.ToInt() == i)
+                        f.GetComponent<Object>().HP_Percent(10);
+                }
+            }
+            else
+            {
+                if (bingo == BINGO_ONE) additionalMoveCount++;
+                else changeCount++;
+            }
+
+            yield return new WaitForSeconds(0.5f);
+        }
+        
         // 플레이어부터 공격
         Object playerObj = player.GetComponent<Object>();
-        List<GameObject> attackableEnemy = AttackableObject(playerObj.GetWeaponType(), playerObj.GetPosition().Color, playerObj.GetPosition().Index, ObjectType.ENEMY);
 
+        StartCoroutine(CubeRotate(playerObj.Color));
+        while (isCubeMove) yield return new WaitForFixedUpdate();
+
+        List<GameObject> attackableEnemy = AttackableObject(playerObj.AttackType, playerObj.Color, playerObj.Index, ObjectType.ENEMY);
         foreach (GameObject enemy in attackableEnemy)
         {
-            enemy.GetComponent<Object>().OnHit(playerObj.GetDamage());
+            enemy.GetComponent<Object>().OnHit(playerObj.Damage);
             yield return new WaitForFixedUpdate();
 
             yield return new WaitForSeconds(0.1f);
         }
-        // 동료 공격
-        for(int i = 0; i < 3; i++)
+
+        // 적과 동료의 공격 순서 결정을 위해 List 생성
+        List<KeyValuePair<int, int>> enemyAttackOrder = new List<KeyValuePair<int, int>>();
+        for (int i = 0; i < stageDatas[ENEMY_COUNT]; i++)
         {
-            if(friend[i] != null)
+            Object enemyObject = enemy[i].GetComponent<Object>();
+            if (enemyObject.gameObject.activeSelf)
+                enemyAttackOrder.Add(new KeyValuePair<int, int>(enemyObject.Damage, i));
+            else // enemyAttackOrder의 크기가 friendAttackOrder 보다 커야하므로 죽은 애들도 일단 list에 넣기
+                enemyAttackOrder.Add(new KeyValuePair<int, int>(0, i));
+        }
+        List<KeyValuePair<int, int>> friendAttackOrder = new List<KeyValuePair<int, int>>();
+        for (int i = 0; i < 3; i++)
+        {
+            if (friend[i] == null) continue;
+            Object friendObject = friend[i].GetComponent<Object>();
+            if (friendObject.gameObject.activeSelf)
+                friendAttackOrder.Add(new KeyValuePair<int, int>(friendObject.Damage, i));
+        }
+        enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
+        friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
+
+        if(!enemy[enemyAttackOrder[0].Value].activeSelf) // 살아있는 enemy가 없으면
+        {
+            ClearStage();
+            yield break;
+        }
+
+        for (int i = 0; i < enemyAttackOrder.Count; i++)
+        {
+            if (i < friendAttackOrder.Count) // 동료도 있다면
             {
-                Object friendObj = friend[i].GetComponent<Object>();
-                attackableEnemy = AttackableObject(friendObj.GetWeaponType(), friendObj.GetPosition().Color, friendObj.GetPosition().Index, ObjectType.ENEMY);
+                Object friendObj = friend[friendAttackOrder[i].Value].GetComponent<Object>();
+                attackableEnemy = AttackableObject(friendObj.AttackType, friendObj.Color, friendObj.Index, ObjectType.ENEMY);
+                
+                StartCoroutine(CubeRotate(friendObj.Color));
+                while (isCubeMove) yield return new WaitForFixedUpdate();
 
                 foreach (GameObject enemy in attackableEnemy)
                 {
-                    enemy.GetComponent<Object>().OnHit(playerObj.GetDamage());
+                    enemy.GetComponent<Object>().OnHit(friendAttackOrder[i].Key);
                     yield return new WaitForFixedUpdate();
 
                     yield return new WaitForSeconds(0.1f);
                 }
             }
-        }
-        // 적 공격
-        foreach (GameObject enemyGameObject in enemy)
-        {
-            Object enemyObj = enemyGameObject.GetComponent<Object>();
+
+            // 적 공격
+            if (!enemy[enemyAttackOrder[i].Value].activeSelf) continue;
+
+            Object enemyObj = enemy[enemyAttackOrder[i].Value].GetComponent<Object>();
             List<GameObject> attackablePlayerTeam;
 
-            attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.PLAYER);
+            attackablePlayerTeam = AttackableObject(enemyObj.AttackType, enemyObj.Color, enemyObj.Index, ObjectType.PLAYER);
+
+            StartCoroutine(CubeRotate(enemyObj.Color));
+            while (isCubeMove) yield return new WaitForFixedUpdate();
 
             foreach (GameObject p in attackablePlayerTeam)
             {
-                p.GetComponent<Object>().OnHit(enemyObj.GetDamage());
+                p.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
                 yield return new WaitForFixedUpdate();
 
                 yield return new WaitForSeconds(0.1f);
             }
 
-            attackablePlayerTeam = AttackableObject(enemyObj.GetWeaponType(), enemyObj.GetPosition().Color, enemyObj.GetPosition().Index, ObjectType.FRIEND);
+            if(!player.activeSelf) // 플레이어가 죽으면 게임 종료
+            {
+                GameOver();
+                yield break;
+            }
+
+            attackablePlayerTeam = AttackableObject(enemyObj.AttackType, enemyObj.Color, enemyObj.Index, ObjectType.FRIEND);
             foreach (GameObject pTeam in attackablePlayerTeam)
             {
-                pTeam.GetComponent<Object>().OnHit(enemyObj.GetDamage());
+                pTeam.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
                 yield return new WaitForFixedUpdate();
 
                 yield return new WaitForSeconds(0.1f);
             }
         }
+
         // statge statue를 바꾼다
         StatusOfStage = StageStatus.PLAYER;
     }
-
     private List<GameObject> AttackableObject(WeaponType weaponType, Colors color, int index, ObjectType objType)
     {
         List<GameObject> attackable = new List<GameObject>();
 
-        if(objType == ObjectType.PLAYER)
+        if(objType == ObjectType.PLAYER && player.activeSelf)
         {
-            ColorCheckCube playerPosition = player.GetComponent<Object>().GetPosition();
-            if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
+            Object p = player.GetComponent<Object>();
+            if (weaponType == WeaponType.CAD || weaponType == WeaponType.LAD)
             {
-                if (playerPosition.Color == color && AttackableRange(weaponType, index)[playerPosition.Index])
+                if (p.Color == color && AttackableRange(weaponType, index)[p.Index])
                     attackable.Add(player);
             }
             else if(weaponType == WeaponType.AP)
             {
-                if (playerPosition.Color != color && playerPosition.Index == index)
+                if (p.Color != color && p.Index == index)
                     attackable.Add(player);
             }
         }
@@ -164,17 +408,17 @@ public class StageManager : MonoBehaviour
         {
             for(int i = 0;i<3;i++)
             {
-                if (friend[i] == null) continue;
+                if (friend[i] == null || !friend[i].activeSelf) continue;
 
-                ColorCheckCube friendPosition = friend[i].GetComponent<Object>().GetPosition();
-                if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
+                Object f = friend[i].GetComponent<Object>();
+                if (weaponType == WeaponType.CAD || weaponType == WeaponType.LAD)
                 {
-                    if (friendPosition.Color == color && AttackableRange(weaponType, index)[friendPosition.Index])
+                    if (f.Color == color && AttackableRange(weaponType, index)[f.Index])
                         attackable.Add(friend[i]);
                 }
                 else if (weaponType == WeaponType.AP)
                 {
-                    if (friendPosition.Color != color && friendPosition.Index == index)
+                    if (f.Color != color && f.Index == index)
                         attackable.Add(friend[i]);
                 }
             }
@@ -183,29 +427,30 @@ public class StageManager : MonoBehaviour
         {
             foreach(GameObject enemyObj in enemy)
             {
-                ColorCheckCube enemyPosition = enemyObj.GetComponent<Object>().GetPosition();
-                if (weaponType == WeaponType.MELEE || weaponType == WeaponType.AD)
+                if (!enemyObj.activeSelf) continue;
+
+                Object e = enemyObj.GetComponent<Object>();
+                if (weaponType == WeaponType.CAD || weaponType == WeaponType.LAD)
                 {
-                    if (enemyPosition.Color == color && AttackableRange(weaponType, index)[enemyPosition.Index])
+                    if (e.Color == color && AttackableRange(weaponType, index)[e.Index])
                         attackable.Add(enemyObj);
                 }
                 else if (weaponType == WeaponType.AP)
                 {
-                    if (enemyPosition.Color != color && enemyPosition.Index == index)
+                    if (e.Color != color && e.Index == index)
                         attackable.Add(enemyObj);
                 }
             }
         }
         return attackable;
     }
-
     private bool[] AttackableRange(WeaponType weaponType, int index)
     {
         bool[] attackable = new bool[9];
         for (int i = 0; i < 9; i++)
             attackable[i] = false;
 
-        if (weaponType == WeaponType.MELEE)
+        if (weaponType == WeaponType.CAD)
         {
             switch (index)
             {
@@ -255,7 +500,7 @@ public class StageManager : MonoBehaviour
                     break;
             }
         }
-        else if (weaponType == WeaponType.AD)
+        else if (weaponType == WeaponType.LAD)
         {
             switch (index)
             {
@@ -301,16 +546,16 @@ public class StageManager : MonoBehaviour
         return attackable;
     }
 
-    public bool SummonsFriend(Colors color, int index)
+    public bool SummonsFriend(Colors color, int index, int friendIndex)
     {
         ColorCheckCube cube = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>();
         if (cube.GetObjectType() != ObjectType.NULL)
             return false;
         for (int i = 0; i < 3; i++)
         {
-            if (friend[i] == null)
+            if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
-                friend[i] = objectManager.Summons(cube, ObjectType.FRIEND);
+                friend[i] = objectManager.Summons(cube, ObjectType.FRIEND, friendIndex);
                 Debug.Log("summons success!");
                 return true;
             }
