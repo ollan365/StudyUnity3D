@@ -19,11 +19,18 @@ public class Touch : MonoBehaviour
     {
         get
         {
-            if (ObjectPostion.childCount == 0) return null;
+            if (ObjType == ObjectType.NULL) return null;
             else return ObjectPostion.GetChild(0).GetComponent<Object>();
         }
     }
-
+    public ObjectType ObjType
+    {
+        get
+        {
+            if (ObjectPostion.childCount == 0) return ObjectType.NULL;
+            else return ObjectPostion.GetChild(0).GetComponent<Object>().Type;
+        }
+    }
     [SerializeField] private GameObject colorPointCube;
     private void OnTriggerEnter(Collider other)
     {

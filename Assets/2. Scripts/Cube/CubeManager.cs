@@ -146,7 +146,7 @@ public class CubeManager : MonoBehaviour
 
         if (mouseStartTouchCube == script) // 같은 곳을 클릭했을 때
         {
-            ObjectType type = script.Obj.Type;
+            ObjectType type = script.ObjType;
             if (type == ObjectType.NULL)
             {
                 if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
