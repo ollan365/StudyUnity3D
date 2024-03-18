@@ -68,12 +68,12 @@ public class Object : MonoBehaviour
     
     public Colors Color { get => GetPosition().Color; }
     public int Index { get => GetPosition().Index; }
-    private ColorCheckCube GetPosition()
+    private Touch GetPosition()
     {
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.up, 30);
+        RaycastHit[] hits = Physics.RaycastAll(transform.position, -transform.up, 10);
         foreach (RaycastHit hit in hits)
         {
-            ColorCheckCube touchComponent = hit.collider.gameObject.GetComponent<ColorCheckCube>();
+            Touch touchComponent = hit.collider.gameObject.GetComponent<Touch>();
             if (touchComponent != null)
                 return touchComponent;
         }

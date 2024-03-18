@@ -35,7 +35,7 @@ public class ObjectManager : MonoBehaviour
         shopItemArray = new KeyValuePair<ItemObject, int>[16];
     }
     
-    public GameObject Summons(ColorCheckCube cube, ObjectType objectType, int objectID)
+    public GameObject Summons(Touch cube, ObjectType objectType, int objectID)
     {
         GameObject newObject;
 
@@ -78,9 +78,9 @@ public class ObjectManager : MonoBehaviour
                 break;
         }
 
-        newObject.transform.parent = cube.colorPointCube.transform.GetChild(0);
-        newObject.transform.position = cube.colorPointCube.transform.GetChild(0).position;
-        newObject.transform.rotation = cube.colorPointCube.transform.GetChild(0).rotation;
+        newObject.transform.parent = cube.ObjectPostion;
+        newObject.transform.position = cube.ObjectPostion.position;
+        newObject.transform.rotation = cube.ObjectPostion.rotation;
 
         newObject.GetComponent<Object>().objectManager = this;
 

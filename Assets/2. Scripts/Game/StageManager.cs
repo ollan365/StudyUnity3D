@@ -8,9 +8,6 @@ using static Excel;
 
 public class StageManager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray;
-    private GameObject[][] colorCheckCubeArray;
-
     [SerializeField] private Transform cube;
     private bool isCubeMove;
 
@@ -43,6 +40,7 @@ public class StageManager : MonoBehaviour
                 case StageStatus.PLAYER:
                     for (int i = 0; i < 6; i++)
                         colorCheckManager.BingoCheck(i, false);
+                    colorCheckManager.ToNextBingo();
                     stageTexts[0].text = $"{StaticManager.Instance.Stage}층 PLAYER";
                     StageTextChange(true, StageText.ALL, 0);
                     break;
@@ -56,10 +54,6 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        colorCheckCubeArray = new GameObject[][] { whiteCheckCubeArray, redCheckCubeArray, blueCheckCubeArray, greenCheckCubeArray, orangeCheckCubeArray, yellowCheckCubeArray };
-    }
     public void StageInit(string data)
     {
         StatusOfStage = StageStatus.INIT;
@@ -135,14 +129,14 @@ public class StageManager : MonoBehaviour
         int index = 0;
         for(int i = 0; i < stageEnemy.Count; i++)
         {
-            ColorCheckCube cube;
+            Touch cube;
 
             for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
             {
                 while (true)
                 {
-                    cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
-                    if (cube.GetObjectType() == ObjectType.NULL)
+                    cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+                    if (cube.Obj == null)
                         break;
                 }
                 enemy[index] = objectManager.Summons(cube, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
@@ -153,11 +147,11 @@ public class StageManager : MonoBehaviour
 
         for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // enemy 배치
         {
-            ColorCheckCube cube;
+            Touch cube;
             while (true)
             {
-                cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
-                if (cube.GetObjectType() == ObjectType.NULL)
+                cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+                if (cube.Obj == null)
                     break;
             }
             treasure[i] = objectManager.Summons(cube, ObjectType.TREASURE, 0);
@@ -184,8 +178,8 @@ public class StageManager : MonoBehaviour
         
         while (true)
         {
-            ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
-            if (cube.GetObjectType() == ObjectType.NULL)
+            Touch cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+            if (cube.Obj == null)
             {
                 objectManager.Summons(cube, ObjectType.MERCHANT, 0);
                 break;
@@ -193,8 +187,8 @@ public class StageManager : MonoBehaviour
         }
         while (true)
         {
-            ColorCheckCube cube = colorCheckCubeArray[Random.Range(0, 6)][Random.Range(0, 9)].GetComponent<ColorCheckCube>();
-            if (cube.GetObjectType() == ObjectType.NULL)
+            Touch cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+            if (cube.Obj == null)
             {
                 objectManager.Summons(cube, ObjectType.PORTAL, 0);
                 break;
@@ -258,29 +252,29 @@ public class StageManager : MonoBehaviour
         additionalMoveCount = 0;
         for(int i = 0; i < 6; i++) // 빙고 확인
         {
-            int bingo = colorCheckManager.BingoCheck(i, true);
+            BingoStatus bingo = colorCheckManager.BingoCheck(i, true);
             int random = Random.Range(0, 2);
 
-            if (bingo == BINGO_DEFAULT) continue;
+            if (bingo == BingoStatus.DEFAULT) continue;
 
             StartCoroutine(CubeRotate(i.ToColor())); // 빙고 완성 시 그 면으로 회전
             while (isCubeMove) yield return new WaitForFixedUpdate();
 
             if (random == 0)
             {
-                if (bingo == BINGO_ALL || player.GetComponent<Object>().Color.ToInt() == i)
+                if (bingo == BingoStatus.ALL || player.GetComponent<Object>().Color.ToInt() == i)
                     player.GetComponent<Object>().HP_Percent(10);
                 foreach(GameObject f in friend)
                 {
                     if (f == null || !f.activeSelf) continue;
 
-                    if (bingo == BINGO_ALL || f.GetComponent<Object>().Color.ToInt() == i)
+                    if (bingo == BingoStatus.ALL || f.GetComponent<Object>().Color.ToInt() == i)
                         f.GetComponent<Object>().HP_Percent(10);
                 }
             }
             else
             {
-                if (bingo == BINGO_ONE) additionalMoveCount++;
+                if (bingo == BingoStatus.ONE) additionalMoveCount++;
                 else changeCount++;
             }
 
@@ -548,8 +542,8 @@ public class StageManager : MonoBehaviour
 
     public bool SummonsFriend(Colors color, int index, int friendIndex)
     {
-        ColorCheckCube cube = colorCheckCubeArray[color.ToInt()][index].GetComponent<ColorCheckCube>();
-        if (cube.GetObjectType() != ObjectType.NULL)
+        Touch cube = StageCube.Instance.touchArray[color.ToInt()][index];
+        if (cube.Obj != null)
             return false;
         for (int i = 0; i < 3; i++)
         {

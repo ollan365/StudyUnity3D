@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8735862760862951022}
   - component: {fileID: 789826866052668765}
   - component: {fileID: 9915054925414412}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Portal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,9 +119,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectManager: {fileID: 0}
-  position: {fileID: 0}
-  height: 3
-  type: 5
-  objectStatus: {fileID: 0}
-  hp: 0
-  weapon: {fileID: 11400000, guid: 9ce03de5033f4a04f999f4f635258b52, type: 2}
+  hpSlider: {fileID: 0}
