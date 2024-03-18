@@ -10,9 +10,9 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private float rotateSpeed;
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
-    private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, SUMMONS_SELECTED }
+    private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
     private PlayerTurnStatus playerTurnStatus;
-    private int summonsIndex;
+    private int itemID;
 
     [SerializeField] private StageManager stageManager;
     [SerializeField] private ObjectManager objectManager;
@@ -71,49 +71,11 @@ public class CubeManager : MonoBehaviour
                 if (hit.collider.gameObject.layer == 6) // 큐브 너머의 오브젝트는 확인 안 함
                     break;
 
-                Object script = hit.collider.gameObject.GetComponent<Object>();
+                Object obj = hit.collider.gameObject.GetComponent<Object>();
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
-                if (script != null && mouseStartObject == hit.collider.gameObject) // 오브젝트를 클릭했다면
+                if (obj != null && mouseStartObject == hit.collider.gameObject) // 오브젝트를 클릭했다면
                 {
-                    if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                    {
-                        Debug.Log("Already object");
-                    }
-                    else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.MERCHANT)
-                    {
-                        if(GetComponent<ColorCheckManager>().Move(script.Color, script.Index, false))
-                            OpenMerchantInventory();
-                        else
-                            Debug.Log($"{script.Type}");
-                    }
-                    else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.TREASURE)
-                    {
-                        if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
-                            objectManager.OpenTreasureBox(script.gameObject);
-                        else
-                            Debug.Log($"{script.Type}");
-                    }
-                    else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && script.Type == ObjectType.PORTAL)
-                    {
-                        if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
-                            stageManager.NextStage();
-                        else
-                            Debug.Log($"{script.Type}");
-                    }
-                    else if(script.Type != ObjectType.PLAYER && script.Type != ObjectType.FRIEND) // 일단은 player 말고는 이동이 불가능
-                    {
-                        Debug.Log($"{script.Type}");
-                    }
-                    else if (playerTurnStatus == PlayerTurnStatus.NORMAL)
-                    {
-                        playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
-                        gameObject.GetComponent<ColorCheckManager>().CharacterSelect(mouseStartObject);
-                    }
-                    else if(playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
-                    {
-                        playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject)
-                            ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
-                    }
+                    ClickObject(obj);
                     mouseStartObject = null;
                     return;
                 }
@@ -154,50 +116,12 @@ public class CubeManager : MonoBehaviour
                         stageManager.StageTextChange(true, StageText.MOVE, -1);
 
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                    playerTurnStatus = stageManager.SummonsFriend(script.Color, script.Index, summonsIndex)
+                    playerTurnStatus = stageManager.SummonsFriend(script.Color, script.Index, itemID)
                         ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.SUMMONS_SELECTED;
             }
             else
             {
-                if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                {
-                    Debug.Log("Already object");
-                }
-                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.MERCHANT)
-                {
-                    if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, false))
-                        OpenMerchantInventory();
-                    else
-                        Debug.Log($"{type}");
-                }
-                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.TREASURE)
-                {
-                    if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
-                        objectManager.OpenTreasureBox(script.Obj.gameObject);
-                    else
-                        Debug.Log($"{type}");
-                }
-                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED && type == ObjectType.PORTAL)
-                {
-                    if (GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
-                        stageManager.NextStage();
-                    else
-                        Debug.Log($"{type}");
-                }
-                else if (type != ObjectType.PLAYER && type != ObjectType.FRIEND)
-                {
-                    Debug.Log($"{type}");
-                }
-                else if (playerTurnStatus == PlayerTurnStatus.NORMAL)
-                {
-                    playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
-                    gameObject.GetComponent<ColorCheckManager>().CharacterSelect(script.Obj.gameObject);
-                }
-                else if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
-                {
-                    playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(script.Obj.gameObject)
-                            ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
-                }
+                ClickObject(script.Obj);
                 mouseStartObject = null;
             }
             return;
@@ -312,18 +236,80 @@ public class CubeManager : MonoBehaviour
         }
     }
 
-    public void SelectSummonsButton(int friendIndex)
+    public void SwitchPlayerTurnStatus(int itemIndex, ItemType itemType)
     {
-        if (playerTurnStatus == PlayerTurnStatus.NORMAL && stageManager.StatusOfStage == StageStatus.PLAYER)
+        switch (itemType)
         {
-            playerTurnStatus = PlayerTurnStatus.SUMMONS_SELECTED;
-            summonsIndex = friendIndex;
-            Debug.Log("summons btn selected!");
+            case ItemType.SCROLL:
+                if (playerTurnStatus == PlayerTurnStatus.NORMAL && stageManager.StatusOfStage == StageStatus.PLAYER)
+                {
+                    playerTurnStatus = PlayerTurnStatus.SUMMONS_SELECTED;
+                    itemID = itemIndex;
+                    Debug.Log("summons btn selected!");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
+                    playerTurnStatus = PlayerTurnStatus.NORMAL;
+                break;
+            case ItemType.PORTION:
+                if (playerTurnStatus == PlayerTurnStatus.NORMAL && stageManager.StatusOfStage == StageStatus.PLAYER)
+                {
+                    playerTurnStatus = PlayerTurnStatus.PORTION_SELECTED;
+                    itemID = itemIndex;
+                    Debug.Log("portion selected!");
+                }
+                else if (playerTurnStatus == PlayerTurnStatus.PORTION_SELECTED)
+                    playerTurnStatus = PlayerTurnStatus.NORMAL;
+                break;
+
+
         }
-        else if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-            playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
 
+    private void ClickObject(Object obj)
+    {
+        switch (playerTurnStatus)
+        {
+            case PlayerTurnStatus.CHARACTER_SELECTED:
+                switch (obj.Type)
+                {
+                    case ObjectType.MERCHANT:
+                        if (GetComponent<ColorCheckManager>().Move(obj.Color, obj.Index, false))
+                            OpenMerchantInventory();
+                        break;
+                    case ObjectType.TREASURE:
+                        if (GetComponent<ColorCheckManager>().Move(obj.Color, obj.Index, true))
+                            objectManager.OpenTreasureBox(obj.gameObject);
+                        break;
+                    case ObjectType.PORTAL:
+                        if (GetComponent<ColorCheckManager>().Move(obj.Color, obj.Index, true))
+                            stageManager.NextStage();
+                        break;
+                    case ObjectType.PLAYER:
+                    case ObjectType.FRIEND:
+                        playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject)
+                            ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
+                        break;
+                }
+                break;
+            case PlayerTurnStatus.NORMAL:
+                if (obj.Type == ObjectType.PLAYER || obj.Type == ObjectType.FRIEND)
+                {
+                    playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
+                    gameObject.GetComponent<ColorCheckManager>().CharacterSelect(mouseStartObject);
+                }
+                break;
+            case PlayerTurnStatus.PORTION_SELECTED:
+                if (obj.Type == ObjectType.PLAYER || obj.Type == ObjectType.FRIEND)
+                {
+                    stageManager.UsePortion(itemID, obj.gameObject);
+                    objectManager.UseItem(ItemType.PORTION, itemID);
+                }
+                break;
+            case PlayerTurnStatus.SUMMONS_SELECTED:
+            case PlayerTurnStatus.TURN:
+                break;
+        }
+    }
     private void OpenMerchantInventory()
     {
         objectManager.ChangeShop();

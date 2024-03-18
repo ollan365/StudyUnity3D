@@ -27,7 +27,7 @@ public class StaticManager : MonoBehaviour
     public Dictionary<int, List<string>> stageEnemyDatas;
     public Dictionary<int, string> enemyDatas;
     public Dictionary<int, Dictionary<int, string>> friendDatas;
-    public Dictionary<int, string> itemDatas;
+    public Dictionary<int, Portion> itemDatas;
     public Dictionary<int, List<string>> weaponDatas;
 
     public KeyValuePair<ItemObject, int>[] inventory;

@@ -325,7 +325,7 @@ public class StageManager : MonoBehaviour
 
         for (int i = 0; i < enemyAttackOrder.Count; i++)
         {
-            if (i < friendAttackOrder.Count) // 동료도 있다면
+            if (i < friendAttackOrder.Count && friend[friendAttackOrder[i].Value].activeSelf) // 동료도 있다면
             {
                 Object friendObj = friend[friendAttackOrder[i].Value].GetComponent<Object>();
                 attackableEnemy = AttackableObject(friendObj.AttackType, friendObj.Color, friendObj.Index, ObjectType.ENEMY);
@@ -555,5 +555,21 @@ public class StageManager : MonoBehaviour
             }
         }
         return false;
+    }
+    public void UsePortion(int itemIndex, GameObject playerTeam)
+    {
+        GameObject p = player;
+
+        foreach (GameObject f in friend)
+            if (playerTeam == f)
+                p = f;
+
+        Portion portion = StaticManager.Instance.itemDatas[itemIndex];
+        switch (portion.StatusEffectType)
+        {
+            case StatusEffect.HP:
+                p.GetComponent<Object>().HP += portion.Value;
+                break;
+        }
     }
 }

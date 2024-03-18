@@ -155,22 +155,15 @@ public class ObjectManager : MonoBehaviour
                     StaticManager.Instance.PlayerWeapon = ((Weapon)StaticManager.Instance.inventory[index].Key);
                 break;
             case ItemType.PORTION:
-                Portion p = (Portion)StaticManager.Instance.inventory[index].Key;
-                switch (p.StatusEffectType)
-                {
-                    case StatusEffect.HP:
-                        player.HP += p.Value;
-                        StaticManager.Instance.inventory[index] = new(StaticManager.Instance.inventory[index].Key, StaticManager.Instance.inventory[index].Value - 1);
-                        break;
-                }
+                cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].Key.ID, ItemType.PORTION);
                 break;
             case ItemType.SCROLL:
-                cubeManager.SelectSummonsButton(StaticManager.Instance.inventory[index].Key.ID);
+                cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].Key.ID, ItemType.SCROLL);
                 break;
         }
         ChangePlayerInventory();
     }
-    private void UseItem(ItemType itemType, int itemIndex)
+    public void UseItem(ItemType itemType, int itemIndex)
     {
         for(int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
