@@ -14,20 +14,7 @@ public class Touch : MonoBehaviour
     [SerializeField] private int positionIndex;
     public int Index { get => positionIndex; }
     [SerializeField] private Vector3 direction;
-    public Transform ObjectPostion
-    {
-        get
-        {
-            RaycastHit[] hits = Physics.RaycastAll(transform.position, direction);
-
-            foreach (RaycastHit hit in hits)
-            {
-                if (hit.collider.gameObject.layer == 8)
-                    return hit.collider.gameObject.transform.GetChild(0).transform;
-            }
-            return null;
-        }
-    }
+    public Transform ObjectPostion { get => colorPointCube.transform.GetChild(0).transform; }
     public Object Obj
     {
         get
@@ -36,4 +23,12 @@ public class Touch : MonoBehaviour
             else return ObjectPostion.GetChild(0).GetComponent<Object>();
         }
     }
+
+    [SerializeField] private GameObject colorPointCube;
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == 8)
+            colorPointCube = other.gameObject;
+    }
+
 }

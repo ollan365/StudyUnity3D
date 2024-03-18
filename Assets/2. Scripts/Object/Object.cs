@@ -70,7 +70,7 @@ public class Object : MonoBehaviour
     public int Index { get => GetPosition().Index; }
     private Touch GetPosition()
     {
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.up, 30);
+        RaycastHit[] hits = Physics.RaycastAll(transform.position, -transform.up, 10);
         foreach (RaycastHit hit in hits)
         {
             Touch touchComponent = hit.collider.gameObject.GetComponent<Touch>();

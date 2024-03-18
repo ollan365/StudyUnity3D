@@ -40,6 +40,7 @@ public class StageManager : MonoBehaviour
                 case StageStatus.PLAYER:
                     for (int i = 0; i < 6; i++)
                         colorCheckManager.BingoCheck(i, false);
+                    colorCheckManager.ToNextBingo();
                     stageTexts[0].text = $"{StaticManager.Instance.Stage}Ãþ PLAYER";
                     StageTextChange(true, StageText.ALL, 0);
                     break;
@@ -251,29 +252,29 @@ public class StageManager : MonoBehaviour
         additionalMoveCount = 0;
         for(int i = 0; i < 6; i++) // ºù°í È®ÀÎ
         {
-            int bingo = colorCheckManager.BingoCheck(i, true);
+            BingoStatus bingo = colorCheckManager.BingoCheck(i, true);
             int random = Random.Range(0, 2);
 
-            if (bingo == BINGO_DEFAULT) continue;
+            if (bingo == BingoStatus.DEFAULT) continue;
 
             StartCoroutine(CubeRotate(i.ToColor())); // ºù°í ¿Ï¼º ½Ã ±× ¸éÀ¸·Î È¸Àü
             while (isCubeMove) yield return new WaitForFixedUpdate();
 
             if (random == 0)
             {
-                if (bingo == BINGO_ALL || player.GetComponent<Object>().Color.ToInt() == i)
+                if (bingo == BingoStatus.ALL || player.GetComponent<Object>().Color.ToInt() == i)
                     player.GetComponent<Object>().HP_Percent(10);
                 foreach(GameObject f in friend)
                 {
                     if (f == null || !f.activeSelf) continue;
 
-                    if (bingo == BINGO_ALL || f.GetComponent<Object>().Color.ToInt() == i)
+                    if (bingo == BingoStatus.ALL || f.GetComponent<Object>().Color.ToInt() == i)
                         f.GetComponent<Object>().HP_Percent(10);
                 }
             }
             else
             {
-                if (bingo == BINGO_ONE) additionalMoveCount++;
+                if (bingo == BingoStatus.ONE) additionalMoveCount++;
                 else changeCount++;
             }
 

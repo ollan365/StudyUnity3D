@@ -138,73 +138,73 @@ public class ColorCheckManager : MonoBehaviour
 
         MovableCubeSetting(index);
     }
-    public int BingoCheck(int color, bool turnChange)
+    public BingoStatus BingoCheck(int sideColor, bool turnChange)
     {
-        return 1;
-    }
-    //{
-    //    int count = 0;
-    //    Colors[] colorOfSide = new Colors[9];
-    //    int[] colorBingo = new int[9];
-
-    //    for (int i = 0; i < 9; i++)
-    //    {
-    //        colorOfSide[i] = StageCube.Instance.touchArray[color][i].Color;
-    //        colorBingo[i] = 0;
-    //    }
-
-    //    if (colorOfSide[0] == colorOfSide[1] && colorOfSide[1] == colorOfSide[2])
-    //        colorBingo[colorOfSide[0].ToInt()]++;
-    //    if (colorOfSide[3] == colorOfSide[4] && colorOfSide[4] == colorOfSide[5])
-    //        colorBingo[colorOfSide[3].ToInt()]++;
-    //    if (colorOfSide[6] == colorOfSide[7] && colorOfSide[7] == colorOfSide[8])
-    //        colorBingo[colorOfSide[6].ToInt()]++;
-    //    if (colorOfSide[0] == colorOfSide[3] && colorOfSide[3] == colorOfSide[6])
-    //        colorBingo[colorOfSide[0].ToInt()]++;
-    //    if (colorOfSide[1] == colorOfSide[4] && colorOfSide[4] == colorOfSide[7])
-    //        colorBingo[colorOfSide[1].ToInt()]++;
-    //    if (colorOfSide[2] == colorOfSide[5] && colorOfSide[5] == colorOfSide[8])
-    //        colorBingo[colorOfSide[2].ToInt()]++;
-
-    //    //if (!IsAllCoolTime(bingoStatus[color]) && count == 6)
-    //    //    bingoTexts[centerCubeArray[color].layer - 8].text = "ALL";
-    //    //else if (bingoStatus[color] != BingoStatus.DEFAULT)
-    //    //    bingoTexts[centerCubeArray[color].layer - 8].text = "COOL TIME";
-    //    //else if (count > 0)
-    //    //    bingoTexts[centerCubeArray[color].layer - 8].text = "ONE";
-    //    //else
-    //    //    bingoTexts[centerCubeArray[color].layer - 8].text = "NO";
-
-    //    //if (turnChange)
-    //    //{
-    //    //    if (!IsAllCoolTime(bingoStatus[color]) && count == 6)
-    //    //    {
-    //    //        bingoStatus[color] = BingoStatus.ALL_1;
-    //    //        return BINGO_ALL;
-    //    //    }
-    //    //    else if(bingoStatus[color] == BingoStatus.DEFAULT && count > 0)
-    //    //    {
-    //    //        bingoStatus[color] = BingoStatus.ONE_1;
-    //    //        return BINGO_ONE;
-    //    //    }
-    //    //    ToNext(bingoStatus[color]);
-    //    //}
-    //    //return BINGO_DEFAULT;
-    //}
-    private BingoStatus ToNext(BingoStatus bingoStatus)
-    {
-        switch (bingoStatus)
+        int[] colorOfSide = new int[9];
+        int[] bingoNum = new int[6];
+        
+        for (int i = 0; i < 9; i++)
         {
-            case BingoStatus.ONE_1: return BingoStatus.ONE_2;
-            case BingoStatus.ONE_2: return BingoStatus.ONE_2;
-            case BingoStatus.ONE_3: return BingoStatus.DEFAULT;
-
-            case BingoStatus.ALL_1: return BingoStatus.ALL_2;
-            case BingoStatus.ALL_2: return BingoStatus.ALL_3;
-            case BingoStatus.ALL_3: return BingoStatus.DEFAULT;
-
-            default: return BingoStatus.DEFAULT;
+            colorOfSide[i] = StageCube.Instance.touchArray[sideColor][i].Color.ToInt();
+            bingoNum[i % 6] = 0; // %는 그냥 배열 크기가 6이라 에러 안 나도록 해둔거
         }
+
+        if (colorOfSide[0] == colorOfSide[1] && colorOfSide[1] == colorOfSide[2])
+            bingoNum[colorOfSide[0]]++;
+        if (colorOfSide[3] == colorOfSide[4] && colorOfSide[4] == colorOfSide[5])
+            bingoNum[colorOfSide[3]]++;
+        if (colorOfSide[6] == colorOfSide[7] && colorOfSide[7] == colorOfSide[8])
+            bingoNum[colorOfSide[6]]++;
+        if (colorOfSide[0] == colorOfSide[3] && colorOfSide[3] == colorOfSide[6])
+            bingoNum[colorOfSide[0]]++;
+        if (colorOfSide[1] == colorOfSide[4] && colorOfSide[4] == colorOfSide[7])
+            bingoNum[colorOfSide[1]]++;
+        if (colorOfSide[2] == colorOfSide[5] && colorOfSide[5] == colorOfSide[8])
+            bingoNum[colorOfSide[2]]++;
+        
+
+        for (int i = 0; i < 6; i++)
+        {
+            if (!IsAllCoolTime(bingoStatus[i]) && bingoNum[i] == 6)
+            {
+                bingoStatus[i] = BingoStatus.ALL;
+                bingoTexts[i].text = "ALL";
+            }
+            else if (bingoStatus[i] != BingoStatus.DEFAULT && bingoStatus[i] != BingoStatus.ONE)
+                bingoTexts[i].text = "COOL TIME";
+            else if (bingoNum[i] > 0 || bingoStatus[i] == BingoStatus.ONE)
+            {
+                bingoStatus[i] = BingoStatus.ONE;
+                bingoTexts[i].text = "ONE";
+            }
+            else
+                bingoTexts[i].text = "NO";
+        }
+
+        bool isOneBingo = false;
+        foreach (int i in bingoNum)
+        {
+            if (i == 6) return BingoStatus.ALL;
+            else if (i > 0) isOneBingo = true;
+        }
+
+        return isOneBingo ? BingoStatus.ONE : BingoStatus.DEFAULT;
+    }
+    public void ToNextBingo()
+    {
+        for(int i = 0;i<bingoStatus.Length;i++)
+            switch (bingoStatus[i])
+            {
+                case BingoStatus.ONE: bingoStatus[i] = BingoStatus.ONE_1; break;
+                case BingoStatus.ONE_1: bingoStatus[i] = BingoStatus.ONE_2; break;
+                case BingoStatus.ONE_2: bingoStatus[i] = BingoStatus.ONE_3; break;
+
+                case BingoStatus.ALL: bingoStatus[i] = BingoStatus.ALL_1; break;
+                case BingoStatus.ALL_1: bingoStatus[i] = BingoStatus.ALL_2; break;
+                case BingoStatus.ALL_2: bingoStatus[i] = BingoStatus.ALL_3; break;
+
+                default: bingoStatus[i] = BingoStatus.DEFAULT; break;
+            }
     }
     private bool IsAllCoolTime(BingoStatus bingoStatus)
     {
