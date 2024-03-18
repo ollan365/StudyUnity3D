@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2532675502615595633}
   - component: {fileID: 2055518778351654959}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 8735862760862951022}
   - component: {fileID: 789826866052668765}
   - component: {fileID: 9915054925414412}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,9 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectManager: {fileID: 0}
-  weapon: {fileID: 11400000, guid: 1f4f57d98be50384b99f7dee0c664a3e, type: 2}
   hpSlider: {fileID: 2055518778351654959}
-  type: 2
 --- !u!1 &916393274587811476
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +219,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 102423339133717651}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -259,7 +257,7 @@ GameObject:
   - component: {fileID: 4891754634002431117}
   - component: {fileID: 6664219210655502366}
   - component: {fileID: 2254926945955179244}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Object Status
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -336,7 +334,7 @@ GameObject:
   - component: {fileID: 5266409616267007547}
   - component: {fileID: 8926365630552502856}
   - component: {fileID: 4171488624047815108}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Canvas World Space
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -437,7 +435,7 @@ GameObject:
   - component: {fileID: 295834205252348392}
   - component: {fileID: 8476955881670160736}
   - component: {fileID: 8881538357215367229}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -512,7 +510,7 @@ GameObject:
   - component: {fileID: 630356547839856288}
   - component: {fileID: 4521427385411877327}
   - component: {fileID: 1346924700112093976}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}

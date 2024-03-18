@@ -54,7 +54,5 @@ public static class Constants
     public enum StatusEffect { HP, SLIENCE, BLIND, RESCTRICTION, BETRAYAL, ALL }
     public enum StageText { MONSTER, MOVE, ROTATE, WEAPON_CHANGE, ALL }
     public enum BingoEffect { SILENCE, RECOVERY, ADD_REWEAPON, ADD_ROTATE, GOLD, ALL_KILL }
-    public enum BingoStatus { DEFAULT, ONE_1, ONE_2, ONE_3, ALL_1, ALL_2, ALL_3 }
-    public const int BINGO_DEFAULT = 0, BINGO_ONE = 1, BINGO_ALL = 2;
-
+    public enum BingoStatus { DEFAULT, ONE, ONE_1, ONE_2, ONE_3, ALL, ALL_1, ALL_2, ALL_3 }
 }
