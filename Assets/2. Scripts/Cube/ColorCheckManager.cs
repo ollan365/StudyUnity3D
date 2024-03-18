@@ -8,8 +8,6 @@ public class ColorCheckManager : MonoBehaviour
     [SerializeField] private Text[] bingoTexts;
     private BingoStatus[] bingoStatus;
 
-    [SerializeField] private GameObject[] centerCubeArray;
-
     private GameObject selectedCharacter;
     private bool[] movableCube;
     private void Awake()
@@ -18,15 +16,6 @@ public class ColorCheckManager : MonoBehaviour
         for (int i = 0; i < 9; i++)
             bingoStatus[i] = BingoStatus.DEFAULT;
         movableCube = new bool[9];
-    }
-
-    public ObjectType CheckCubeObject(Colors color, int index)
-    {
-        return StageCube.Instance.colorArray[color.ToInt()][index].GetComponent<ColorCheckCube>().GetObjectType();
-    }
-    public GameObject GetCubeObject(Colors color, int index)
-    {
-        return StageCube.Instance.colorArray[color.ToInt()][index].GetComponent<ColorCheckCube>().GetObject();
     }
     public void CharacterSelect(GameObject character)
     {
@@ -102,7 +91,7 @@ public class ColorCheckManager : MonoBehaviour
         {
             StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(false);
 
-            ObjectType obj = StageCube.Instance.colorArray[selectedCharacterColor][i].GetComponent<ColorCheckCube>().GetObjectType();
+            ObjectType obj = StageCube.Instance.touchArray[selectedCharacterColor][i].Obj.Type;
             if (obj == ObjectType.NULL || obj == ObjectType.PORTAL || obj == ObjectType.TREASURE)
                 StageCube.Instance.colorArray[selectedCharacterColor][i].SetActive(movableCube[i]);
         }
@@ -121,7 +110,7 @@ public class ColorCheckManager : MonoBehaviour
     {
         MovableCubeSetting(-1);
 
-        Transform parent = StageCube.Instance.colorArray[color.ToInt()][index].GetComponent<ColorCheckCube>().colorPointCube.transform.GetChild(0).transform;
+        Transform parent = StageCube.Instance.touchArray[color.ToInt()][index].ObjectPostion;
 
         selectedCharacter.transform.parent = parent;
 
@@ -149,6 +138,87 @@ public class ColorCheckManager : MonoBehaviour
 
         MovableCubeSetting(index);
     }
+    public int BingoCheck(int color, bool turnChange)
+    {
+        return 1;
+    }
+    //{
+    //    int count = 0;
+    //    Colors[] colorOfSide = new Colors[9];
+    //    int[] colorBingo = new int[9];
+
+    //    for (int i = 0; i < 9; i++)
+    //    {
+    //        colorOfSide[i] = StageCube.Instance.touchArray[color][i].Color;
+    //        colorBingo[i] = 0;
+    //    }
+
+    //    if (colorOfSide[0] == colorOfSide[1] && colorOfSide[1] == colorOfSide[2])
+    //        colorBingo[colorOfSide[0].ToInt()]++;
+    //    if (colorOfSide[3] == colorOfSide[4] && colorOfSide[4] == colorOfSide[5])
+    //        colorBingo[colorOfSide[3].ToInt()]++;
+    //    if (colorOfSide[6] == colorOfSide[7] && colorOfSide[7] == colorOfSide[8])
+    //        colorBingo[colorOfSide[6].ToInt()]++;
+    //    if (colorOfSide[0] == colorOfSide[3] && colorOfSide[3] == colorOfSide[6])
+    //        colorBingo[colorOfSide[0].ToInt()]++;
+    //    if (colorOfSide[1] == colorOfSide[4] && colorOfSide[4] == colorOfSide[7])
+    //        colorBingo[colorOfSide[1].ToInt()]++;
+    //    if (colorOfSide[2] == colorOfSide[5] && colorOfSide[5] == colorOfSide[8])
+    //        colorBingo[colorOfSide[2].ToInt()]++;
+
+    //    //if (!IsAllCoolTime(bingoStatus[color]) && count == 6)
+    //    //    bingoTexts[centerCubeArray[color].layer - 8].text = "ALL";
+    //    //else if (bingoStatus[color] != BingoStatus.DEFAULT)
+    //    //    bingoTexts[centerCubeArray[color].layer - 8].text = "COOL TIME";
+    //    //else if (count > 0)
+    //    //    bingoTexts[centerCubeArray[color].layer - 8].text = "ONE";
+    //    //else
+    //    //    bingoTexts[centerCubeArray[color].layer - 8].text = "NO";
+
+    //    //if (turnChange)
+    //    //{
+    //    //    if (!IsAllCoolTime(bingoStatus[color]) && count == 6)
+    //    //    {
+    //    //        bingoStatus[color] = BingoStatus.ALL_1;
+    //    //        return BINGO_ALL;
+    //    //    }
+    //    //    else if(bingoStatus[color] == BingoStatus.DEFAULT && count > 0)
+    //    //    {
+    //    //        bingoStatus[color] = BingoStatus.ONE_1;
+    //    //        return BINGO_ONE;
+    //    //    }
+    //    //    ToNext(bingoStatus[color]);
+    //    //}
+    //    //return BINGO_DEFAULT;
+    //}
+    private BingoStatus ToNext(BingoStatus bingoStatus)
+    {
+        switch (bingoStatus)
+        {
+            case BingoStatus.ONE_1: return BingoStatus.ONE_2;
+            case BingoStatus.ONE_2: return BingoStatus.ONE_2;
+            case BingoStatus.ONE_3: return BingoStatus.DEFAULT;
+
+            case BingoStatus.ALL_1: return BingoStatus.ALL_2;
+            case BingoStatus.ALL_2: return BingoStatus.ALL_3;
+            case BingoStatus.ALL_3: return BingoStatus.DEFAULT;
+
+            default: return BingoStatus.DEFAULT;
+        }
+    }
+    private bool IsAllCoolTime(BingoStatus bingoStatus)
+    {
+        switch (bingoStatus)
+        {
+            case BingoStatus.ALL_1:
+            case BingoStatus.ALL_2:
+            case BingoStatus.ALL_3: return true;
+
+            default: return false;
+        }
+    }
+
+
     //private IEnumerator MouseCheck()
     //{
     //    Colors selectedColor = selectedCharacter.GetComponent<Object>().GetPosition().Color;
@@ -160,7 +230,7 @@ public class ColorCheckManager : MonoBehaviour
     //        RaycastHit[] hits = Physics.RaycastAll(ray);
 
     //        // ��� ���� �浹���� ���� �ݺ�
-            
+
     //        foreach (GameObject cube in nowCover)
     //        {
     //            bool isMouse = false;
@@ -208,7 +278,7 @@ public class ColorCheckManager : MonoBehaviour
     //            }
     //            break;
     //        }
-            
+
     //        yield return new WaitForFixedUpdate();
     //    }
     //    foreach(GameObject cube in nowCover)
@@ -229,76 +299,4 @@ public class ColorCheckManager : MonoBehaviour
     //        }
     //    yield return new WaitForFixedUpdate();
     //}
-    public int BingoCheck(int color, bool turnChange)
-    {
-        int count = 0;
-        bool[] isColorMatch = new bool[9];
-
-        for (int j = 0; j < 9; j++)
-            isColorMatch[j] = centerCubeArray[color].layer == StageCube.Instance.colorArray[color][j].layer;
-
-        if (isColorMatch[0] && isColorMatch[1] && isColorMatch[2])
-            count++;
-        if (isColorMatch[3] && isColorMatch[4] && isColorMatch[5])
-            count++;
-        if (isColorMatch[6] && isColorMatch[7] && isColorMatch[8])
-            count++;
-        if (isColorMatch[0] && isColorMatch[3] && isColorMatch[6])
-            count++;
-        if (isColorMatch[1] && isColorMatch[4] && isColorMatch[7])
-            count++;
-        if (isColorMatch[2] && isColorMatch[5] && isColorMatch[8])
-            count++;
-
-        if (!IsAllCoolTime(bingoStatus[color]) && count == 6)
-            bingoTexts[centerCubeArray[color].layer - 8].text = "ALL";
-        else if (bingoStatus[color] != BingoStatus.DEFAULT)
-            bingoTexts[centerCubeArray[color].layer - 8].text = "COOL TIME";
-        else if (count > 0)
-            bingoTexts[centerCubeArray[color].layer - 8].text = "ONE";
-        else
-            bingoTexts[centerCubeArray[color].layer - 8].text = "NO";
-
-        if (turnChange)
-        {
-            if (!IsAllCoolTime(bingoStatus[color]) && count == 6)
-            {
-                bingoStatus[color] = BingoStatus.ALL_1;
-                return BINGO_ALL;
-            }
-            else if(bingoStatus[color] == BingoStatus.DEFAULT && count > 0)
-            {
-                bingoStatus[color] = BingoStatus.ONE_1;
-                return BINGO_ONE;
-            }
-            ToNext(bingoStatus[color]);
-        }
-        return BINGO_DEFAULT;
-    }
-    private BingoStatus ToNext(BingoStatus bingoStatus)
-    {
-        switch (bingoStatus)
-        {
-            case BingoStatus.ONE_1: return BingoStatus.ONE_2;
-            case BingoStatus.ONE_2: return BingoStatus.ONE_2;
-            case BingoStatus.ONE_3: return BingoStatus.DEFAULT;
-
-            case BingoStatus.ALL_1: return BingoStatus.ALL_2;
-            case BingoStatus.ALL_2: return BingoStatus.ALL_3;
-            case BingoStatus.ALL_3: return BingoStatus.DEFAULT;
-
-            default: return BingoStatus.DEFAULT;
-        }
-    }
-    private bool IsAllCoolTime(BingoStatus bingoStatus)
-    {
-        switch (bingoStatus)
-        {
-            case BingoStatus.ALL_1:
-            case BingoStatus.ALL_2:
-            case BingoStatus.ALL_3: return true;
-
-            default: return false;
-        }
-    }
 }
