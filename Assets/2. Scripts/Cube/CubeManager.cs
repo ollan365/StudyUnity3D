@@ -307,7 +307,7 @@ public class CubeManager : MonoBehaviour
                 break;
         }
     }
-    public void DisableMoveableBlock(GameObject character)
+    public void DisableMoveableBlock(GameObject character) // 이거 왜 있는거더라...?
     {
         playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(character)
             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;

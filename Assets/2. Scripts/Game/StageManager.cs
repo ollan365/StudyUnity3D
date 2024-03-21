@@ -37,12 +37,8 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject player;
     public Object Player { get => player.GetComponent<Object>(); }
 
-    //0320add
     [SerializeField] private GameObject stageStartPanel;
     [SerializeField] private GameObject gameOverPanel;
-    //[SerializeField] private Camera mainCam;
-    
-
 
     private StageStatus status;
     public StageStatus StatusOfStage
@@ -193,23 +189,12 @@ public class StageManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-
-
-        //stage start panel 0320
         stageStartPanel.SetActive(true);
 
         yield return new WaitForSeconds(0.5f);
         stageStartPanel.SetActive(false);
 
         StatusOfStage = StageStatus.PLAYER;
-
-        //float timer = 0;
-        //while(timer < 1)
-        //{
-        //    Camera.main.transform.position = Vector3.Lerp(Camera.main.gameObject.transform.position, player.transform.position, timer);
-        //    yield return new WaitForSeconds(0.1f);
-        //    timer += 0.1f;
-        //}
 
     }
     public void ChangeStatus()
@@ -221,7 +206,7 @@ public class StageManager : MonoBehaviour
         }
         else if(StatusOfStage == StageStatus.FIGHT)
         {
-            StatusOfStage = StageStatus.PLAYER;
+            StatusOfStage = StageStatus.ENV;
         }
     }
     public void ClearStage()
