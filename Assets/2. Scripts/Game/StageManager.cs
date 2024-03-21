@@ -23,7 +23,12 @@ public class StageManager : MonoBehaviour
     private GameObject[] enemy, friend, treasure;
     [SerializeField] private GameObject player;
 
+    //0320add
+    [SerializeField] private GameObject stageStartPanel;
     [SerializeField] private GameObject gameOverPanel;
+    //[SerializeField] private Camera mainCam;
+    
+
 
     private StageStatus status;
     public StageStatus StatusOfStage
@@ -121,9 +126,15 @@ public class StageManager : MonoBehaviour
     }
     private IEnumerator StartStage()
     {
+        //섞기 전 플레이어 비활성화
+        player.SetActive(false);
+
         cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
         yield return new WaitForSeconds(10f);
+
+        //섞은 후 플레이어 활성화
+        player.SetActive(true);
 
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         int index = 0;
@@ -159,7 +170,24 @@ public class StageManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
+
+
+        //stage start panel 0320
+        stageStartPanel.SetActive(true);
+
+        yield return new WaitForSeconds(0.5f);
+        stageStartPanel.SetActive(false);
+
         StatusOfStage = StageStatus.PLAYER;
+
+        //float timer = 0;
+        //while(timer < 1)
+        //{
+        //    Camera.main.transform.position = Vector3.Lerp(Camera.main.gameObject.transform.position, player.transform.position, timer);
+        //    yield return new WaitForSeconds(0.1f);
+        //    timer += 0.1f;
+        //}
+
     }
     public void ChangeStatus()
     {
@@ -194,11 +222,19 @@ public class StageManager : MonoBehaviour
                 break;
             }
         }
+
+        changeCount = 9999;
+        moveCount = 9999;
+        rotateCount = 9999;
+        stageTexts[2].text = $"{moveCount} / {stageDatas[MOVE_COUNT] + additionalMoveCount}";
+        stageTexts[3].text = $"{rotateCount} / {stageDatas[ROTATE_COUNT]}";
+        stageTexts[4].text = $"{changeCount} / 3";
     }
     public void NextStage()
     {
         Debug.Log("Next Stage!");
     }
+
     private void GameOver()
     {
         gameOverPanel.SetActive(true);
@@ -249,6 +285,7 @@ public class StageManager : MonoBehaviour
 
     private IEnumerator Attack()
     {
+        
         additionalMoveCount = 0;
         for(int i = 0; i < 6; i++) // 빙고 확인
         {

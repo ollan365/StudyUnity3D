@@ -7,7 +7,7 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private GameObject[] turnPoints;
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
-    [SerializeField] private float rotateSpeed;
+    [SerializeField] private float rotateSpeed; //Cube Object Rotation Speed
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, SUMMONS_SELECTED }
@@ -25,7 +25,9 @@ public class CubeManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButton(2))
+
+
+        if (Input.GetMouseButton(2) &&(stageManager.StatusOfStage != StageStatus.INIT && stageManager.StatusOfStage != StageStatus.FIGHT))
         {
             transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
             transform.Rotate(Input.GetAxis("Mouse Y") * rotateSpeed, 0f, Input.GetAxis("Mouse Y") * rotateSpeed, Space.World);
@@ -329,4 +331,11 @@ public class CubeManager : MonoBehaviour
         objectManager.ChangeShop();
         shopPopup.SetActive(true);
     }
+
+    public void DisableMoveableBlock(GameObject character)
+    {
+        playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(character)
+            ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
+    }
+
 }
