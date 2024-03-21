@@ -1,30 +1,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MouseOver : MonoBehaviour
 {
     MeshRenderer cubeColor;
-    
+    //true: black, false: origin color
+    private bool isGlittering = true;
 
-    private void Start()
+
+    private void Awake()
     {
         cubeColor = gameObject.GetComponent<MeshRenderer>();
     }
 
-    void OnMouseOver()
+    private void OnEnable()
+    {
+        StartCoroutine(Glittering());
+    }
+
+    private void OnMouseOver()
     {
         cubeColor.material.color = Color.blue;
     }
-     
-    void OnMouseExit()
+
+    private void OnMouseExit()
     {
-        cubeColor.material.color = Color.black;
+        if (isGlittering)
+            cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 0.7f);
+        else
+            cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 0);
     }
 
-    private void OnMouseUp()
+    private IEnumerator Glittering()
     {
-        cubeColor.material.color = Color.black;
+        int cnt = 0;
+        while (cnt < 100) {
+            
+            if (isGlittering)
+            {
+                cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 0.7f);
+                isGlittering = false;
+            }
+            else
+            {
+                cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 0);
+                isGlittering = true;
+            }
+            yield return new WaitForSecondsRealtime(0.7f);
+            cnt++;
+        }
+        
+        
     }
+
+
 
 }

@@ -32,6 +32,7 @@ public class ColorCheckManager : MonoBehaviour
         Debug.Log("character select cancel!");
         return true;
     }
+
     private void MovableCubeSetting(int index)
     {
         for (int i = 0; i < 9; i++)
