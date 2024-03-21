@@ -7,7 +7,6 @@ public class StaticManager : MonoBehaviour
     public static StaticManager Instance { get; private set; }
 
     [SerializeField] private int stage;
-    [SerializeField] private StageManager stageManager;
     [SerializeField] private Object player;
     public int Stage { get => stage; }
 
@@ -23,12 +22,19 @@ public class StaticManager : MonoBehaviour
     }
     private int gold;
     public int Gold { get => gold; set => gold = value; }
+
+    [SerializeField] private List<Portion> portionList;
+    [SerializeField] private List<Scroll> scrollList;
+    [SerializeField] private List<Weapon> weaponList;
+
     public Dictionary<int, string> stageDatas;
     public Dictionary<int, List<string>> stageEnemyDatas;
     public Dictionary<int, string> enemyDatas;
     public Dictionary<int, Dictionary<int, string>> friendDatas;
-    public Dictionary<int, Portion> itemDatas;
-    public Dictionary<int, List<string>> weaponDatas;
+
+    public Dictionary<int, Portion> portionDatas;
+    public Dictionary<int, Scroll> scrollDatas;
+    public Dictionary<int, Weapon> weaponDatas;
 
     public KeyValuePair<ItemObject, int>[] inventory;
 
@@ -38,7 +44,9 @@ public class StaticManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
             SaveExcelDatas();
+            SaveItemDatas();
         }
         else
         {
@@ -50,7 +58,7 @@ public class StaticManager : MonoBehaviour
             inventory[i] = new(playerWeapon, 0);
         inventory[0] = new(playerWeapon, 1);
 
-        stageManager.StageInit(stageDatas[stage]);
+        StageManager.Instance.StageInit(stageDatas[stage]);
         PlayerWeapon = playerWeapon;
     }
     private void SaveExcelDatas()
@@ -115,8 +123,15 @@ public class StaticManager : MonoBehaviour
             i += add;
         }
     }
+    private void SaveItemDatas()
+    {
+        foreach(Portion p in portionList)
+            portionDatas.Add(p.ID, p);
 
+        foreach (Scroll s in scrollList)
+            scrollDatas.Add(s.ID, s);
 
-    
-
+        foreach (Weapon w in weaponList)
+            weaponDatas.Add(w.ID, w);
+    }
 }

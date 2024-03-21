@@ -13,11 +13,6 @@ public class CubeManager : MonoBehaviour
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
     private PlayerTurnStatus playerTurnStatus;
     private int itemID;
-
-    [SerializeField] private StageManager stageManager;
-    [SerializeField] private ObjectManager objectManager;
-
-    [SerializeField] private GameObject shopPopup;
     private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
@@ -27,13 +22,13 @@ public class CubeManager : MonoBehaviour
     {
 
 
-        if (Input.GetMouseButton(2) &&(stageManager.StatusOfStage != StageStatus.INIT && stageManager.StatusOfStage != StageStatus.FIGHT))
+        if (Input.GetMouseButton(2) &&(StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
         {
             transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
             transform.Rotate(Input.GetAxis("Mouse Y") * rotateSpeed, 0f, Input.GetAxis("Mouse Y") * rotateSpeed, Space.World);
         }
     
-        if (Input.GetMouseButtonDown(0) && (stageManager.StatusOfStage == StageStatus.PLAYER || stageManager.StatusOfStage == StageStatus.END))
+        if (Input.GetMouseButtonDown(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
@@ -62,7 +57,7 @@ public class CubeManager : MonoBehaviour
                 }
             }
         }
-        if (Input.GetMouseButtonUp(0) && (stageManager.StatusOfStage == StageStatus.PLAYER || stageManager.StatusOfStage == StageStatus.END))
+        if (Input.GetMouseButtonUp(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
@@ -114,11 +109,11 @@ public class CubeManager : MonoBehaviour
             if (type == ObjectType.NULL)
             {
                 if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
-                    if (stageManager.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
-                        stageManager.StageTextChange(true, StageText.MOVE, -1);
+                    if (StageManager.Instance.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
+                        StageManager.Instance.StageTextChange(true, StageText.MOVE, -1);
 
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                    playerTurnStatus = stageManager.SummonsFriend(script.Color, script.Index, itemID)
+                    playerTurnStatus = StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID)
                         ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.SUMMONS_SELECTED;
             }
             else
@@ -146,9 +141,9 @@ public class CubeManager : MonoBehaviour
     }
     private void Turn(Colors color, int direction)
     {
-        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL || (!stageManager.StageTextChange(false, StageText.ROTATE, -1) && stageManager.StatusOfStage == StageStatus.PLAYER)) return;
-        if (stageManager.StatusOfStage == StageStatus.PLAYER)
-            if(!stageManager.StageTextChange(true, StageText.ROTATE, -1)) return;
+        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL || (!StageManager.Instance.StageTextChange(false, StageText.ROTATE, -1) && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)) return;
+        if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
+            if(!StageManager.Instance.StageTextChange(true, StageText.ROTATE, -1)) return;
 
         playerTurnStatus = PlayerTurnStatus.TURN;
 
@@ -243,7 +238,7 @@ public class CubeManager : MonoBehaviour
         switch (itemType)
         {
             case ItemType.SCROLL:
-                if (playerTurnStatus == PlayerTurnStatus.NORMAL && stageManager.StatusOfStage == StageStatus.PLAYER)
+                if (playerTurnStatus == PlayerTurnStatus.NORMAL && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
                 {
                     playerTurnStatus = PlayerTurnStatus.SUMMONS_SELECTED;
                     itemID = itemIndex;
@@ -253,7 +248,7 @@ public class CubeManager : MonoBehaviour
                     playerTurnStatus = PlayerTurnStatus.NORMAL;
                 break;
             case ItemType.PORTION:
-                if (playerTurnStatus == PlayerTurnStatus.NORMAL && stageManager.StatusOfStage == StageStatus.PLAYER)
+                if (playerTurnStatus == PlayerTurnStatus.NORMAL && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
                 {
                     playerTurnStatus = PlayerTurnStatus.PORTION_SELECTED;
                     itemID = itemIndex;
@@ -276,15 +271,15 @@ public class CubeManager : MonoBehaviour
                 {
                     case ObjectType.MERCHANT:
                         if (GetComponent<ColorCheckManager>().Move(obj.Color, obj.Index, false))
-                            OpenMerchantInventory();
+                            ObjectManager.Instance.ChangeShop();
                         break;
                     case ObjectType.TREASURE:
                         if (GetComponent<ColorCheckManager>().Move(obj.Color, obj.Index, true))
-                            objectManager.OpenTreasureBox(obj.gameObject);
+                            StageManager.Instance.StagePlayLogic.OpenTreasureBox(obj.gameObject);
                         break;
                     case ObjectType.PORTAL:
                         if (GetComponent<ColorCheckManager>().Move(obj.Color, obj.Index, true))
-                            stageManager.NextStage();
+                            StageManager.Instance.NextStage();
                         break;
                     case ObjectType.PLAYER:
                     case ObjectType.FRIEND:
@@ -303,8 +298,8 @@ public class CubeManager : MonoBehaviour
             case PlayerTurnStatus.PORTION_SELECTED:
                 if (obj.Type == ObjectType.PLAYER || obj.Type == ObjectType.FRIEND)
                 {
-                    stageManager.UsePortion(itemID, obj.gameObject);
-                    objectManager.UseItem(ItemType.PORTION, itemID);
+                    StageManager.Instance.StagePlayLogic.UsePortion(itemID, obj.gameObject);
+                    ObjectManager.Instance.UseItem(ItemType.PORTION, itemID);
                 }
                 break;
             case PlayerTurnStatus.SUMMONS_SELECTED:
@@ -312,16 +307,9 @@ public class CubeManager : MonoBehaviour
                 break;
         }
     }
-    private void OpenMerchantInventory()
-    {
-        objectManager.ChangeShop();
-        shopPopup.SetActive(true);
-    }
-
     public void DisableMoveableBlock(GameObject character)
     {
         playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(character)
             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
     }
-
 }

@@ -38,7 +38,7 @@ public static class Constants
     }
 
     public enum ObjectType { PLAYER, FRIEND, ENEMY, TREASURE, MERCHANT, PORTAL, NULL }
-    public enum StageStatus { INIT, PLAYER, FIGHT, END }
+    public enum StageStatus { INIT, PLAYER, ENV, FIGHT, END }
     public enum WeaponType { CAD, LAD, AP, NULL }
     public static WeaponType ToEnum(this string weaponType)
     {

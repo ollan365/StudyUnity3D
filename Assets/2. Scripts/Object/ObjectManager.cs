@@ -5,8 +5,8 @@ using static Constants;
 
 public class ObjectManager : MonoBehaviour
 {
+    public static ObjectManager Instance { get; private set; }
     [SerializeField] private CubeManager cubeManager;
-    [SerializeField] private StageManager stageManager;
     [SerializeField] private Object player;
     [SerializeField] private Text goldText;
 
@@ -21,6 +21,7 @@ public class ObjectManager : MonoBehaviour
 
     [SerializeField] private Transform dieObject;
 
+    [SerializeField] private GameObject shopPopup;
     private ItemObject[] allShopWeapon;
     private ItemObject[] allShopPortion;
     private ItemObject[] allShopScroll;
@@ -32,6 +33,9 @@ public class ObjectManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         shopItemArray = new KeyValuePair<ItemObject, int>[16];
     }
     
@@ -103,13 +107,6 @@ public class ObjectManager : MonoBehaviour
         obj.transform.parent = dieObject;
     }
 
-    public void OpenTreasureBox(GameObject obj)
-    {
-        StaticManager.Instance.Gold += obj.GetComponent<Object>().Damage;
-        obj.transform.position = dieObject.position;
-        obj.transform.parent = dieObject;
-    }
-
     public void ChangePlayerInventory()
     {
         goldText.text = StaticManager.Instance.Gold.ToString();
@@ -151,8 +148,8 @@ public class ObjectManager : MonoBehaviour
         switch (StaticManager.Instance.inventory[index].Key.ItemType)
         {
             case ItemType.WEAPON:
-                if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].Key && stageManager.StageTextChange(true, StageText.WEAPON_CHANGE, -1))
-                    StaticManager.Instance.PlayerWeapon = ((Weapon)StaticManager.Instance.inventory[index].Key);
+                if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].Key && StageManager.Instance.StageTextChange(true, StageText.WEAPON_CHANGE, -1))
+                    StaticManager.Instance.PlayerWeapon = (Weapon)StaticManager.Instance.inventory[index].Key;
                 break;
             case ItemType.PORTION:
                 cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].Key.ID, ItemType.PORTION);
@@ -163,11 +160,11 @@ public class ObjectManager : MonoBehaviour
         }
         ChangePlayerInventory();
     }
-    public void UseItem(ItemType itemType, int itemIndex)
+    public void UseItem(ItemType itemType, int itemID)
     {
         for(int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
-            if(itemType== StaticManager.Instance.inventory[i].Key.ItemType && itemIndex == StaticManager.Instance.inventory[i].Key.ID)
+            if(itemType == StaticManager.Instance.inventory[i].Key.ItemType && itemID == StaticManager.Instance.inventory[i].Key.ID)
             {
                 StaticManager.Instance.inventory[i] = new(StaticManager.Instance.inventory[i].Key, StaticManager.Instance.inventory[i].Value - 1);
                 break;
@@ -206,6 +203,8 @@ public class ObjectManager : MonoBehaviour
                     = allShopScroll[random].Cost.ToString();
             }
         }
+
+        shopPopup.SetActive(true);
     }
     public void Buy(int index)
     {

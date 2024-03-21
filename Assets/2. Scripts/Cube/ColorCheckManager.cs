@@ -93,7 +93,10 @@ public class ColorCheckManager : MonoBehaviour
             StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(false);
 
             ObjectType obj = StageCube.Instance.touchArray[selectedCharacterColor][i].ObjType;
-            if (obj == ObjectType.NULL || obj == ObjectType.PORTAL || obj == ObjectType.TREASURE)
+            if (obj != ObjectType.NULL && obj != ObjectType.PORTAL && obj != ObjectType.TREASURE)
+                movableCube[i] = false;
+
+            if (selectedCharacter.GetComponent<Object>().Type != ObjectType.ENEMY)
                 StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
         }
     }
