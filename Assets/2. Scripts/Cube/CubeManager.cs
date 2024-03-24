@@ -20,8 +20,6 @@ public class CubeManager : MonoBehaviour
 
     private void Update()
     {
-
-
         if (Input.GetMouseButton(2) &&(StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
         {
             transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
@@ -207,8 +205,7 @@ public class CubeManager : MonoBehaviour
 
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
-        for (int i = 0; i < 6; i++)
-            gameObject.GetComponent<ColorCheckManager>().BingoCheck(i, false);
+        gameObject.GetComponent<ColorCheckManager>().BingoTextChange(-1);
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
@@ -283,7 +280,7 @@ public class CubeManager : MonoBehaviour
                         break;
                     case ObjectType.PLAYER:
                     case ObjectType.FRIEND:
-                        playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject)
+                        playerTurnStatus = GetComponent<ColorCheckManager>().CharacterSelectCancel(obj.gameObject)
                             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
                         break;
                 }
@@ -292,7 +289,7 @@ public class CubeManager : MonoBehaviour
                 if (obj.Type == ObjectType.PLAYER || obj.Type == ObjectType.FRIEND)
                 {
                     playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
-                    gameObject.GetComponent<ColorCheckManager>().CharacterSelect(mouseStartObject);
+                    gameObject.GetComponent<ColorCheckManager>().CharacterSelect(obj.gameObject);
                 }
                 break;
             case PlayerTurnStatus.PORTION_SELECTED:

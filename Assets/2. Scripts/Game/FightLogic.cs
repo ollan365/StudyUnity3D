@@ -10,34 +10,16 @@ public class FightLogic : MonoBehaviour
     [SerializeField] private ColorCheckManager colorCheckManager;
     public IEnumerator Attack()
     {
-        // additionalMoveCount = 0;
         for (int i = 0; i < 6; i++) // 빙고 확인
         {
-            BingoStatus bingo = colorCheckManager.BingoCheck(i, true);
-            int random = Random.Range(0, 2);
+            int bingoCnt = colorCheckManager.BingoTextChange(i);
 
-            if (bingo == BingoStatus.DEFAULT) continue;
+            if (bingoCnt == 0) continue;
 
             StartCoroutine(StageManager.Instance.CubeRotate(i.ToColor())); // 빙고 완성 시 그 면으로 회전
             while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
 
-            if (random == 0)
-            {
-                if (bingo == BingoStatus.ALL || StageManager.Instance.Player.Color.ToInt() == i)
-                    StageManager.Instance.Player.HP_Percent(10);
-                foreach (GameObject f in StageManager.Instance.FriendList)
-                {
-                    if (f == null || !f.activeSelf) continue;
-
-                    if (bingo == BingoStatus.ALL || f.GetComponent<Object>().Color.ToInt() == i)
-                        f.GetComponent<Object>().HP_Percent(10);
-                }
-            }
-            else
-            {
-                // if (bingo == BingoStatus.ONE) additionalMoveCount++;
-                // else changeCount++;
-            }
+            BingoReward(i, bingoCnt);
 
             yield return new WaitForSeconds(0.5f);
         }
@@ -137,6 +119,29 @@ public class FightLogic : MonoBehaviour
 
         // statge statue를 바꾼다
         StageManager.Instance.ChangeStatus();
+    }
+    
+    private void BingoReward(int sideColor, int bingoCnt)
+    {
+        if (bingoCnt == 6) return; // 올 빙고
+        if (bingoCnt > 0) return; // 그 면의 서로 다른 색의 한줄 빙고 완성 개수
+        //if (random == 0)
+        //{
+        //    if (bingo == BingoStatus.ALL || StageManager.Instance.Player.Color.ToInt() == i)
+        //        StageManager.Instance.Player.HP_Percent(10);
+        //    foreach (GameObject f in StageManager.Instance.FriendList)
+        //    {
+        //        if (f == null || !f.activeSelf) continue;
+
+        //        if (bingo == BingoStatus.ALL || f.GetComponent<Object>().Color.ToInt() == i)
+        //            f.GetComponent<Object>().HP_Percent(10);
+        //    }
+        //}
+        //else
+        //{
+        //    // if (bingo == BingoStatus.ONE) additionalMoveCount++;
+        //    // else changeCount++;
+        //}
     }
     private List<GameObject> AttackableObject(WeaponType weaponType, Colors color, int index, ObjectType objType)
     {

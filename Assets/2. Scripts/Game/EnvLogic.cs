@@ -10,14 +10,16 @@ public class EnvLogic : MonoBehaviour
     {
         foreach(GameObject e in StageManager.Instance.EnemyList)
         {
-            Object enemyObj = e.GetComponent<Object>();
-            if (enemyObj.Color != StageManager.Instance.Player.Color) continue;
+            if (!e.activeSelf) continue;
 
+            Object enemyObj = e.GetComponent<Object>();
+
+            StageManager.Instance.CubeRotate(enemyObj.Color);
             colorCheckManager.CharacterSelect(e);
 
             List<int> priority = GetPriorityMoveCube(enemyObj.AttackType);
 
-            for (int i = 0; i < priority.Count; i++)
+            for(int i = 0; i < priority.Count; i++)
             {
                 if (colorCheckManager.Move(enemyObj.Color, i, true))
                 {
@@ -25,12 +27,14 @@ public class EnvLogic : MonoBehaviour
 
                     if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TREASURE)
                         StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(9999);
+
+                    break;
                 }
-                break;
             }
             yield return new WaitForSeconds(1f); // move에 걸리는 시간
             colorCheckManager.CharacterSelectCancel(e);
         }
+        StageManager.Instance.ChangeStatus();
     }
 
     private List<int> GetPriorityMoveCube(WeaponType weaponType)

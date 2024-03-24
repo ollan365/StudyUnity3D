@@ -53,9 +53,7 @@ public class StageManager : MonoBehaviour
                     stageTexts[0].text = $"{StaticManager.Instance.Stage}층 INIT";
                     break;
                 case StageStatus.PLAYER:
-                    for (int i = 0; i < 6; i++)
-                        colorCheckManager.BingoCheck(i, false);
-                    colorCheckManager.ToNextBingo();
+                    colorCheckManager.BingoTextChange(-1);
                     stageTexts[0].text = $"{StaticManager.Instance.Stage}층 PLAYER";
                     StageTextChange(true, StageText.ALL, 0);
                     break;
@@ -208,6 +206,11 @@ public class StageManager : MonoBehaviour
         {
             StatusOfStage = StageStatus.ENV;
         }
+        else if (StatusOfStage == StageStatus.ENV)
+        {
+            colorCheckManager.ToNextBingo();
+            StatusOfStage = StageStatus.PLAYER;
+        }
     }
     public void ClearStage()
     {
@@ -294,7 +297,7 @@ public class StageManager : MonoBehaviour
         isCubeMove = false;
     }
 
-    public bool SummonsFriend(Colors color, int index, int friendIndex)
+    public bool SummonsFriend(Colors color, int index, int scrollID)
     {
         Touch cube = StageCube.Instance.touchArray[color.ToInt()][index];
         if (cube.Obj != null)
@@ -303,7 +306,7 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
-                friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, friendIndex);
+                friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 Debug.Log("summons success!");
                 return true;
             }
