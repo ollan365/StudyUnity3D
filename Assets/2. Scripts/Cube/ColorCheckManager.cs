@@ -35,7 +35,6 @@ public class ColorCheckManager : MonoBehaviour
 
     private void MovableCubeSetting(int index)
     {
-        Debug.Log($"{selectedCharacter} / {index}");
         for (int i = 0; i < 9; i++)
             movableCube[i] = false;
 
@@ -137,7 +136,6 @@ public class ColorCheckManager : MonoBehaviour
             travelTIme += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
-
 
         yield return new WaitForFixedUpdate();
 
