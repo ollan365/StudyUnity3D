@@ -35,6 +35,7 @@ public class ColorCheckManager : MonoBehaviour
 
     private void MovableCubeSetting(int index)
     {
+        Debug.Log($"{selectedCharacter} / {index}");
         for (int i = 0; i < 9; i++)
             movableCube[i] = false;
 

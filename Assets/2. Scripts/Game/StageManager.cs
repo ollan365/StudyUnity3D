@@ -148,7 +148,7 @@ public class StageManager : MonoBehaviour
 
         cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(5f);
 
         //섞은 후 플레이어 활성화
         player.SetActive(true);

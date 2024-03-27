@@ -11,7 +11,7 @@ public class CubeManager : MonoBehaviour
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
-    private PlayerTurnStatus playerTurnStatus;
+    [SerializeField] private PlayerTurnStatus playerTurnStatus;
     private int itemID;
     private void Awake()
     {
@@ -107,9 +107,12 @@ public class CubeManager : MonoBehaviour
             if (type == ObjectType.NULL)
             {
                 if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+                {
                     if (StageManager.Instance.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
                         StageManager.Instance.StageTextChange(true, StageText.MOVE, -1);
 
+                    DisableMoveableBlock(StageManager.Instance.Player.gameObject);
+                }
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
                     playerTurnStatus = StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID)
                         ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.SUMMONS_SELECTED;
@@ -119,6 +122,11 @@ public class CubeManager : MonoBehaviour
                 ClickObject(script.Obj);
                 mouseStartObject = null;
             }
+            return;
+        }
+        else if(script.ObjType == ObjectType.NULL && playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+        {
+            DisableMoveableBlock(StageManager.Instance.Player.gameObject);
             return;
         }
         else if (playerTurnStatus != PlayerTurnStatus.NORMAL)
@@ -282,6 +290,9 @@ public class CubeManager : MonoBehaviour
                     case ObjectType.FRIEND:
                         playerTurnStatus = GetComponent<ColorCheckManager>().CharacterSelectCancel(obj.gameObject)
                             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
+                        break;
+                    case ObjectType.ENEMY:
+                        DisableMoveableBlock(StageManager.Instance.Player.gameObject);
                         break;
                 }
                 break;
