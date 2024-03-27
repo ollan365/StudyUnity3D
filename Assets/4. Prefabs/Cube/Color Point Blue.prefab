@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -468543319902951394}
   m_Layer: 8
   m_Name: Color Point Blue
-  m_TagString: Untagged
+  m_TagString: Blue
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

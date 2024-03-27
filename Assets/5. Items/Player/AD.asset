@@ -18,5 +18,8 @@ MonoBehaviour:
   description: 
   icon: {r: 1, g: 0, b: 0, a: 1}
   weaponType: 1
-  minDamage: 1000
-  maxDamage: 1000
+  level: 0
+  weaponLevel:
+  - level: 0
+    minDamage: 5
+    maxDamage: 10

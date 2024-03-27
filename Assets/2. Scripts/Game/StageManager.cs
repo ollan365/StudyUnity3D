@@ -37,12 +37,8 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject player;
     public Object Player { get => player.GetComponent<Object>(); }
 
-    //0320add
     [SerializeField] private GameObject stageStartPanel;
     [SerializeField] private GameObject gameOverPanel;
-    //[SerializeField] private Camera mainCam;
-    
-
 
     private StageStatus status;
     public StageStatus StatusOfStage
@@ -57,9 +53,7 @@ public class StageManager : MonoBehaviour
                     stageTexts[0].text = $"{StaticManager.Instance.Stage}층 INIT";
                     break;
                 case StageStatus.PLAYER:
-                    for (int i = 0; i < 6; i++)
-                        colorCheckManager.BingoCheck(i, false);
-                    colorCheckManager.ToNextBingo();
+                    colorCheckManager.BingoTextChange(-1);
                     stageTexts[0].text = $"{StaticManager.Instance.Stage}층 PLAYER";
                     StageTextChange(true, StageText.ALL, 0);
                     break;
@@ -193,23 +187,12 @@ public class StageManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-
-
-        //stage start panel 0320
         stageStartPanel.SetActive(true);
 
         yield return new WaitForSeconds(0.5f);
         stageStartPanel.SetActive(false);
 
         StatusOfStage = StageStatus.PLAYER;
-
-        //float timer = 0;
-        //while(timer < 1)
-        //{
-        //    Camera.main.transform.position = Vector3.Lerp(Camera.main.gameObject.transform.position, player.transform.position, timer);
-        //    yield return new WaitForSeconds(0.1f);
-        //    timer += 0.1f;
-        //}
 
     }
     public void ChangeStatus()
@@ -221,6 +204,11 @@ public class StageManager : MonoBehaviour
         }
         else if(StatusOfStage == StageStatus.FIGHT)
         {
+            StatusOfStage = StageStatus.ENV;
+        }
+        else if (StatusOfStage == StageStatus.ENV)
+        {
+            colorCheckManager.ToNextBingo();
             StatusOfStage = StageStatus.PLAYER;
         }
     }
@@ -309,7 +297,7 @@ public class StageManager : MonoBehaviour
         isCubeMove = false;
     }
 
-    public bool SummonsFriend(Colors color, int index, int friendIndex)
+    public bool SummonsFriend(Colors color, int index, int scrollID)
     {
         Touch cube = StageCube.Instance.touchArray[color.ToInt()][index];
         if (cube.Obj != null)
@@ -318,7 +306,7 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
-                friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, friendIndex);
+                friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 Debug.Log("summons success!");
                 return true;
             }

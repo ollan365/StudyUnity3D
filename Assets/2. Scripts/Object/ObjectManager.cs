@@ -58,8 +58,7 @@ public class ObjectManager : MonoBehaviour
                         friendObjectStatus[i].SetActive(true);
                         break;
                     }
-                Dictionary<int, string> values;
-                StaticManager.Instance.friendDatas.TryGetValue(objectID, out values);
+                Dictionary<int, string> values = StaticManager.Instance.friendDatas[objectID];
                 values.TryGetValue(StaticManager.Instance.Stage, out value);
                 newObject.GetComponent<Object>().init(objectType, value.Split(','));
                 UseItem(ItemType.SCROLL, objectID);

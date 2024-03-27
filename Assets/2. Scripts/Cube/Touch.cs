@@ -9,10 +9,10 @@ public class Touch : MonoBehaviour
     public Colors[] TouchColors { get => colors; }
     [SerializeField] private int[] ints;
     public int[] TouchInts{ get => ints; }
-    [SerializeField] private Colors positionColor;
-    public Colors Color { get => positionColor; }
-    [SerializeField] private int positionIndex;
-    public int Index { get => positionIndex; }
+    [SerializeField] private Colors AbsoluteColor;
+    public Colors Color { get => AbsoluteColor; }
+    [SerializeField] private int AbsoluteIndex;
+    public int Index { get => AbsoluteIndex; }
     [SerializeField] private Vector3 direction;
     public Transform ObjectPostion { get => colorPointCube.transform.GetChild(0).transform; }
     public Object Obj
@@ -32,6 +32,22 @@ public class Touch : MonoBehaviour
         }
     }
     [SerializeField] private GameObject colorPointCube;
+    public Colors RelativeColor
+    {
+        get
+        {
+            switch(colorPointCube.tag)
+            {
+                case "White": return Colors.WHITE;
+                case "Red": return Colors.RED;
+                case "Blue": return Colors.BLUE;
+                case "Green": return Colors.GREEN;
+                case "Orange": return Colors.ORANGE;
+                case "Yellow": return Colors.YELLOW;
+                default: return Colors.NULL;
+            }
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == 8)
