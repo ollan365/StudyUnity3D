@@ -21,6 +21,7 @@ public class ColorCheckManager : MonoBehaviour
     {
         Debug.Log("character select!");
         selectedCharacter = character;
+        Debug.Log(selectedCharacter);
         MovableCubeSetting(selectedCharacter.GetComponent<Object>().Index);
     }
     public bool CharacterSelectCancel(GameObject character)

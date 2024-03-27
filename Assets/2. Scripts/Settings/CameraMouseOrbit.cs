@@ -30,6 +30,9 @@ public class CameraMouseOrbit : MonoBehaviour
     [Tooltip("What is the minimum and maximum tilt angle ?")]
     [SerializeField] private Vector2 _xAngleRange = new Vector2(-30, 30);
 
+    //240324
+    
+
     void Awake()
     {
         //set some default values based on the current camera's position
@@ -45,6 +48,10 @@ public class CameraMouseOrbit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+
+
+
         //if we are dragging with the middle mouse, update our target values
         if (Input.GetMouseButton(2))
         {

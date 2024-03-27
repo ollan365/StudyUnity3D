@@ -40,7 +40,6 @@ public class StageManager : MonoBehaviour
     //0320add
     [SerializeField] private GameObject stageStartPanel;
     [SerializeField] private GameObject gameOverPanel;
-    //[SerializeField] private Camera mainCam;
     
 
 
@@ -78,7 +77,11 @@ public class StageManager : MonoBehaviour
     }
     private void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else Destroy(gameObject);
     }
 
@@ -154,7 +157,7 @@ public class StageManager : MonoBehaviour
 
         cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(5f);
 
         //섞은 후 플레이어 활성화
         player.SetActive(true);

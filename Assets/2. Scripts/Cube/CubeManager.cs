@@ -8,11 +8,18 @@ public class CubeManager : MonoBehaviour
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
     [SerializeField] private float rotateSpeed; //Cube Object Rotation Speed
+    
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
     private PlayerTurnStatus playerTurnStatus;
     private int itemID;
+
+    //Camera Zoon In and Out
+    [SerializeField] private float scrollSpeed; // Camera Object Scroll Speed
+    private float maxValue = 90.0f;
+    private float minValue = 40.0f;
+
     private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
@@ -20,6 +27,27 @@ public class CubeManager : MonoBehaviour
 
     private void Update()
     {
+        //240325 Camera Zoom in&out
+        if(StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT){
+            
+            float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
+            if (Camera.main.fieldOfView >= maxValue) 
+            {
+                //Min zoom
+                Camera.main.fieldOfView = maxValue;
+                scrollWheel = Mathf.Max(0, scrollWheel);
+            }
+            else if (Camera.main.fieldOfView <= minValue)
+            {   
+                //Max zoom
+                Camera.main.fieldOfView = minValue;
+                scrollWheel = Mathf.Min(0, scrollWheel);
+            }
+            Camera.main.fieldOfView -= scrollWheel * Time.deltaTime * scrollSpeed;
+            
+        }
+        //Camera Zoom in&out     
+
 
 
         if (Input.GetMouseButton(2) &&(StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
@@ -109,8 +137,13 @@ public class CubeManager : MonoBehaviour
             if (type == ObjectType.NULL)
             {
                 if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+                {
                     if (StageManager.Instance.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
                         StageManager.Instance.StageTextChange(true, StageText.MOVE, -1);
+
+                    DisableMoveableBlock(StageManager.Instance.Player.gameObject);
+                }
+                    
 
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
                     playerTurnStatus = StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID)
@@ -121,6 +154,11 @@ public class CubeManager : MonoBehaviour
                 ClickObject(script.Obj);
                 mouseStartObject = null;
             }
+            return;
+        }
+        else if(script.ObjType == ObjectType.NULL && playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+        {
+            DisableMoveableBlock(StageManager.Instance.Player.gameObject);
             return;
         }
         else if (playerTurnStatus != PlayerTurnStatus.NORMAL)
@@ -285,6 +323,10 @@ public class CubeManager : MonoBehaviour
                     case ObjectType.FRIEND:
                         playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(mouseStartObject)
                             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
+                        break;
+                    case ObjectType.ENEMY:
+                        //여기서 DisableMoveableBlock을 해야하는데, 지금 선택된건 적아니면 NULL이라 플레이어의 게임 오브젝트를 받아와야함 
+                        DisableMoveableBlock(StageManager.Instance.Player.gameObject);
                         break;
                 }
                 break;

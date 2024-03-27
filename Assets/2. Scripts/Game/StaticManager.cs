@@ -38,8 +38,10 @@ public class StaticManager : MonoBehaviour
 
     public KeyValuePair<ItemObject, int>[] inventory;
 
-    private void Awake()
+    private void Start()
     {
+        //이게 Awake로 되어있었는데 그렇게 되면 아래의 StageManager의 instance가 생기기 전에 참조를 하려고 해서 nullreferenceexception이 발생하게 됨.
+        //그래서 일단은 Start로 바꿈.
         if (Instance == null)
         {
             Instance = this;
@@ -57,7 +59,7 @@ public class StaticManager : MonoBehaviour
         for(int i = 0; i < 16; i++)
             inventory[i] = new(playerWeapon, 0);
         inventory[0] = new(playerWeapon, 1);
-
+        Debug.Log(StageManager.Instance);
         StageManager.Instance.StageInit(stageDatas[stage]);
         PlayerWeapon = playerWeapon;
     }
