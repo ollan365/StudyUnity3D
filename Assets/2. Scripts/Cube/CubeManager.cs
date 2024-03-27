@@ -110,8 +110,8 @@ public class CubeManager : MonoBehaviour
                 {
                     if (StageManager.Instance.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
                         StageManager.Instance.StageTextChange(true, StageText.MOVE, -1);
-
-                    DisableMoveableBlock(StageManager.Instance.Player.gameObject);
+                    else
+                        DisableMoveableBlock(StageManager.Instance.Player.gameObject);
                 }
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
                     playerTurnStatus = StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID)
@@ -315,7 +315,7 @@ public class CubeManager : MonoBehaviour
                 break;
         }
     }
-    public void DisableMoveableBlock(GameObject character) // 이거 왜 있는거더라...?
+    public void DisableMoveableBlock(GameObject character)
     {
         playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(character)
             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;

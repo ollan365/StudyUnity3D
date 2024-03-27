@@ -65,7 +65,6 @@ public class Object : MonoBehaviour
                 hpSlider.value = hp / maxHp;
         }
     }
-    [SerializeField] private Touch touchTest; // 나중에 삭제
     public Colors Color { get => GetPosition().Color; }
     public int Index { get => GetPosition().Index; }
     private Touch GetPosition()
@@ -75,10 +74,7 @@ public class Object : MonoBehaviour
         {
             Touch touchComponent = hit.collider.gameObject.GetComponent<Touch>();
             if (touchComponent != null)
-            {
-                touchTest = touchComponent; // 나중에 삭제
                 return touchComponent;
-            }
         }
         return null;
     }
