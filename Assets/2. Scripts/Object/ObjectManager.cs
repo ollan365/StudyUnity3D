@@ -178,28 +178,28 @@ public class ObjectManager : MonoBehaviour
             {
                 int random = Random.Range(0, allShopWeapon.Length);
 
-                shopItemArray[i] = new(allShopWeapon[random], allShopWeapon[random].Cost);
+                shopItemArray[i] = new(allShopWeapon[random], allShopWeapon[random].SellCost);
                 shopSlotButton[i].GetComponent<Image>().color = allShopWeapon[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = allShopWeapon[random].Cost.ToString(); 
+                    = allShopWeapon[random].SellCost.ToString(); 
             }
             else if (i < 8)
             {
                 int random = Random.Range(0, allShopPortion.Length);
 
-                shopItemArray[i] = new(allShopPortion[random], allShopPortion[random].Cost);
+                shopItemArray[i] = new(allShopPortion[random], allShopPortion[random].SellCost);
                 shopSlotButton[i].GetComponent<Image>().color = allShopPortion[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = allShopPortion[random].Cost.ToString();
+                    = allShopPortion[random].SellCost.ToString();
             }
             else
             {
                 int random = Random.Range(0, allShopScroll.Length);
 
-                shopItemArray[i] = new(allShopScroll[random], allShopScroll[random].Cost);
+                shopItemArray[i] = new(allShopScroll[random], allShopScroll[random].SellCost);
                 shopSlotButton[i].GetComponent<Image>().color = allShopScroll[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = allShopScroll[random].Cost.ToString();
+                    = allShopScroll[random].SellCost.ToString();
             }
         }
 

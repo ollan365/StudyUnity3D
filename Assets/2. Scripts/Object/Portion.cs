@@ -8,4 +8,9 @@ public class Portion : ItemObject
     public StatusEffect StatusEffectType { get => statusEffect; }
     [SerializeField] private int value;
     public int Value { get => value; }
+
+    [SerializeField] private int healRate;
+    public int HealRate { get => healRate; }
+
+
 }
