@@ -125,6 +125,10 @@ public class StaticManager : MonoBehaviour
     }
     private void SaveItemDatas()
     {
+        portionDatas = new();
+        scrollDatas = new();
+        weaponDatas = new();
+
         foreach(Portion p in portionList)
             portionDatas.Add(p.ID, p);
 
