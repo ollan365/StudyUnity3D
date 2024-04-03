@@ -9099,7 +9099,6 @@ MonoBehaviour:
   - {fileID: 2146210244}
   dieObject: {fileID: 685963}
   shopPopup: {fileID: 0}
-  nullObject: {fileID: 11400000, guid: 0aa6a85edc80a6a40b1dbdc92df16c55, type: 2}
   inventorySlotButton:
   - {fileID: 2029152997}
   - {fileID: 857325415}
@@ -24458,6 +24457,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4e99e3b263b50174dbfcbc7ba38f7ef4, type: 2}
   - {fileID: 11400000, guid: 65b30926d84991743802039a58f06cbd, type: 2}
   - {fileID: 11400000, guid: ea2e29d148e011a4fbeb9c95ed8a4838, type: 2}
+  nullObject: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
 --- !u!4 &1424684505
 Transform:
   m_ObjectHideFlags: 0

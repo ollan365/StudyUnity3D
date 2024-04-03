@@ -23,9 +23,9 @@ public class ColorCheckManager : MonoBehaviour
         selectedCharacter = character;
         MovableCubeSetting(selectedCharacter.GetComponent<Object>().Index);
     }
-    public bool CharacterSelectCancel(GameObject character)
+    public bool CharacterSelectCancel(GameObject character, bool mustChange)
     {
-        if (selectedCharacter != character)
+        if (!mustChange && selectedCharacter != character)
             return false;
 
         MovableCubeSetting(-1);
@@ -84,7 +84,10 @@ public class ColorCheckManager : MonoBehaviour
                 break;
 
             default:
-                break;
+                for (int i = 0; i < 6; i++)
+                    for (int j = 0; j < 9; j++)
+                        StageCube.Instance.coverArray[i][j].SetActive(false);
+                return;
         }
 
         int selectedCharacterColor = selectedCharacter.GetComponent<Object>().Color.ToInt();
@@ -176,6 +179,8 @@ public class ColorCheckManager : MonoBehaviour
             int count = 0;
             for (int i = 0; i < 6; i++)
             {
+                if (IsAllCoolTime(bingoStatus[i]) || IsOneCoolTime(bingoStatus[i])) return 0;
+
                 if (bingoNums[sideColor][i] == 6) return 6;
                 else if (bingoNums[sideColor][i] > 0) count++;
 

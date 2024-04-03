@@ -15,6 +15,7 @@ public class EnvLogic : MonoBehaviour
             Object enemyObj = e.GetComponent<Object>();
 
             StageManager.Instance.CubeRotate(enemyObj.Color);
+            yield return new WaitForSeconds(1f); // move에 걸리는 시간
             colorCheckManager.CharacterSelect(e);
 
             List<int> priority = GetPriorityMoveCube(enemyObj.AttackType);
@@ -28,11 +29,10 @@ public class EnvLogic : MonoBehaviour
                     if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TREASURE)
                         StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(9999);
 
-                    break;
+                    yield return new WaitForSeconds(1f); // move에 걸리는 시간
                 }
             }
-            yield return new WaitForSeconds(1f); // move에 걸리는 시간
-            colorCheckManager.CharacterSelectCancel(e);
+            colorCheckManager.CharacterSelectCancel(e, true);
         }
         StageManager.Instance.ChangeStatus();
     }

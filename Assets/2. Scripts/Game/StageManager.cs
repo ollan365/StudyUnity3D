@@ -152,6 +152,7 @@ public class StageManager : MonoBehaviour
 
         //섞은 후 플레이어 활성화
         player.SetActive(true);
+        StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         int index = 0;
@@ -197,7 +198,9 @@ public class StageManager : MonoBehaviour
     }
     public void ChangeStatus()
     {
-        if(StatusOfStage == StageStatus.PLAYER)
+        cubeManager.ChangeToNormal();
+
+        if (StatusOfStage == StageStatus.PLAYER)
         {
             StatusOfStage = StageStatus.FIGHT;
             StartCoroutine(fightLogic.Attack());

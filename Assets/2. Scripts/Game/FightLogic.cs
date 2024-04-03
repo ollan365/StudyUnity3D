@@ -24,8 +24,11 @@ public class FightLogic : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
+        Debug.Log("Bingo End!");
+
         StartCoroutine(StageManager.Instance.CubeRotate(StageManager.Instance.Player.Color));
         while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
+        yield return new WaitForSeconds(1f);
 
         List<GameObject> attackableEnemy = AttackableObject(StageManager.Instance.Player.AttackType, StageManager.Instance.Player.Color, StageManager.Instance.Player.Index, ObjectType.ENEMY);
         foreach (GameObject enemy in attackableEnemy)
@@ -72,6 +75,7 @@ public class FightLogic : MonoBehaviour
 
                 StartCoroutine(StageManager.Instance.CubeRotate(friendObj.Color));
                 while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
+                yield return new WaitForSeconds(1f);
 
                 foreach (GameObject enemy in attackableEnemy)
                 {
@@ -92,6 +96,7 @@ public class FightLogic : MonoBehaviour
 
             StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
             while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
+            yield return new WaitForSeconds(1f);
 
             foreach (GameObject p in attackablePlayerTeam)
             {
@@ -145,7 +150,7 @@ public class FightLogic : MonoBehaviour
     }
     private List<GameObject> AttackableObject(WeaponType weaponType, Colors color, int index, ObjectType objType)
     {
-        List<GameObject> attackable = new List<GameObject>();
+        List<GameObject> attackable = new();
 
         if (objType == ObjectType.PLAYER && StageManager.Instance.Player.gameObject.activeSelf)
         {
@@ -302,6 +307,5 @@ public class FightLogic : MonoBehaviour
 
         return attackable;
     }
-
 
 }

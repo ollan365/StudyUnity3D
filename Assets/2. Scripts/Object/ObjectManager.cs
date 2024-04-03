@@ -25,7 +25,6 @@ public class ObjectManager : MonoBehaviour
     private ItemObject[] allShopWeapon;
     private ItemObject[] allShopPortion;
     private ItemObject[] allShopScroll;
-    [SerializeField] private ItemObject nullObject;
 
     [SerializeField] private GameObject[] inventorySlotButton;
     [SerializeField] private GameObject[] shopSlotButton;
@@ -112,7 +111,7 @@ public class ObjectManager : MonoBehaviour
 
         for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
-            if (StaticManager.Instance.inventory[i].Value == 0) StaticManager.Instance.inventory[i] = new(nullObject, 1);
+            if (StaticManager.Instance.inventory[i].Value == 0) StaticManager.Instance.inventory[i] = new(StaticManager.Instance.nullObject, 1);
 
             switch (StaticManager.Instance.inventory[i].Key.ItemType)
             {

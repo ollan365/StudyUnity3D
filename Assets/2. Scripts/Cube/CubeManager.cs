@@ -111,7 +111,7 @@ public class CubeManager : MonoBehaviour
                     if (StageManager.Instance.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
                         StageManager.Instance.StageTextChange(true, StageText.MOVE, -1);
                     else
-                        DisableMoveableBlock(StageManager.Instance.Player.gameObject);
+                        ChangeToNormal();
                 }
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
                     playerTurnStatus = StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID)
@@ -126,7 +126,7 @@ public class CubeManager : MonoBehaviour
         }
         else if(script.ObjType == ObjectType.NULL && playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
         {
-            DisableMoveableBlock(StageManager.Instance.Player.gameObject);
+            ChangeToNormal();
             return;
         }
         else if (playerTurnStatus != PlayerTurnStatus.NORMAL)
@@ -144,6 +144,11 @@ public class CubeManager : MonoBehaviour
                     else if (direction > 0) Turn(end.TouchColors[j], 1);
                     return;
                 }
+    }
+    public void ChangeToNormal()
+    {
+        gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(null, true);
+        playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
     private void Turn(Colors color, int direction)
     {
@@ -288,11 +293,11 @@ public class CubeManager : MonoBehaviour
                         break;
                     case ObjectType.PLAYER:
                     case ObjectType.FRIEND:
-                        playerTurnStatus = GetComponent<ColorCheckManager>().CharacterSelectCancel(obj.gameObject)
+                        playerTurnStatus = GetComponent<ColorCheckManager>().CharacterSelectCancel(obj.gameObject, false)
                             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
                         break;
                     case ObjectType.ENEMY:
-                        DisableMoveableBlock(StageManager.Instance.Player.gameObject);
+                        ChangeToNormal();
                         break;
                 }
                 break;
@@ -314,10 +319,5 @@ public class CubeManager : MonoBehaviour
             case PlayerTurnStatus.TURN:
                 break;
         }
-    }
-    public void DisableMoveableBlock(GameObject character)
-    {
-        playerTurnStatus = gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(character)
-            ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
     }
 }
