@@ -47,34 +47,34 @@ public class ObjectManager : MonoBehaviour
             case ObjectType.ENEMY:
                 newObject = Instantiate(enemyPrefab);
                 string value = StaticManager.Instance.enemyDatas[objectID];
-                newObject.GetComponent<Object>().init(objectType, value.Split(','));
+                newObject.GetComponent<Object>().Init(objectType, value.Split(','));
                 break;
             case ObjectType.FRIEND:
                 newObject = Instantiate(friendPrefab);
                 for (int i = 0; i < 3; i++)
                     if (!friendObjectStatus[i].activeSelf)
                     {
-                        newObject.GetComponent<Object>().hpSlider = friendHpSlider[i];
+                        newObject.GetComponent<Object>().bottomHP = friendHpSlider[i];
                         friendObjectStatus[i].SetActive(true);
                         break;
                     }
                 Dictionary<int, string> values = StaticManager.Instance.friendDatas[objectID];
                 values.TryGetValue(StaticManager.Instance.Stage, out value);
-                newObject.GetComponent<Object>().init(objectType, value.Split(','));
+                newObject.GetComponent<Object>().Init(objectType, value.Split(','));
                 UseItem(ItemType.SCROLL, objectID);
                 ChangePlayerInventory();
                 break;
             case ObjectType.TREASURE:
                 newObject = Instantiate(treasurePrefab);
-                newObject.GetComponent<Object>().init(objectType, null);
+                newObject.GetComponent<Object>().Init(objectType, null);
                 break;
             case ObjectType.MERCHANT:
                 newObject = Instantiate(merchantPrefab);
-                newObject.GetComponent<Object>().init(objectType, null);
+                newObject.GetComponent<Object>().Init(objectType, null);
                 break;
             case ObjectType.PORTAL:
                 newObject = Instantiate(portalPrefab);
-                newObject.GetComponent<Object>().init(objectType, null);
+                newObject.GetComponent<Object>().Init(objectType, null);
                 break;
             default:
                 newObject = null;
@@ -94,7 +94,7 @@ public class ObjectManager : MonoBehaviour
     {
         if (obj.GetComponent<Object>().Type == ObjectType.FRIEND)
             for (int i = 0; i < 3; i++)
-                if (obj.GetComponent<Object>().hpSlider == friendHpSlider[i])
+                if (obj.GetComponent<Object>().bottomHP == friendHpSlider[i])
                 {
                     friendObjectStatus[i].SetActive(false);
                     break;

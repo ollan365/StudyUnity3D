@@ -84,7 +84,7 @@ public class StageManager : MonoBehaviour
         for (int i = 0; i < data.Split(',').Length - 1; i++)
             stageDatas[i] = int.Parse(data.Split(',')[i]);
 
-        Player.init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() });
+        Player.Init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() });
 
         stageDatas[ROTATE_COUNT] = 10; // 나중에 계산 공식으로 바꾸기!
         stageDatas[MOVE_COUNT] = 10;

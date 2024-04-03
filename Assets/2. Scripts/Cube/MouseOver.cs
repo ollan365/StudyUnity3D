@@ -51,10 +51,5 @@ public class MouseOver : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.7f);
             cnt++;
         }
-        
-        
     }
-
-
-
 }

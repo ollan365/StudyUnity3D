@@ -6,7 +6,10 @@ using static Excel;
 public class Object : MonoBehaviour
 {
     public ObjectManager objectManager;
-    public Slider hpSlider;
+    public Slider bottomHP;
+
+    [SerializeField] private Slider hpSlider;
+    [SerializeField] private Text goldText;
 
     private int id;
     private string objName;
@@ -15,7 +18,7 @@ public class Object : MonoBehaviour
     private ObjectType type;
     private WeaponType weaponType;
 
-    public void init(ObjectType objType, string[] datas)
+    public void Init(ObjectType objType, string[] datas)
     {
         type = objType;
         if (objType == ObjectType.PLAYER)
@@ -61,7 +64,7 @@ public class Object : MonoBehaviour
         set
         {
             hp = Mathf.Clamp(value, 0, maxHp);
-            if (hpSlider != null) // 보물상자나 상인은 이게 없음
+            if (hpSlider != null)
                 hpSlider.value = hp / maxHp;
         }
     }
