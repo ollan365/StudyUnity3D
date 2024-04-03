@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 348f4d3159843fb459b6681fb256e7cf, type: 3}
-  m_Name: Scroll
+  m_Name: ScrollA9
   m_EditorClassIdentifier: 
-  id: 0
+  itemName: "\uB3D9\uB8CC A9 \uC18C\uD658 \uC2A4\uD06C\uB864"
+  id: 110010
   itemType: 2
-  cost: 15
+  sellCost: 60
+  buyCost: 130
   description: 
-  icon: {r: 0, g: 0, b: 1, a: 1}
-  value: 0
-  objectMaterial: {fileID: 0}
+  icon: {r: 0, g: 0, b: 0, a: 0}
+  friendIndex: 120008

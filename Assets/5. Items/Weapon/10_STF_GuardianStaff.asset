@@ -10,16 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
-  m_Name: AD
+  m_Name: 10_STF_GuardianStaff
   m_EditorClassIdentifier: 
-  id: 0
+  itemName: "\uC218\uD638\uC758 \uC9C0\uD321\uC774"
+  id: 110023
   itemType: 0
-  cost: 10
+  sellCost: 300
+  buyCost: 800
   description: 
-  icon: {r: 1, g: 0, b: 0, a: 1}
-  weaponType: 1
+  icon: {r: 0, g: 0, b: 0, a: 0}
+  weaponType: 0
   level: 0
   weaponLevel:
   - level: 0
-    minDamage: 5
-    maxDamage: 10
+    minDamage: 700
+    maxDamage: 900
+  - level: 1
+    minDamage: 910
+    maxDamage: 1100

@@ -10,15 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
-  m_Name: AP
+  m_Name: 7_STF_RustyStaff
   m_EditorClassIdentifier: 
-  id: 0
+  itemName: "\uB179\uC2A8 \uC9C0\uD321\uC774"
+  id: 110021
   itemType: 0
-  cost: 20
+  sellCost: 0
+  buyCost: 0
   description: 
-  icon: {r: 1, g: 1, b: 0, a: 1}
-  weaponType: 2
-  maxHP: 20
-  minDamage: 10
-  maxDamage: 20
-  objectMaterial: {fileID: 2100000, guid: 3a0139cc364562448ba6b451cb9ec358, type: 2}
+  icon: {r: 0, g: 0, b: 0, a: 0}
+  weaponType: 0
+  level: 0
+  weaponLevel:
+  - level: 0
+    minDamage: 60
+    maxDamage: 70
+  - level: 1
+    minDamage: 78
+    maxDamage: 90
