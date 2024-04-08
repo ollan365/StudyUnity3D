@@ -108,8 +108,8 @@ public class CubeManager : MonoBehaviour
             {
                 if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
                 {
-                    if (StageManager.Instance.StageTextChange(false, StageText.MOVE, -1) && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
-                        StageManager.Instance.StageTextChange(true, StageText.MOVE, -1);
+                    if (StageManager.Instance.GetStageTextValue(StageText.MOVE) > 0 && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
+                        StageManager.Instance.SetStageTextValue(StageText.MOVE, -1);
                     else
                         ChangeToNormal();
                 }
@@ -152,9 +152,10 @@ public class CubeManager : MonoBehaviour
     }
     private void Turn(Colors color, int direction)
     {
-        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL || (!StageManager.Instance.StageTextChange(false, StageText.ROTATE, -1) && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)) return;
-        if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
-            if(!StageManager.Instance.StageTextChange(true, StageText.ROTATE, -1)) return;
+        if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL
+            || (StageManager.Instance.GetStageTextValue(StageText.ROTATE) <= 0 && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)) return;
+
+        if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER) StageManager.Instance.SetStageTextValue(StageText.ROTATE, -1);
 
         playerTurnStatus = PlayerTurnStatus.TURN;
 

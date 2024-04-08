@@ -9,6 +9,7 @@ public class ColorCheckManager : MonoBehaviour
     private BingoStatus[] bingoStatus;
 
     private GameObject selectedCharacter;
+    public GameObject SelectedCharacter { get => selectedCharacter; }
     private bool[] movableCube;
     private void Awake()
     {
@@ -19,7 +20,6 @@ public class ColorCheckManager : MonoBehaviour
     }
     public void CharacterSelect(GameObject character)
     {
-        Debug.Log("character select!");
         selectedCharacter = character;
         MovableCubeSetting(selectedCharacter.GetComponent<Object>().Index);
     }
@@ -29,7 +29,6 @@ public class ColorCheckManager : MonoBehaviour
             return false;
 
         MovableCubeSetting(-1);
-        Debug.Log("character select cancel!");
         return true;
     }
 
@@ -105,12 +104,8 @@ public class ColorCheckManager : MonoBehaviour
     }
     public bool Move(Colors color, int index, bool wantMove)
     {
-        if (color != selectedCharacter.GetComponent<Object>().Color) // �ٸ� ���̸� �̵� ����
-            return false;
-        if (!movableCube[index]) // ���� ���� �̵� �Ұ����� ���̸� �̵� �� ��
-            return false;
-        if (wantMove)
-            StartCoroutine(MoveCoroutine(color, index));
+        if (color != selectedCharacter.GetComponent<Object>().Color || !movableCube[index]) return false;
+        if (wantMove) StartCoroutine(MoveCoroutine(color, index));
         return true;
     }
     private IEnumerator MoveCoroutine(Colors color, int index)

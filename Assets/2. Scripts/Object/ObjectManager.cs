@@ -146,8 +146,11 @@ public class ObjectManager : MonoBehaviour
         switch (StaticManager.Instance.inventory[index].Key.ItemType)
         {
             case ItemType.WEAPON:
-                if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].Key && StageManager.Instance.StageTextChange(true, StageText.WEAPON_CHANGE, -1))
+                if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].Key && StageManager.Instance.GetStageTextValue(StageText.WEAPON_CHANGE) > 0)
+                {
                     StaticManager.Instance.PlayerWeapon = (Weapon)StaticManager.Instance.inventory[index].Key;
+                    StageManager.Instance.SetStageTextValue(StageText.WEAPON_CHANGE, -1);
+                }
                 break;
             case ItemType.PORTION:
                 cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].Key.ID, ItemType.PORTION);
