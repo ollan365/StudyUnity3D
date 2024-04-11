@@ -37,6 +37,7 @@ public class StaticManager : MonoBehaviour
     public Dictionary<int, Weapon> weaponDatas;
 
     public KeyValuePair<ItemObject, int>[] inventory;
+    public ItemObject nullObject;
 
     private void Awake()
     {
@@ -55,7 +56,7 @@ public class StaticManager : MonoBehaviour
 
         inventory = new KeyValuePair<ItemObject, int>[16]; // 일단은 저장이 없음
         for(int i = 0; i < 16; i++)
-            inventory[i] = new(playerWeapon, 0);
+            inventory[i] = new(nullObject, 0);
         inventory[0] = new(playerWeapon, 1);
 
         StageManager.Instance.StageInit(stageDatas[stage]);

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 8_STF_GuardianStaff
   m_EditorClassIdentifier: 
   itemName: "\uACAC\uC2B5 \uCC9C\uC0AC\uC758 \uC9C0\uD321\uC774"
-  id: 110022
+  id: 110021
   itemType: 0
   sellCost: 20
   buyCost: 100

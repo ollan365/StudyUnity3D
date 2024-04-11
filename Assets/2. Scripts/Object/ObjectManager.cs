@@ -25,7 +25,6 @@ public class ObjectManager : MonoBehaviour
     private ItemObject[] allShopWeapon;
     private ItemObject[] allShopPortion;
     private ItemObject[] allShopScroll;
-    [SerializeField] private ItemObject nullObject;
 
     [SerializeField] private GameObject[] inventorySlotButton;
     [SerializeField] private GameObject[] shopSlotButton;
@@ -112,7 +111,7 @@ public class ObjectManager : MonoBehaviour
 
         for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
-            if (StaticManager.Instance.inventory[i].Value == 0) StaticManager.Instance.inventory[i] = new(nullObject, 1);
+            if (StaticManager.Instance.inventory[i].Value == 0) StaticManager.Instance.inventory[i] = new(StaticManager.Instance.nullObject, 1);
 
             switch (StaticManager.Instance.inventory[i].Key.ItemType)
             {
@@ -147,8 +146,11 @@ public class ObjectManager : MonoBehaviour
         switch (StaticManager.Instance.inventory[index].Key.ItemType)
         {
             case ItemType.WEAPON:
-                if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].Key && StageManager.Instance.StageTextChange(true, StageText.WEAPON_CHANGE, -1))
+                if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].Key && StageManager.Instance.GetStageTextValue(StageText.WEAPON_CHANGE) > 0)
+                {
                     StaticManager.Instance.PlayerWeapon = (Weapon)StaticManager.Instance.inventory[index].Key;
+                    StageManager.Instance.SetStageTextValue(StageText.WEAPON_CHANGE, -1);
+                }
                 break;
             case ItemType.PORTION:
                 cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].Key.ID, ItemType.PORTION);

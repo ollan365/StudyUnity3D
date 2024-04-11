@@ -21,15 +21,15 @@ public class StageManager : MonoBehaviour
     public PlayLogic StagePlayLogic { get => playLogic; }
 
     [SerializeField] private Text[] stageTexts;
+    private int[] stageTextValues;
+    
     private int[] stageDatas;
     public int StageData(int column)
     {
         return stageDatas[column];
     }
-    private int moveCount, rotateCount, changeCount;
-    private int additionalMoveCount;
 
-    private GameObject[] enemy, friend, treasure;
+   [SerializeField] private GameObject[] enemy, friend, treasure;
     public GameObject[] EnemyList { get => enemy; }
     public GameObject[] FriendList { get => friend; }
     public GameObject[] TreasureList { get => treasure; }
@@ -47,33 +47,15 @@ public class StageManager : MonoBehaviour
         private set
         { 
             status = value;
-            switch (value)
-            {
-                case StageStatus.INIT:
-                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 INIT";
-                    break;
-                case StageStatus.PLAYER:
-                    colorCheckManager.BingoTextChange(-1);
-                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 PLAYER";
-                    StageTextChange(true, StageText.ALL, 0);
-                    break;
-                case StageStatus.ENV:
-                    StartCoroutine(envLogic.MoveEnemy());
-                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 ENV";
-                    break;
-                case StageStatus.FIGHT:
-                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 FIGHT";
-                    break;
-                case StageStatus.END:
-                    stageTexts[0].text = $"{StaticManager.Instance.Stage}층 END";
-                    break;
-            }
+            stageTexts[0].text = $"{StaticManager.Instance.Stage}층 {status}";
         }
     }
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        stageTextValues = new int[8];
     }
 
     public void StageInit(string data)
@@ -86,9 +68,15 @@ public class StageManager : MonoBehaviour
 
         Player.Init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() });
 
-        stageDatas[ROTATE_COUNT] = 10; // 나중에 계산 공식으로 바꾸기!
-        stageDatas[MOVE_COUNT] = 10;
-        changeCount = stageDatas[WEAPON_CHANGE];
+        // 나중에 계산 공식으로 바꾸기!
+        stageTextValues[StageText.MONSTER.ToInt()] = stageTextValues[StageText.MONSTER_INIT.ToInt()]
+            = stageDatas[ENEMY_COUNT];
+        stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()]
+            = stageDatas[ROTATE_COUNT] = 10;
+        stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()]
+            = stageDatas[MOVE_COUNT] = 10;
+        stageTextValues[StageText.WEAPON_CHANGE.ToInt()] = stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]
+            = stageDatas[WEAPON_CHANGE];
 
         enemy = new GameObject[stageDatas[ENEMY_COUNT]];
         friend = new GameObject[3];
@@ -96,50 +84,35 @@ public class StageManager : MonoBehaviour
 
         StartCoroutine(StartStage());
     }
-    public bool StageTextChange(bool wantChange, StageText text, int value)
+    public int GetStageTextValue(StageText text)
     {
-        switch (text)
+        return stageTextValues[text.ToInt()];
+    }
+    public void SetStageTextValue(StageText text, int addValue)
+    {
+        if (text == StageText.ALL_INIT)
         {
-            case StageText.MONSTER:
-                int nowEnemyCount = 0;
-                for (int i = 0; i < enemy.Length; i++)
-                    if (enemy[i].activeSelf) nowEnemyCount++;
-                stageTexts[1].text = $"{nowEnemyCount} / {stageDatas[ENEMY_COUNT]}";
-                return true;
-            case StageText.MOVE:
-                if (moveCount + value < 0) return false;
-                if (!wantChange) return true;
-                moveCount += value;
-                break;
-            case StageText.ROTATE:
-                if (rotateCount + value < 0) return false;
-                if (!wantChange) return true;
-                rotateCount += value;
-                break;
-            case StageText.WEAPON_CHANGE:
-                if (changeCount + value < 0) return false;
-                if (!wantChange) return true;
-                changeCount += value;
-                break;
-            case StageText.ALL:
-                if (value != 0) return false;
-
-                nowEnemyCount = 0;
-                for (int i = 0; i < enemy.Length; i++)
-                    if (enemy[i].activeSelf) nowEnemyCount++;
-                
-                stageTexts[1].text = $"{nowEnemyCount} / {stageDatas[ENEMY_COUNT]}";
-
-                moveCount = stageDatas[MOVE_COUNT] + additionalMoveCount;
-                rotateCount = stageDatas[ROTATE_COUNT];
-                break;
-            default:
-                return false;
+            stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()];
+            stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE.ToInt()];
         }
-        stageTexts[2].text = $"{moveCount} / {stageDatas[MOVE_COUNT] + additionalMoveCount}";
-        stageTexts[3].text = $"{rotateCount} / {stageDatas[ROTATE_COUNT]}";
-        stageTexts[4].text = $"{changeCount} / 3";
-        return true;
+        else if (text == StageText.END)
+        {
+            stageTexts[1].text = "ALL DIE !";
+            stageTexts[2].text = "INFINITY";
+            stageTexts[3].text = "INFINITY";
+            stageTexts[4].text = "INFINITY";
+
+            return;
+        }
+        else stageTextValues[text.ToInt()] += addValue;
+
+        stageTextValues[StageText.MONSTER.ToInt()] = 0;
+        foreach (GameObject e in enemy) stageTextValues[StageText.MONSTER.ToInt()]++;
+
+        stageTexts[1].text = $"{stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
+        stageTexts[2].text = $"{stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
+        stageTexts[3].text = $"{stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
+        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
     }
     private IEnumerator StartStage()
     {
@@ -152,10 +125,11 @@ public class StageManager : MonoBehaviour
 
         //섞은 후 플레이어 활성화
         player.SetActive(true);
+        StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         int index = 0;
-        for(int i = 0; i < stageEnemy.Count; i++)
+        for(int i = 0; i < stageEnemy.Count; i++) // enemy 배치
         {
             Touch cube;
 
@@ -173,7 +147,7 @@ public class StageManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // enemy 배치
+        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
         {
             Touch cube;
             while (true)
@@ -192,23 +166,29 @@ public class StageManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         stageStartPanel.SetActive(false);
 
-        StatusOfStage = StageStatus.PLAYER;
+        ChangeStatus();
 
     }
     public void ChangeStatus()
     {
-        if(StatusOfStage == StageStatus.PLAYER)
+        cubeManager.ChangeToNormal();
+
+        if (StatusOfStage == StageStatus.PLAYER)
         {
             StatusOfStage = StageStatus.FIGHT;
-            StartCoroutine(fightLogic.Attack());
+            StartCoroutine(fightLogic.BingoReward());
         }
         else if(StatusOfStage == StageStatus.FIGHT)
         {
+            StartCoroutine(envLogic.MoveEnemy());
             StatusOfStage = StageStatus.ENV;
         }
-        else if (StatusOfStage == StageStatus.ENV)
+        else if (StatusOfStage == StageStatus.ENV || StatusOfStage == StageStatus.INIT)
         {
-            colorCheckManager.ToNextBingo();
+            if (StatusOfStage == StageStatus.ENV) colorCheckManager.ToNextBingo();
+
+            colorCheckManager.BingoTextChange(-1);
+            SetStageTextValue(StageText.ALL_INIT, 0);
             StatusOfStage = StageStatus.PLAYER;
         }
     }
@@ -218,32 +198,23 @@ public class StageManager : MonoBehaviour
 
         foreach(GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
             t.GetComponent<Object>().OnHit(9999);
-        
-        while (true)
+
+        // 상인과 포탈 소환
+        ObjectType[] summonObjectArray = new ObjectType[2] { ObjectType.MERCHANT, ObjectType.PORTAL };
+        foreach (ObjectType type in summonObjectArray)
         {
-            Touch cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-            if (cube.Obj == null)
+            while (true)
             {
-                ObjectManager.Instance.Summons(cube, ObjectType.MERCHANT, 0);
-                break;
-            }
-        }
-        while (true)
-        {
-            Touch cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-            if (cube.Obj == null)
-            {
-                ObjectManager.Instance.Summons(cube, ObjectType.PORTAL, 0);
-                break;
+                Touch cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+                if (cube.Obj == null)
+                {
+                    ObjectManager.Instance.Summons(cube, type, 0);
+                    break;
+                }
             }
         }
 
-        changeCount = 9999;
-        moveCount = 9999;
-        rotateCount = 9999;
-        stageTexts[2].text = $"{moveCount} / {stageDatas[MOVE_COUNT] + additionalMoveCount}";
-        stageTexts[3].text = $"{rotateCount} / {stageDatas[ROTATE_COUNT]}";
-        stageTexts[4].text = $"{changeCount} / 3";
+        SetStageTextValue(StageText.END, 0);
     }
     public void NextStage()
     {

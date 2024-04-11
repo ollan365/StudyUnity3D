@@ -3610,9 +3610,13 @@ PrefabInstance:
     m_TransformParent: {fileID: 1711166800}
     m_Modifications:
     - target: {fileID: 9915054925414412, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
-      propertyPath: hpSlider
+      propertyPath: bottomHP
       value: 
       objectReference: {fileID: 1106512691}
+    - target: {fileID: 9915054925414412, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
+      propertyPath: hpSlider
+      value: 
+      objectReference: {fileID: 672089013}
     - target: {fileID: 9915054925414412, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
       propertyPath: objectStatus
       value: 
@@ -3639,6 +3643,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1517277444023949020, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3932733253859078336, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6621551295297145703, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7636244507949822204, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
+      propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8227914666799126371, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
@@ -9099,7 +9115,6 @@ MonoBehaviour:
   - {fileID: 2146210244}
   dieObject: {fileID: 685963}
   shopPopup: {fileID: 0}
-  nullObject: {fileID: 11400000, guid: 0aa6a85edc80a6a40b1dbdc92df16c55, type: 2}
   inventorySlotButton:
   - {fileID: 2029152997}
   - {fileID: 857325415}
@@ -10369,7 +10384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde3170ef6333f541aad8d4e47287c5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerGoldText: {fileID: 0}
+  colorCheckManager: {fileID: 924634}
 --- !u!114 &608311166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10421,6 +10436,9 @@ MonoBehaviour:
   - {fileID: 1318596708}
   - {fileID: 155735929}
   - {fileID: 292753868}
+  enemy: []
+  friend: []
+  treasure: []
   player: {fileID: 1463790524}
   stageStartPanel: {fileID: 75974628}
   gameOverPanel: {fileID: 1358166159}
@@ -11739,6 +11757,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &672089013 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 87716061585014867, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
+  m_PrefabInstance: {fileID: 194768343}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &674370750
 GameObject:
   m_ObjectHideFlags: 0
@@ -24458,6 +24487,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4e99e3b263b50174dbfcbc7ba38f7ef4, type: 2}
   - {fileID: 11400000, guid: 65b30926d84991743802039a58f06cbd, type: 2}
   - {fileID: 11400000, guid: ea2e29d148e011a4fbeb9c95ed8a4838, type: 2}
+  nullObject: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
 --- !u!4 &1424684505
 Transform:
   m_ObjectHideFlags: 0
