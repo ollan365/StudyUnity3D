@@ -9,6 +9,7 @@ public class ColorCheckManager : MonoBehaviour
     private BingoStatus[] bingoStatus;
 
     private GameObject selectedCharacter;
+    public GameObject SelectedCharacter { get => selectedCharacter; }
     private bool[] movableCube;
     private void Awake()
     {
@@ -19,17 +20,15 @@ public class ColorCheckManager : MonoBehaviour
     }
     public void CharacterSelect(GameObject character)
     {
-        Debug.Log("character select!");
         selectedCharacter = character;
         MovableCubeSetting(selectedCharacter.GetComponent<Object>().Index);
     }
-    public bool CharacterSelectCancel(GameObject character)
+    public bool CharacterSelectCancel(GameObject character, bool mustChange)
     {
-        if (selectedCharacter != character)
+        if (!mustChange && selectedCharacter != character)
             return false;
 
         MovableCubeSetting(-1);
-        Debug.Log("character select cancel!");
         return true;
     }
 
@@ -84,7 +83,10 @@ public class ColorCheckManager : MonoBehaviour
                 break;
 
             default:
-                break;
+                for (int i = 0; i < 6; i++)
+                    for (int j = 0; j < 9; j++)
+                        StageCube.Instance.coverArray[i][j].SetActive(false);
+                return;
         }
 
         int selectedCharacterColor = selectedCharacter.GetComponent<Object>().Color.ToInt();
@@ -102,12 +104,8 @@ public class ColorCheckManager : MonoBehaviour
     }
     public bool Move(Colors color, int index, bool wantMove)
     {
-        if (color != selectedCharacter.GetComponent<Object>().Color) // �ٸ� ���̸� �̵� ����
-            return false;
-        if (!movableCube[index]) // ���� ���� �̵� �Ұ����� ���̸� �̵� �� ��
-            return false;
-        if (wantMove)
-            StartCoroutine(MoveCoroutine(color, index));
+        if (color != selectedCharacter.GetComponent<Object>().Color || !movableCube[index]) return false;
+        if (wantMove) StartCoroutine(MoveCoroutine(color, index));
         return true;
     }
     private IEnumerator MoveCoroutine(Colors color, int index)
@@ -176,6 +174,8 @@ public class ColorCheckManager : MonoBehaviour
             int count = 0;
             for (int i = 0; i < 6; i++)
             {
+                if (IsAllCoolTime(bingoStatus[i]) || IsOneCoolTime(bingoStatus[i])) return 0;
+
                 if (bingoNums[sideColor][i] == 6) return 6;
                 else if (bingoNums[sideColor][i] > 0) count++;
 

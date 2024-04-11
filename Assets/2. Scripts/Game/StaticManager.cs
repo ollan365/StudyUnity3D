@@ -38,11 +38,10 @@ public class StaticManager : MonoBehaviour
     public Dictionary<int, Weapon> weaponDatas;
 
     public KeyValuePair<ItemObject, int>[] inventory;
-    
     [SerializeField] private Material[] material1, material2, material3, material4, material5, material6;
     public Material[][] cubeMaterialSet;
-
     
+    public ItemObject nullObject;
 
     private void Awake()
     {
@@ -59,9 +58,9 @@ public class StaticManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        inventory = new KeyValuePair<ItemObject, int>[16]; // ÀÏ´ÜÀº ÀúÀåÀÌ ¾øÀ½
+        inventory = new KeyValuePair<ItemObject, int>[16]; // ï¿½Ï´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         for(int i = 0; i < 16; i++)
-            inventory[i] = new(playerWeapon, 0);
+            inventory[i] = new(nullObject, 0);
         inventory[0] = new(playerWeapon, 1);
 
         StageManager.Instance.StageInit(stageDatas[stage]);

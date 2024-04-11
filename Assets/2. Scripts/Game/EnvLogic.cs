@@ -13,26 +13,25 @@ public class EnvLogic : MonoBehaviour
             if (!e.activeSelf) continue;
 
             Object enemyObj = e.GetComponent<Object>();
-
-            StageManager.Instance.CubeRotate(enemyObj.Color);
             colorCheckManager.CharacterSelect(e);
 
             List<int> priority = GetPriorityMoveCube(enemyObj.AttackType);
 
             for(int i = 0; i < priority.Count; i++)
             {
-                if (colorCheckManager.Move(enemyObj.Color, i, true))
-                {
-                    StageManager.Instance.CubeRotate(enemyObj.Color);
+                if (enemyObj.Index == priority[i]) break; // 본인의 현재 위치보다 우선순위가 낮아지면 이동 안함
 
+                if (colorCheckManager.Move(enemyObj.Color, priority[i], true))
+                {
+                    StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
+                    yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
+                     
                     if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TREASURE)
                         StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(9999);
-
                     break;
                 }
             }
-            yield return new WaitForSeconds(1f); // move에 걸리는 시간
-            colorCheckManager.CharacterSelectCancel(e);
+            colorCheckManager.CharacterSelectCancel(e, true);
         }
         StageManager.Instance.ChangeStatus();
     }
@@ -152,9 +151,8 @@ public class EnvLogic : MonoBehaviour
         while (array.Count > 2)
         {
             int random = Random.Range(0, array.Count);
-            int value = array[Random.Range(0, array.Count)];
+            output.Add(array[random]);
             array.RemoveAt(random);
-            output.Add(value);
         }
 
         if (array.Count == 2)

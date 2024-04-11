@@ -52,7 +52,22 @@ public static class Constants
     }
     public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
     public enum StatusEffect { HP, SLIENCE, BLIND, RESCTRICTION, BETRAYAL, ALL }
-    public enum StageText { MONSTER, MOVE, ROTATE, WEAPON_CHANGE, ALL }
+    public enum StageText { ALL_INIT, END,  MONSTER, MOVE, ROTATE, WEAPON_CHANGE, MONSTER_INIT, MOVE_INIT, ROTATE_INIT, WEAPON_CHANGE_INIT }
+    public static int ToInt(this StageText text)
+    {
+        switch (text)
+        {
+            case StageText.MONSTER: return 0;
+            case StageText.MOVE: return 1;
+            case StageText.ROTATE: return 2;
+            case StageText.WEAPON_CHANGE: return 3;
+            case StageText.MONSTER_INIT: return 4;
+            case StageText.MOVE_INIT: return 5;
+            case StageText.ROTATE_INIT: return 6;
+            case StageText.WEAPON_CHANGE_INIT: return 7;
+            default: return -1;
+        }
+    }
     public enum BingoEffect { SILENCE, RECOVERY, ADD_REWEAPON, ADD_ROTATE, GOLD, ALL_KILL }
     public enum BingoStatus { DEFAULT, ONE, ONE_1, ONE_2, ONE_3, ALL, ALL_1, ALL_2, ALL_3 }
 }

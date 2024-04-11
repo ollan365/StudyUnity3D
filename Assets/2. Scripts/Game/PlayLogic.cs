@@ -5,15 +5,38 @@ using static Constants;
 
 public class PlayLogic : MonoBehaviour
 {
-    [SerializeField] private Text playerGoldText;
+    [SerializeField] private ColorCheckManager colorCheckManager;
     public void OpenTreasureBox(GameObject obj)
     {
         StaticManager.Instance.Gold += obj.GetComponent<Object>().Damage;
         ObjectManager.Instance.ObjectDie(obj);
+
+        StartCoroutine(GoldText());
     }
-    public IEnumerator GoldText()
+    private IEnumerator GoldText()
     {
-        yield return null;
+        GameObject goldTextObj = colorCheckManager.SelectedCharacter.GetComponent<Object>().GoldText;
+        Text goldText = goldTextObj.GetComponent<Text>();
+        RectTransform rectTransform = goldTextObj.GetComponent<RectTransform>();
+        goldText.color = new Color(1, 1, 0, 1);
+        Vector3 originPosition =  rectTransform.position;
+
+        float current = 1;
+        while (current > 0)
+        {
+            current -= Time.deltaTime;
+
+            Color color = goldText.color;
+            color.a = Mathf.Lerp(1, 0, current * 2);
+            goldText.color = color;
+            rectTransform.Translate(Vector3.up * Time.deltaTime);
+            yield return new WaitForFixedUpdate();
+        }
+
+        goldText.color = new Color(1, 1, 0, 0);
+        rectTransform.position = originPosition;
+
+        yield return new WaitForFixedUpdate();
     }
     public void UsePortion(int itemID, GameObject playerTeam)
     {

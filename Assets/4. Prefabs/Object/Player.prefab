@@ -122,6 +122,8 @@ MonoBehaviour:
   objectManager: {fileID: 0}
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 87716061585014867}
+  goldText: {fileID: 6621551295297145703}
+  testTouch: {fileID: 0}
 --- !u!1001 &6365901046568617306
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -241,5 +243,10 @@ MonoBehaviour:
 --- !u!224 &3305109582217274053 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8468494500217382815, guid: bbc2d5598ba482e459088253fec41676, type: 3}
+  m_PrefabInstance: {fileID: 6365901046568617306}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6621551295297145703 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 269161082373033533, guid: bbc2d5598ba482e459088253fec41676, type: 3}
   m_PrefabInstance: {fileID: 6365901046568617306}
   m_PrefabAsset: {fileID: 0}

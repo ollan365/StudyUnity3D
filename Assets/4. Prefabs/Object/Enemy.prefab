@@ -122,6 +122,8 @@ MonoBehaviour:
   objectManager: {fileID: 0}
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 2055518778351654959}
+  goldText: {fileID: 0}
+  testTouch: {fileID: 0}
 --- !u!1001 &5037614271145844006
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -223,7 +225,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 269161082373033533, guid: bbc2d5598ba482e459088253fec41676, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbc2d5598ba482e459088253fec41676, type: 3}

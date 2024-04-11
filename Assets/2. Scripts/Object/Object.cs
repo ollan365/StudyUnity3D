@@ -9,7 +9,8 @@ public class Object : MonoBehaviour
     public Slider bottomHP;
 
     [SerializeField] private Slider hpSlider;
-    [SerializeField] private Text goldText;
+    [SerializeField] private GameObject goldText;
+    public GameObject GoldText { get => goldText; }
 
     private int id;
     private string objName;
@@ -18,6 +19,7 @@ public class Object : MonoBehaviour
     private ObjectType type;
     private WeaponType weaponType;
 
+    [SerializeField] private Touch testTouch;
     public void Init(ObjectType objType, string[] datas)
     {
         type = objType;
@@ -76,9 +78,11 @@ public class Object : MonoBehaviour
         foreach (RaycastHit hit in hits)
         {
             Touch touchComponent = hit.collider.gameObject.GetComponent<Touch>();
+            testTouch = touchComponent;
             if (touchComponent != null)
                 return touchComponent;
         }
+        Debug.Log("Can't find touch cube!");
         return null;
     }
 
