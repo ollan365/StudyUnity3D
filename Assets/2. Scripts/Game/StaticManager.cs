@@ -23,6 +23,7 @@ public class StaticManager : MonoBehaviour
     private int gold;
     public int Gold { get => gold; set => gold = value; }
 
+    
     [SerializeField] private List<Portion> portionList;
     [SerializeField] private List<Scroll> scrollList;
     [SerializeField] private List<Weapon> weaponList;
@@ -37,6 +38,11 @@ public class StaticManager : MonoBehaviour
     public Dictionary<int, Weapon> weaponDatas;
 
     public KeyValuePair<ItemObject, int>[] inventory;
+    
+    [SerializeField] private Material[] material1, material2, material3, material4, material5, material6;
+    public Material[][] cubeMaterialSet;
+
+    
 
     private void Awake()
     {
@@ -60,6 +66,9 @@ public class StaticManager : MonoBehaviour
 
         StageManager.Instance.StageInit(stageDatas[stage]);
         PlayerWeapon = playerWeapon;
+
+        cubeMaterialSet = new Material[][] { material1, material2, material3, material4, material5, material6 };
+
     }
     private void SaveExcelDatas()
     {
