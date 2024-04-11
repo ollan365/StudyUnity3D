@@ -7,6 +7,7 @@ using static Excel;
 
 public class StageManager : MonoBehaviour
 {
+
     public static StageManager Instance { get; private set; }
 
     [SerializeField] private Transform cube;
