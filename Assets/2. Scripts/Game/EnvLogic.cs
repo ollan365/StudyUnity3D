@@ -15,20 +15,50 @@ public class EnvLogic : MonoBehaviour
             Object enemyObj = e.GetComponent<Object>();
             colorCheckManager.CharacterSelect(e);
 
-            List<int> priority = GetPriorityMoveCube(enemyObj.AttackType);
-
-            for(int i = 0; i < priority.Count; i++)
+            if (enemyObj.Color != StageManager.Instance.Player.Color) // 플레이어와 다른 면일 때
             {
-                if (enemyObj.Index == priority[i]) break; // 본인의 현재 위치보다 우선순위가 낮아지면 이동 안함
-
-                if (colorCheckManager.Move(enemyObj.Color, priority[i], true))
+                for (int i = 0; i < 3; i++) // 이동을 세번 정도 시도
                 {
-                    StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
-                    yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
-                     
-                    if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TREASURE)
-                        StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(9999);
-                    break;
+                    int random = Random.Range(0, 9);
+
+                    if (colorCheckManager.Move(enemyObj.Color, random, false))
+                    {
+                        Debug.Log($"{enemyObj.Color}: {random}");
+
+                        StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
+                        yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
+
+                        colorCheckManager.Move(enemyObj.Color, random, true); // 이동
+
+                        if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].ObjType == ObjectType.TREASURE)
+                            StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].Obj.OnHit(9999);
+
+                        break;
+                    }
+                }
+            }
+            else // 플레이어와 같은 면일 때
+            {
+                List<int> priority = GetPriorityMoveCube(enemyObj.AttackType);
+
+                for (int i = 0; i < priority.Count; i++)
+                {
+                    if (enemyObj.Index == priority[i]) break; // 본인의 현재 위치보다 우선순위가 낮아지면 이동 안함
+
+                    if (colorCheckManager.Move(enemyObj.Color, priority[i], false))
+                    {
+                        Debug.Log($"{priority[i]}");
+
+                        StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
+                        yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
+
+                        colorCheckManager.Move(enemyObj.Color, priority[i], true);
+                        yield return new WaitForSeconds(2f); // Move에 걸리는 시간
+
+                        if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TREASURE)
+                            StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(9999);
+                        break;
+                    }
                 }
             }
             colorCheckManager.CharacterSelectCancel(e, true);
@@ -42,128 +72,87 @@ public class EnvLogic : MonoBehaviour
 
         List<int> priorityMoveCube = new();
 
-        List<int> first = new(), second = new(), third = new(), fourth = new(), fifth = new();
-        
-        // ============== 구석 ================ //
-        if (playerIndex == 0 || playerIndex == 8)
+        if (weaponType == WeaponType.CAD)
         {
-            first = RandomArray(new List<int> { 0 });
-            second = RandomArray(new List<int> { 1, 3 });
-            third = RandomArray(new List<int> { 2, 4, 6 });
-            fourth = RandomArray(new List<int> { 5, 7 });
-            fifth = RandomArray(new List<int> { 8 });
-        }
-        else if (playerIndex == 2 || playerIndex == 6)
-        {
-            first = RandomArray(new List<int> { 2 });
-            second = RandomArray(new List<int> { 1, 5 });
-            third = RandomArray(new List<int> { 0, 4, 8 });
-            fourth = RandomArray(new List<int> { 3, 7 });
-            fifth = RandomArray(new List<int> { 6 });
-        }
-
-        if ((weaponType == WeaponType.CAD && (playerIndex == 0 || playerIndex == 2))
-            || (weaponType == WeaponType.LAD && (playerIndex == 8 || playerIndex == 6)))
-        {
-            if (weaponType == WeaponType.LAD) priorityMoveCube.Add(4);
-
-            priorityMoveCube.AddRange(first);
-            priorityMoveCube.AddRange(second);
-            priorityMoveCube.AddRange(third);
-            priorityMoveCube.AddRange(fourth);
-            priorityMoveCube.AddRange(fifth);
-        }
-        else if ((weaponType == WeaponType.CAD && (playerIndex == 8 || playerIndex == 6))
-            || (weaponType == WeaponType.LAD && (playerIndex == 0 || playerIndex == 2)))
-        {
-            if (weaponType == WeaponType.LAD) priorityMoveCube.Add(4);
-
-            priorityMoveCube.AddRange(fifth);
-            priorityMoveCube.AddRange(fourth);
-            priorityMoveCube.AddRange(third);
-            priorityMoveCube.AddRange(second);
-            priorityMoveCube.AddRange(first);
-        }
-
-        // ============== 가장자리 가운데 ================ //
-        if (playerIndex == 1)
-        {
-            first = RandomArray(new List<int> { 0, 4, 2 });
-            second = RandomArray(new List<int> { 3, 7, 5 });
-            third = RandomArray(new List<int> { 6, 8 });
-        }
-        else if(playerIndex == 3)
-        {
-            first = RandomArray(new List<int> { 0, 4, 6 });
-            second = RandomArray(new List<int> { 1, 5, 7 });
-            third = RandomArray(new List<int> { 2, 8 });
-        }
-        else if (playerIndex == 5)
-        {
-            first = RandomArray(new List<int> { 2, 4, 8 });
-            second = RandomArray(new List<int> { 1, 3, 7 });
-            third = RandomArray(new List<int> { 0, 6 });
-        }
-        else if (playerIndex == 7)
-        {
-            first = RandomArray(new List<int> { 6, 4, 8 });
-            second = RandomArray(new List<int> { 3, 1, 5 });
-            third = RandomArray(new List<int> { 0, 2 });
-        }
-        if(playerIndex == 1 && playerIndex == 3 && playerIndex == 5 && playerIndex == 7)
-        {
-            if(weaponType == WeaponType.LAD)
+            switch (playerIndex)
             {
-                if (playerIndex == 1 || playerIndex == 7)
-                    priorityMoveCube.AddRange(RandomArray(new List<int> { 3, 5 }));
-                else if (playerIndex == 3 || playerIndex == 5)
-                    priorityMoveCube.AddRange(RandomArray(new List<int> { 1, 7 }));
-            }
-            priorityMoveCube.AddRange(first);
-            priorityMoveCube.AddRange(second);
-            priorityMoveCube.AddRange(third);
-        }
-
-        // ============== 가운데 ================ //
-        if(playerIndex == 4)
-        {
-            first = RandomArray(new List<int> { 1, 3, 5, 7 });
-            second = RandomArray(new List<int> { 2, 4, 6, 8 });
-
-            if (weaponType == WeaponType.CAD)
-            {
-                priorityMoveCube.AddRange(first);
-                priorityMoveCube.AddRange(second);
-            }
-            else if (weaponType == WeaponType.LAD)
-            {
-                priorityMoveCube.AddRange(second);
-                priorityMoveCube.AddRange(first);
+                case 0:
+                    priorityMoveCube = new() { 1, 3, 2, 4, 6, 5, 7, 8 };
+                    break;
+                case 1:
+                    priorityMoveCube = new() { 0, 2, 4, 3, 5, 7, 6, 8 };
+                    break;
+                case 2:
+                    priorityMoveCube = new() { 1, 5, 0, 4, 8, 3, 7, 6 };
+                    break;
+                case 3:
+                    priorityMoveCube = new() { 0, 4, 6, 1, 5, 7, 2, 8 };
+                    break;
+                case 4:
+                    priorityMoveCube = new() { 1, 3, 5, 7, 0, 2, 6, 8 };
+                    break;
+                case 5:
+                    priorityMoveCube = new() { 2, 4, 8, 1, 3, 7, 0, 6 };
+                    break;
+                case 6:
+                    priorityMoveCube = new() { 3, 7, 0, 4, 8, 1, 5, 2 };
+                    break;
+                case 7:
+                    priorityMoveCube = new() { 4, 6, 8, 1, 3, 5, 0, 2 };
+                    break;
+                case 8:
+                    priorityMoveCube = new() { 5, 7, 2, 4, 6, 1, 3, 0 };
+                    break;
             }
         }
+        else if (weaponType == WeaponType.LAD)
+        {
+            switch (playerIndex)
+            {
+                case 0:
+                    priorityMoveCube = new() { 4, 8, 7, 5, 6, 2, 3, 1 };
+                    break;
+                case 1:
+                    priorityMoveCube = new() { 5, 3, 8, 6, 7, 4, 2, 0 };
+                    break;
+                case 2:
+                    priorityMoveCube = new() { 4, 6, 7, 3, 8, 0, 5, 1 };
+                    break;
+                case 3:
+                    priorityMoveCube = new() { 7, 1, 8, 2, 5, 6, 4, 0 };
+                    break;
+                case 4:
+                    priorityMoveCube = new() { 8, 6, 2, 0, 7, 5, 3, 1 };
+                    break;
+                case 5:
+                    priorityMoveCube = new() { 7, 1, 6, 0, 3, 8, 4, 2 };
+                    break;
+                case 6:
+                    priorityMoveCube = new() { 4, 2, 5, 1, 8, 0, 7, 3 };
+                    break;
+                case 7:
+                    priorityMoveCube = new() { 5, 3, 2, 0, 1, 8, 6, 4 };
+                    break;
+                case 8:
+                    priorityMoveCube = new() { 4, 0, 3, 1, 6, 2, 7, 5 };
+                    break;
+            }
+        }
+
         return priorityMoveCube;
     }
 
     private List<int> RandomArray(List<int> array)
     {
-        List<int> output = new List<int>();
-
-        while (array.Count > 2)
+        // array를 랜덤하게 섞음
+        for (int i = 0; i < array.Count; i++)
         {
-            int random = Random.Range(0, array.Count);
-            output.Add(array[random]);
-            array.RemoveAt(random);
+            int temp = array[i];
+            int randomIndex = Random.Range(i, array.Count);
+            array[i] = array[randomIndex];
+            array[randomIndex] = temp;
         }
 
-        if (array.Count == 2)
-        {
-            int random = Random.Range(0, 2);
-
-            if (random == 0) { output.Add(array[0]); output.Add(array[1]); }
-            else if (random == 1) { output.Add(array[1]); output.Add(array[0]); }
-        }
-        else return array; // 한개짜리 리스트
-
-        return output;
+        return array;
     }
 }

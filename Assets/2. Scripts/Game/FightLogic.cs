@@ -10,17 +10,20 @@ public class FightLogic : MonoBehaviour
     [SerializeField] private ColorCheckManager colorCheckManager;
     public IEnumerator BingoReward()
     {
-        for (int i = 0; i < 6; i++) // 빙고 확인
+        if (false) // 일단은 빙고 부분은 건너 뛴다
         {
-            int bingoCnt = colorCheckManager.BingoTextChange(i);
+            for (int i = 0; i < 6; i++) // 빙고 확인
+            {
+                int bingoCnt = colorCheckManager.BingoTextChange(i);
 
-            if (bingoCnt == 0) continue;
+                if (bingoCnt == 0) continue;
 
-            StartCoroutine(StageManager.Instance.CubeRotate(i.ToColor())); // 빙고 완성 시 그 면으로 회전
-            while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
+                StartCoroutine(StageManager.Instance.CubeRotate(i.ToColor())); // 빙고 완성 시 그 면으로 회전
+                while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
 
-            // 빙고 보상 구현
-            yield return new WaitForSeconds(0.5f);
+                // 빙고 보상 구현
+                yield return new WaitForSeconds(0.5f);
+            }
         }
 
         // if (bingoCnt == 6) return; // 올 빙고
