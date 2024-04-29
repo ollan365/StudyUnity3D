@@ -23,7 +23,7 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] private Text[] stageTexts;
     private int[] stageTextValues;
-    
+
     private int[] stageDatas;
     public int StageData(int column)
     {
@@ -40,6 +40,7 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] private GameObject stageStartPanel;
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject clickIgnorePanel;
 
     private StageStatus status;
     public StageStatus StatusOfStage
@@ -110,15 +111,17 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.MONSTER.ToInt()] = 0;
         foreach (GameObject e in enemy) stageTextValues[StageText.MONSTER.ToInt()]++;
 
-        stageTexts[1].text = $"{stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
-        stageTexts[2].text = $"{stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
-        stageTexts[3].text = $"{stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
-        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
+        stageTexts[1].text = $"Monster: {stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
+        stageTexts[2].text = $"Move: {stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
+        stageTexts[3].text = $"Rotate: {stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
+        stageTexts[4].text = $"Weapon: {stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
     }
     private IEnumerator StartStage()
     {
+        clickIgnorePanel.SetActive(true);
         //섞기 전 플레이어 비활성화
         player.SetActive(false);
+        
 
         cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
@@ -166,6 +169,7 @@ public class StageManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         stageStartPanel.SetActive(false);
+        clickIgnorePanel.SetActive(false);
 
         ChangeStatus();
 
@@ -176,6 +180,7 @@ public class StageManager : MonoBehaviour
 
         if (StatusOfStage == StageStatus.PLAYER)
         {
+            Debug.Log("fight");
             StatusOfStage = StageStatus.FIGHT;
             StartCoroutine(fightLogic.BingoReward());
         }
@@ -191,7 +196,10 @@ public class StageManager : MonoBehaviour
             colorCheckManager.BingoTextChange(-1);
             SetStageTextValue(StageText.ALL_INIT, 0);
             StatusOfStage = StageStatus.PLAYER;
+            clickIgnorePanel.SetActive(false);
         }
+
+        
     }
     public void ClearStage()
     {

@@ -13,6 +13,8 @@ public class CubeManager : MonoBehaviour
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
     [SerializeField] private PlayerTurnStatus playerTurnStatus;
     private int itemID;
+
+
     private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
@@ -305,8 +307,11 @@ public class CubeManager : MonoBehaviour
             case PlayerTurnStatus.NORMAL:
                 if (obj.Type == ObjectType.PLAYER || obj.Type == ObjectType.FRIEND)
                 {
-                    playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
-                    gameObject.GetComponent<ColorCheckManager>().CharacterSelect(obj.gameObject);
+                    if (StageManager.Instance.GetStageTextValue(StageText.MOVE) > 0)
+                    {
+                        playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
+                        gameObject.GetComponent<ColorCheckManager>().CharacterSelect(obj.gameObject);
+                    }
                 }
                 break;
             case PlayerTurnStatus.PORTION_SELECTED:

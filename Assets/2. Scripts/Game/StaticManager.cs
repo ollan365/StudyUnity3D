@@ -58,7 +58,7 @@ public class StaticManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        inventory = new KeyValuePair<ItemObject, int>[16]; // �ϴ��� ������ ����
+        inventory = new KeyValuePair<ItemObject, int>[16]; 
         for(int i = 0; i < 16; i++)
             inventory[i] = new(nullObject, 0);
         inventory[0] = new(playerWeapon, 1);

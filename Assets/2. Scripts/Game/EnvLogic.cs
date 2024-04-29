@@ -146,24 +146,26 @@ public class EnvLogic : MonoBehaviour
 
     private List<int> RandomArray(List<int> array)
     {
-        List<int> output = new List<int>();
+        return array;
+        //List<int> output = new List<int>();
 
-        while (array.Count > 2)
-        {
-            int random = Random.Range(0, array.Count);
-            output.Add(array[random]);
-            array.RemoveAt(random);
-        }
+        //while (array.Count > 2)
+        //{
+        //    int random = Random.Range(0, array.Count);
+        //    output.Add(array[random]);
+        //    array.RemoveAt(random);
+        //    Debug.Log("random: " + random + "count: " + array.Count);
+        //}
 
-        if (array.Count == 2)
-        {
-            int random = Random.Range(0, 2);
+        //if (array.Count == 2)
+        //{
+        //    int random = Random.Range(0, 2);
 
-            if (random == 0) { output.Add(array[0]); output.Add(array[1]); }
-            else if (random == 1) { output.Add(array[1]); output.Add(array[0]); }
-        }
-        else return array; // 한개짜리 리스트
+        //    if (random == 0) { output.Add(array[0]); output.Add(array[1]); }
+        //    else if (random == 1) { output.Add(array[1]); output.Add(array[0]); }
+        //}
+        //else return array; // 한개짜리 리스트
 
-        return output;
+        //return output;
     }
 }

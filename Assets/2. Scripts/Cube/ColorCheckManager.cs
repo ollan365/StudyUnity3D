@@ -11,6 +11,7 @@ public class ColorCheckManager : MonoBehaviour
     private GameObject selectedCharacter;
     public GameObject SelectedCharacter { get => selectedCharacter; }
     private bool[] movableCube;
+
     private void Awake()
     {
         bingoStatus = new BingoStatus[9];
