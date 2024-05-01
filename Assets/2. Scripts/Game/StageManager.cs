@@ -119,7 +119,7 @@ public class StageManager : MonoBehaviour
     {
         clickIgnorePanel.SetActive(true);
         //섞기 전 플레이어 비활성화
-        player.SetActive(false);
+        // player.SetActive(false);
         
         cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
@@ -285,6 +285,7 @@ public class StageManager : MonoBehaviour
             if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
                 friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
+                ObjectManager.Instance.UseItem(ItemType.SCROLL, scrollID);
                 Debug.Log("summons success!");
                 return true;
             }
