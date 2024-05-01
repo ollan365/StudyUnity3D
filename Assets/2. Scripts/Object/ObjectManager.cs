@@ -85,6 +85,7 @@ public class ObjectManager : MonoBehaviour
         newObject.transform.rotation = cube.ObjectPostion.rotation;
 
         newObject.GetComponent<Object>().objectManager = this;
+        newObject.GetComponent<Object>().touchCube = cube;
 
         return newObject;
     }

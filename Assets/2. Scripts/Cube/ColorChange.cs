@@ -24,7 +24,6 @@ public class ColorChange : MonoBehaviour
         {
             stage = StaticManager.Instance.Stage;
             gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[StaticManager.Instance.Stage][color.ToInt()];
-            Debug.Log(stage);
         }
     }
 }

@@ -12,14 +12,41 @@ public class Object : MonoBehaviour
     [SerializeField] private GameObject goldText;
     public GameObject GoldText { get => goldText; }
 
-    private int id;
-    private string objName;
-    private int minDamage;
-    private int maxDamage;
-    private ObjectType type;
-    private WeaponType weaponType;
+    [SerializeField] private int id;
+    [SerializeField] private string objName;
+    [SerializeField] private int minDamage;
+    [SerializeField] private int maxDamage;
+    [SerializeField] private ObjectType type;
+    [SerializeField] private WeaponType weaponType;
 
-    [SerializeField] private Touch testTouch;
+    public Touch touchCube;
+    
+    public int ID { get => id; }
+    public string Name { get => objName; }
+    public void SetWeapon(int min, int max, WeaponType weaponType)
+    {
+        minDamage = min;
+        maxDamage = max;
+        this.weaponType = weaponType;
+    }
+    public int Damage { get => Random.Range(minDamage, maxDamage + 1); }
+    public ObjectType Type { get => type; }
+    public WeaponType AttackType { get => weaponType; }
+
+    [SerializeField] private float maxHp;
+    [SerializeField] private float hp;
+    public float HP
+    {
+        get => hp;
+        set
+        {
+            hp = Mathf.Clamp(value, 0, maxHp);
+            if (hpSlider != null)
+                hpSlider.value = hp / maxHp;
+        }
+    }
+    public Colors Color { get => touchCube.Color; }
+    public int Index { get => touchCube.Index; }
     public void Init(ObjectType objType, string[] datas)
     {
         type = objType;
@@ -46,46 +73,6 @@ public class Object : MonoBehaviour
         hp = maxHp;
         HP = hp;
     }
-    public int ID { get => id; }
-    public string Name { get => objName; }
-    public void SetWeapon(int min, int max, WeaponType weaponType)
-    {
-        minDamage = min;
-        maxDamage = max;
-        this.weaponType = weaponType;
-    }
-    public int Damage { get => Random.Range(minDamage, maxDamage + 1); }
-    public ObjectType Type { get => type; }
-    public WeaponType AttackType { get => weaponType; }
-
-    private float maxHp;
-    private float hp;
-    public float HP
-    {
-        get => hp;
-        set
-        {
-            hp = Mathf.Clamp(value, 0, maxHp);
-            if (hpSlider != null)
-                hpSlider.value = hp / maxHp;
-        }
-    }
-    public Colors Color { get => GetPosition().Color; }
-    public int Index { get => GetPosition().Index; }
-    private Touch GetPosition()
-    {
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, -transform.up, 10);
-        foreach (RaycastHit hit in hits)
-        {
-            Touch touchComponent = hit.collider.gameObject.GetComponent<Touch>();
-            testTouch = touchComponent;
-            if (touchComponent != null)
-                return touchComponent;
-        }
-        Debug.Log("Can't find touch cube!");
-        return null;
-    }
-
     public void OnHit(int damage)
     {
         HP -= damage;
@@ -104,5 +91,10 @@ public class Object : MonoBehaviour
             HP += maxHp * percent / 100;
 
         Debug.Log($"{HP}");
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        touchCube = other.GetComponent<Touch>();
     }
 }

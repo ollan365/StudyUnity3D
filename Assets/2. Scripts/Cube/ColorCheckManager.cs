@@ -14,8 +14,8 @@ public class ColorCheckManager : MonoBehaviour
 
     private void Awake()
     {
-        bingoStatus = new BingoStatus[9];
-        for (int i = 0; i < 9; i++)
+        bingoStatus = new BingoStatus[6];
+        for (int i = 0; i < 6; i++)
             bingoStatus[i] = BingoStatus.DEFAULT;
         movableCube = new bool[9];
     }
@@ -168,20 +168,20 @@ public class ColorCheckManager : MonoBehaviour
                 bingoNum[colorOfSide[2]]++;
 
             bingoNums[i] = bingoNum;
-        }
 
-        if (sideColor != -1)
-        {
-            int count = 0;
-            for (int i = 0; i < 6; i++)
+
+            if(sideColor == i)
             {
-                if (IsAllCoolTime(bingoStatus[i]) || IsOneCoolTime(bingoStatus[i])) return 0;
+                int oneBingoCnt = 0;
 
-                if (bingoNums[sideColor][i] == 6) return 6;
-                else if (bingoNums[sideColor][i] > 0) count++;
+                foreach(int num in bingoNum)
+                {
+                    if (num == 6) return 6;
+                    else if (num > 1) oneBingoCnt++;
+                }
 
+                return oneBingoCnt;
             }
-            return count;
         }
 
         for (int j = 0; j < 6; j++) // 각각의 색
@@ -192,20 +192,22 @@ public class ColorCheckManager : MonoBehaviour
                 if (bingoNums[i][j] > maxBingoNum) maxBingoNum = bingoNums[i][j];
             }
 
-            if(maxBingoNum == 6 && !IsAllCoolTime(bingoStatus[j]))
+            if (maxBingoNum == 6 && !IsAllCoolTime(bingoStatus[j]))
             {
-                bingoStatus[j] = BingoStatus.ALL;
                 bingoTexts[j].text = "ALL";
             }
-            else if(IsAllCoolTime(bingoStatus[j]) || IsOneCoolTime(bingoStatus[j]))
+            else if (IsAllCoolTime(bingoStatus[j]) || IsOneCoolTime(bingoStatus[j]))
                 bingoTexts[j].text = "COOL TIME";
-            else if(maxBingoNum > 0)
+            else if (maxBingoNum > 0)
             {
                 bingoStatus[j] = BingoStatus.ONE;
                 bingoTexts[j].text = "ONE";
             }
             else
+            {
+                bingoStatus[j] = BingoStatus.DEFAULT;
                 bingoTexts[j].text = "NO";
+            }
         }
 
         return 0;
@@ -214,6 +216,8 @@ public class ColorCheckManager : MonoBehaviour
     {
         for (int i = 0; i < 6; i++)
         {
+            if (bingoTexts[i].text == "ALL") bingoStatus[i] = BingoStatus.ALL;
+
             switch (bingoStatus[i])
             {
                 case BingoStatus.ONE: bingoStatus[i] =   BingoStatus.ONE_1; break;
