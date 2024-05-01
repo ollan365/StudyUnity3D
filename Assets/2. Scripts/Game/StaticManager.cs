@@ -90,6 +90,8 @@ public class StaticManager : MonoBehaviour
             {
                 valueList.Add(data[i + add]);
                 add++;
+
+                if (data.Length <= i + add) break;
             }
 
             stageEnemyDatas.Add(int.Parse(data[i].Split(',')[STAGE_ENEMY_STAGE]), valueList);
@@ -120,6 +122,8 @@ public class StaticManager : MonoBehaviour
             {
                 valueList.Add(int.Parse(data[i + add].Split(',')[FRIEND_STAGE]), data[i]);
                 add++;
+
+                if (data.Length <= i + add) break;
             }
 
             friendDatas.Add(int.Parse(data[i].Split(',')[FRIEND_ID]), valueList);
