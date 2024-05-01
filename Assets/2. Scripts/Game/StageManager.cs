@@ -7,7 +7,6 @@ using static Excel;
 
 public class StageManager : MonoBehaviour
 {
-
     public static StageManager Instance { get; private set; }
 
     [SerializeField] private Transform cube;
@@ -118,7 +117,7 @@ public class StageManager : MonoBehaviour
     private IEnumerator StartStage()
     {
         //섞기 전 플레이어 비활성화
-        player.SetActive(false);
+        // player.SetActive(false);
 
         cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
