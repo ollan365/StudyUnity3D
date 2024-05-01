@@ -14,7 +14,7 @@ public class ColorChange : MonoBehaviour
         //cubeMaterialSet[stage][white]
         stage = 0;
         
-        gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[StaticManager.Instance.Stage][color.ToInt()];
+        gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[StaticManager.Instance.Stage % 6][color.ToInt()];
     }
 
     // Update is called once per frame
@@ -23,7 +23,7 @@ public class ColorChange : MonoBehaviour
         if (stage != StaticManager.Instance.Stage)
         {
             stage = StaticManager.Instance.Stage;
-            gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[StaticManager.Instance.Stage][color.ToInt()];
+            gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[StaticManager.Instance.Stage % 6][color.ToInt()];
         }
     }
 }

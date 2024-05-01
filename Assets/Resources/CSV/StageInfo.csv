@@ -1,4 +1,4 @@
-﻿Level,CubeSize,RotationForMixCnt,PlayerMaxHP,RewardGold,WeaponChageCnt,TreasureBoxCnt,TreasureMinGold,TreausreMaxGold,EnemyCnt,RotateCnt,MoveCnt,비고
+Level,CubeSize,RotationForMixCnt,PlayerMaxHP,RewardGold,WeaponChageCnt,TreasureBoxCnt,TreasureMinGold,TreausreMaxGold,EnemyCnt,RotateCnt,MoveCnt,비고
 1,2,0,100,0,1,0,0,0,3,2,0,0
 2,2,21,200,17,1,0,0,0,4,2,0,0
 3,3,21,500,22,1,1,10,100,5,4,0,0
