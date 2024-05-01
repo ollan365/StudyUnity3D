@@ -29,6 +29,7 @@ public class EnvLogic : MonoBehaviour
                         yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
 
                         colorCheckManager.Move(enemyObj.Color, random, true); // 이동
+                        yield return new WaitForSeconds(2f); // Move에 걸리는 시간
 
                         if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].ObjType == ObjectType.TREASURE)
                             StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].Obj.OnHit(9999);
