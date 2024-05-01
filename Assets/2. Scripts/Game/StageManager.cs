@@ -28,8 +28,12 @@ public class StageManager : MonoBehaviour
     {
         return stageDatas[column];
     }
+    [SerializeField] private bool developMode;
+    [SerializeField] private GameObject[] enemy, friend, treasure;
+    [SerializeField] private int enemyCnt;
+    [SerializeField] private int friendCnt;
+    [SerializeField] private int tresureCnt;    
 
-   [SerializeField] private GameObject[] enemy, friend, treasure;
     public GameObject[] EnemyList { get => enemy; }
     public GameObject[] FriendList { get => friend; }
     public GameObject[] TreasureList { get => treasure; }
@@ -79,9 +83,21 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.WEAPON_CHANGE.ToInt()] = stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]
             = stageDatas[WEAPON_CHANGE];
 
-        enemy = new GameObject[stageDatas[ENEMY_COUNT]];
-        friend = new GameObject[3];
-        treasure = new GameObject[stageDatas[TREASURE_COUNT]];
+        if (developMode)
+        {
+            enemy = new GameObject[enemyCnt];
+            friend = new GameObject[friendCnt];
+            treasure = new GameObject[tresureCnt];
+
+            
+        }
+        else
+        {
+            enemy = new GameObject[stageDatas[ENEMY_COUNT]];
+            friend = new GameObject[3];
+            treasure = new GameObject[stageDatas[TREASURE_COUNT]];
+        }
+
 
         StartCoroutine(StartStage());
     }
@@ -119,7 +135,7 @@ public class StageManager : MonoBehaviour
     {
         clickIgnorePanel.SetActive(true);
         //섞기 전 플레이어 비활성화
-        player.SetActive(false);
+        player.SetActive(true);
         
         cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
@@ -127,7 +143,6 @@ public class StageManager : MonoBehaviour
 
         //섞은 후 플레이어 활성화
         player.SetActive(true);
-        StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         int index = 0;
@@ -194,6 +209,7 @@ public class StageManager : MonoBehaviour
             colorCheckManager.BingoTextChange(-1);
             SetStageTextValue(StageText.ALL_INIT, 0);
             StatusOfStage = StageStatus.PLAYER;
+            StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
             clickIgnorePanel.SetActive(false);
         }
 
