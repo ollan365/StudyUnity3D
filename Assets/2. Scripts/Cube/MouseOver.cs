@@ -6,9 +6,6 @@ using UnityEngine.EventSystems;
 public class MouseOver : MonoBehaviour
 {
     MeshRenderer cubeColor;
-    //true: black, false: origin color
-    private bool isGlittering = true;
-
 
     private void Awake()
     {
@@ -27,29 +24,17 @@ public class MouseOver : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (isGlittering)
-            cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 0.7f);
-        else
-            cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 0);
+        cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 1f);
     }
 
     private IEnumerator Glittering()
     {
-        int cnt = 0;
-        while (cnt < 100) {
-            
-            if (isGlittering)
-            {
-                cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 0.7f);
-                isGlittering = false;
-            }
-            else
-            {
-                cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, 0);
-                isGlittering = true;
-            }
-            yield return new WaitForSecondsRealtime(0.7f);
-            cnt++;
+        float cnt = 0;
+        while (cnt < 1) {
+            cnt += 0.1f;
+            cubeColor.material.color = new Color(0.1f, 0.1f, 0.1f, cnt);
+            yield return new WaitForFixedUpdate();
+
         }
     }
 }

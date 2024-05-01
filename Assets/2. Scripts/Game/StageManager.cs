@@ -22,7 +22,7 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] private Text[] stageTexts;
     private int[] stageTextValues;
-    
+
     private int[] stageDatas;
     public int StageData(int column)
     {
@@ -39,6 +39,7 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] private GameObject stageStartPanel;
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject clickIgnorePanel;
 
     private StageStatus status;
     public StageStatus StatusOfStage
@@ -47,7 +48,7 @@ public class StageManager : MonoBehaviour
         private set
         { 
             status = value;
-            stageTexts[0].text = $"{StaticManager.Instance.Stage}Ãş {status}";
+            stageTexts[0].text = $"{StaticManager.Instance.Stage}ì¸µ {status}";
         }
     }
     private void Awake()
@@ -68,7 +69,7 @@ public class StageManager : MonoBehaviour
 
         Player.Init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() });
 
-        // ³ªÁß¿¡ °è»ê °ø½ÄÀ¸·Î ¹Ù²Ù±â!
+        // ë‚˜ì¤‘ì— ê³„ì‚° ê³µì‹ìœ¼ë¡œ ë°”ê¾¸ê¸°!
         stageTextValues[StageText.MONSTER.ToInt()] = stageTextValues[StageText.MONSTER_INIT.ToInt()]
             = stageDatas[ENEMY_COUNT];
         stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()]
@@ -109,27 +110,28 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.MONSTER.ToInt()] = 0;
         foreach (GameObject e in enemy) stageTextValues[StageText.MONSTER.ToInt()]++;
 
-        stageTexts[1].text = $"{stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
-        stageTexts[2].text = $"{stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
-        stageTexts[3].text = $"{stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
-        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
+        stageTexts[1].text = $"Monster: {stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
+        stageTexts[2].text = $"Move: {stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
+        stageTexts[3].text = $"Rotate: {stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
+        stageTexts[4].text = $"Weapon: {stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
     }
     private IEnumerator StartStage()
     {
-        //¼¯±â Àü ÇÃ·¹ÀÌ¾î ºñÈ°¼ºÈ­
-        // player.SetActive(false);
-
-        cubeManager.StartRandomTurn(stageDatas[MIX]); // Å¥ºê¸¦ ¼¯´Â´Ù
+        clickIgnorePanel.SetActive(true);
+        //ì„ê¸° ì „ í”Œë ˆì´ì–´ ë¹„í™œì„±í™”
+        player.SetActive(false);
+        
+        cubeManager.StartRandomTurn(stageDatas[MIX]); // íë¸Œë¥¼ ì„ëŠ”ë‹¤
 
         yield return new WaitForSeconds(5f);
 
-        //¼¯Àº ÈÄ ÇÃ·¹ÀÌ¾î È°¼ºÈ­
+        //ì„ì€ í›„ í”Œë ˆì´ì–´ í™œì„±í™”
         player.SetActive(true);
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         int index = 0;
-        for(int i = 0; i < stageEnemy.Count; i++) // enemy ¹èÄ¡
+        for(int i = 0; i < stageEnemy.Count; i++) // enemy ë°°ì¹˜
         {
             Touch cube;
 
@@ -147,7 +149,7 @@ public class StageManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure ¹èÄ¡
+        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure ë°°ì¹˜
         {
             Touch cube;
             while (true)
@@ -165,6 +167,7 @@ public class StageManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         stageStartPanel.SetActive(false);
+        clickIgnorePanel.SetActive(false);
 
         ChangeStatus();
 
@@ -175,6 +178,7 @@ public class StageManager : MonoBehaviour
 
         if (StatusOfStage == StageStatus.PLAYER)
         {
+            Debug.Log("fight");
             StatusOfStage = StageStatus.FIGHT;
             StartCoroutine(fightLogic.BingoReward());
         }
@@ -190,16 +194,19 @@ public class StageManager : MonoBehaviour
             colorCheckManager.BingoTextChange(-1);
             SetStageTextValue(StageText.ALL_INIT, 0);
             StatusOfStage = StageStatus.PLAYER;
+            clickIgnorePanel.SetActive(false);
         }
+
+        
     }
     public void ClearStage()
     {
         StatusOfStage = StageStatus.END;
 
-        foreach(GameObject t in treasure) // ½ºÅ×ÀÌÁö Á¾·á ½Ã º¸¹°»óÀÚ ¼Ò¸ê
+        foreach(GameObject t in treasure) // ìŠ¤í…Œì´ì§€ ì¢…ë£Œ ì‹œ ë³´ë¬¼ìƒì ì†Œë©¸
             t.GetComponent<Object>().OnHit(9999);
 
-        // »óÀÎ°ú Æ÷Å» ¼ÒÈ¯
+        // ìƒì¸ê³¼ í¬íƒˆ ì†Œí™˜
         ObjectType[] summonObjectArray = new ObjectType[2] { ObjectType.MERCHANT, ObjectType.PORTAL };
         foreach (ObjectType type in summonObjectArray)
         {
@@ -263,7 +270,7 @@ public class StageManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        // º¸Á¤À» À§ÇØ ÃÖÁ¾ È¸Àü °¢µµ·Î ¼³Á¤
+        // ë³´ì •ì„ ìœ„í•´ ìµœì¢… íšŒì „ ê°ë„ë¡œ ì„¤ì •
         cube.transform.localRotation = Quaternion.Euler(endRotationVector);
         isCubeMove = false;
     }
@@ -275,7 +282,7 @@ public class StageManager : MonoBehaviour
             return false;
         for (int i = 0; i < 3; i++)
         {
-            if (friend[i] == null) // ÀÌ°Ç µ¿·á ¼ÒÈ¯ÀÌ ÇÑ ½ºÅ×ÀÌÁö¿¡¼­ 3¹ø¸¸ °¡´ÉÇÒ ¶§±ä ÇÔ
+            if (friend[i] == null) // ì´ê±´ ë™ë£Œ ì†Œí™˜ì´ í•œ ìŠ¤í…Œì´ì§€ì—ì„œ 3ë²ˆë§Œ ê°€ëŠ¥í•  ë•Œê¸´ í•¨
             {
                 friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 Debug.Log("summons success!");

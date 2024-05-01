@@ -15,9 +15,9 @@ public class EnvLogic : MonoBehaviour
             Object enemyObj = e.GetComponent<Object>();
             colorCheckManager.CharacterSelect(e);
 
-            if (enemyObj.Color != StageManager.Instance.Player.Color) // ÇÃ·¹ÀÌ¾î¿Í ´Ù¸¥ ¸éÀÏ ¶§
+            if (enemyObj.Color != StageManager.Instance.Player.Color) // í”Œë ˆì´ì–´ì™€ ë‹¤ë¥¸ ë©´ì¼ ë•Œ
             {
-                for (int i = 0; i < 3; i++) // ÀÌµ¿À» ¼¼¹ø Á¤µµ ½Ãµµ
+                for (int i = 0; i < 3; i++) // ì´ë™ì„ ì„¸ë²ˆ ì •ë„ ì‹œë„
                 {
                     int random = Random.Range(0, 9);
 
@@ -26,10 +26,10 @@ public class EnvLogic : MonoBehaviour
                         Debug.Log($"{enemyObj.Color}: {random}");
 
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
-                        yield return new WaitForSeconds(2f); // CubeRotate¿¡ °É¸®´Â ½Ã°£
+                        yield return new WaitForSeconds(2f); // CubeRotateì— ê±¸ë¦¬ëŠ” ì‹œê°„
 
-                        colorCheckManager.Move(enemyObj.Color, random, true); // ÀÌµ¿
-                        yield return new WaitForSeconds(2f); // Move¿¡ °É¸®´Â ½Ã°£
+                        colorCheckManager.Move(enemyObj.Color, random, true); // ì´ë™
+                        yield return new WaitForSeconds(2f); // Moveì— ê±¸ë¦¬ëŠ” ì‹œê°„
 
                         if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].ObjType == ObjectType.TREASURE)
                             StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].Obj.OnHit(9999);
@@ -38,23 +38,23 @@ public class EnvLogic : MonoBehaviour
                     }
                 }
             }
-            else // ÇÃ·¹ÀÌ¾î¿Í °°Àº ¸éÀÏ ¶§
+            else // í”Œë ˆì´ì–´ì™€ ê°™ì€ ë©´ì¼ ë•Œ
             {
                 List<int> priority = GetPriorityMoveCube(enemyObj.AttackType);
 
                 for (int i = 0; i < priority.Count; i++)
                 {
-                    if (enemyObj.Index == priority[i]) break; // º»ÀÎÀÇ ÇöÀç À§Ä¡º¸´Ù ¿ì¼±¼øÀ§°¡ ³·¾ÆÁö¸é ÀÌµ¿ ¾ÈÇÔ
+                    if (enemyObj.Index == priority[i]) break; // ë³¸ì¸ì˜ í˜„ì¬ ìœ„ì¹˜ë³´ë‹¤ ìš°ì„ ìˆœìœ„ê°€ ë‚®ì•„ì§€ë©´ ì´ë™ ì•ˆí•¨
 
                     if (colorCheckManager.Move(enemyObj.Color, priority[i], false))
                     {
                         Debug.Log($"{priority[i]}");
 
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
-                        yield return new WaitForSeconds(2f); // CubeRotate¿¡ °É¸®´Â ½Ã°£
+                        yield return new WaitForSeconds(2f); // CubeRotateì— ê±¸ë¦¬ëŠ” ì‹œê°„
 
                         colorCheckManager.Move(enemyObj.Color, priority[i], true);
-                        yield return new WaitForSeconds(2f); // Move¿¡ °É¸®´Â ½Ã°£
+                        yield return new WaitForSeconds(2f); // Moveì— ê±¸ë¦¬ëŠ” ì‹œê°„
 
                         if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TREASURE)
                             StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(9999);
@@ -145,7 +145,7 @@ public class EnvLogic : MonoBehaviour
 
     private List<int> RandomArray(List<int> array)
     {
-        // array¸¦ ·£´ıÇÏ°Ô ¼¯À½
+        // arrayë¥¼ ëœë¤í•˜ê²Œ ì„ìŒ
         for (int i = 0; i < array.Count; i++)
         {
             int temp = array[i];
