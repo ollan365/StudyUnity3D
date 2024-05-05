@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9097,24 +9097,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255b72b855700bc4d9a17efc48de6a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeManager: {fileID: 924633}
+  friendObjectStatus:
+  - {fileID: 671984734}
+  - {fileID: 743013545}
+  - {fileID: 1195638117}
+  dieObject: {fileID: 685963}
   player: {fileID: 1463790526}
   goldText: {fileID: 1185456634}
+  cubeManager: {fileID: 924633}
   enemyPrefab: {fileID: 360777001147702422, guid: 8f91185271672b6499de09a66bba49d0, type: 3}
   friendPrefab: {fileID: 360777001147702422, guid: 1d29f093945026448bcbc74c2cf70b0c, type: 3}
   treasurePrefab: {fileID: 360777001147702422, guid: 2760ecf787b1bd34aabe0b7874e52e20, type: 3}
   merchantPrefab: {fileID: 360777001147702422, guid: 1bdf0a1e8f1ee0942b331d21d4b34e2d, type: 3}
   portalPrefab: {fileID: 360777001147702422, guid: 33863ed9a20f64f41a56f8196a76d774, type: 3}
-  friendObjectStatus:
-  - {fileID: 671984734}
-  - {fileID: 743013545}
-  - {fileID: 1195638117}
   friendHpSlider:
   - {fileID: 1588038328}
   - {fileID: 1622419590}
   - {fileID: 2146210244}
-  dieObject: {fileID: 685963}
-  shopPopup: {fileID: 0}
+  shopPopup: {fileID: 780875441}
   inventorySlotButton:
   - {fileID: 2029152997}
   - {fileID: 857325415}
@@ -10423,6 +10423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97da29fb889d2ab42b69a4fdcb424cf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 1463790524}
   cube: {fileID: 924632}
   isCubeMove: 0
   cubeManager: {fileID: 924633}
@@ -10439,10 +10440,11 @@ MonoBehaviour:
   enemy: []
   friend: []
   treasure: []
-  player: {fileID: 1463790524}
   stageStartPanel: {fileID: 75974628}
   gameOverPanel: {fileID: 1358166159}
   clickIgnorePanel: {fileID: 1063095728}
+  onDevelopMode: 1
+  enemyCountArray: 010000000200000003000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!4 &608311169
 Transform:
   m_ObjectHideFlags: 0
@@ -24533,36 +24535,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stage: 6
-  player: {fileID: 1463790526}
-  playerWeapon: {fileID: 11400000, guid: bb090f420cb763a48ba2cabb39cc24ef, type: 2}
-  portionList:
-  - {fileID: 11400000, guid: 28b4674014134fa449bf240e7b6a92a2, type: 2}
-  - {fileID: 11400000, guid: 1d859bc08e9eacc4ca6bff80eb882bec, type: 2}
-  scrollList:
-  - {fileID: 11400000, guid: 653a6cd605aaa60418708d0343a61c16, type: 2}
-  - {fileID: 11400000, guid: b7d2d3abd5f11774eb8d3a5140e60b16, type: 2}
-  - {fileID: 11400000, guid: 17ea2dc104b5386449402a0ea58313a4, type: 2}
-  - {fileID: 11400000, guid: afdbf1ba31c61974a8dd9d181907a5e1, type: 2}
-  - {fileID: 11400000, guid: 284cdfde43baab8408564b775d606012, type: 2}
-  - {fileID: 11400000, guid: f16e4f2a748e3e24290e853a8e9928b3, type: 2}
-  - {fileID: 11400000, guid: 302c657aa1a14d9478ccbbedcfa07bb9, type: 2}
-  - {fileID: 11400000, guid: 393b1d06906fb1a4398d52810e60da6c, type: 2}
-  - {fileID: 11400000, guid: 500beb267f920e84b8e10233dabe6277, type: 2}
-  weaponList:
-  - {fileID: 11400000, guid: bb090f420cb763a48ba2cabb39cc24ef, type: 2}
-  - {fileID: 11400000, guid: 255a402360ebe9d47bbb330f9cc1f87f, type: 2}
-  - {fileID: 11400000, guid: 8cd26a974a2f8f64782189dea1be85e9, type: 2}
-  - {fileID: 11400000, guid: c8903ee5785816645849ebce86a309cf, type: 2}
-  - {fileID: 11400000, guid: 22995e75636f4134c89f94d2d2beda88, type: 2}
-  - {fileID: 11400000, guid: 3504b531f03f96343a972c3f8c9e6d4c, type: 2}
-  - {fileID: 11400000, guid: 1ccebde6cac3eb444a0f774c8cc2b48e, type: 2}
-  - {fileID: 11400000, guid: b89924253954b164d876f25df99820e6, type: 2}
-  - {fileID: 11400000, guid: eeedd807df1424746b780cdc0a674547, type: 2}
-  - {fileID: 11400000, guid: 4ae3045fe5cb0dd4cac250101c935c03, type: 2}
-  - {fileID: 11400000, guid: dbef531f23e68654a87bc14bb6e97da6, type: 2}
-  - {fileID: 11400000, guid: 4e99e3b263b50174dbfcbc7ba38f7ef4, type: 2}
-  - {fileID: 11400000, guid: 65b30926d84991743802039a58f06cbd, type: 2}
-  - {fileID: 11400000, guid: ea2e29d148e011a4fbeb9c95ed8a4838, type: 2}
   inventory:
   - item: {fileID: 11400000, guid: bb090f420cb763a48ba2cabb39cc24ef, type: 2}
     count: 1
@@ -24596,6 +24568,37 @@ MonoBehaviour:
     count: 0
   - item: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
     count: 0
+  nullObject: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
+  player: {fileID: 1463790526}
+  playerWeapon: {fileID: 11400000, guid: bb090f420cb763a48ba2cabb39cc24ef, type: 2}
+  portionList:
+  - {fileID: 11400000, guid: 28b4674014134fa449bf240e7b6a92a2, type: 2}
+  - {fileID: 11400000, guid: 1d859bc08e9eacc4ca6bff80eb882bec, type: 2}
+  scrollList:
+  - {fileID: 11400000, guid: 653a6cd605aaa60418708d0343a61c16, type: 2}
+  - {fileID: 11400000, guid: b7d2d3abd5f11774eb8d3a5140e60b16, type: 2}
+  - {fileID: 11400000, guid: 17ea2dc104b5386449402a0ea58313a4, type: 2}
+  - {fileID: 11400000, guid: afdbf1ba31c61974a8dd9d181907a5e1, type: 2}
+  - {fileID: 11400000, guid: 284cdfde43baab8408564b775d606012, type: 2}
+  - {fileID: 11400000, guid: f16e4f2a748e3e24290e853a8e9928b3, type: 2}
+  - {fileID: 11400000, guid: 302c657aa1a14d9478ccbbedcfa07bb9, type: 2}
+  - {fileID: 11400000, guid: 393b1d06906fb1a4398d52810e60da6c, type: 2}
+  - {fileID: 11400000, guid: 500beb267f920e84b8e10233dabe6277, type: 2}
+  weaponList:
+  - {fileID: 11400000, guid: bb090f420cb763a48ba2cabb39cc24ef, type: 2}
+  - {fileID: 11400000, guid: 255a402360ebe9d47bbb330f9cc1f87f, type: 2}
+  - {fileID: 11400000, guid: 8cd26a974a2f8f64782189dea1be85e9, type: 2}
+  - {fileID: 11400000, guid: c8903ee5785816645849ebce86a309cf, type: 2}
+  - {fileID: 11400000, guid: 22995e75636f4134c89f94d2d2beda88, type: 2}
+  - {fileID: 11400000, guid: 3504b531f03f96343a972c3f8c9e6d4c, type: 2}
+  - {fileID: 11400000, guid: 1ccebde6cac3eb444a0f774c8cc2b48e, type: 2}
+  - {fileID: 11400000, guid: b89924253954b164d876f25df99820e6, type: 2}
+  - {fileID: 11400000, guid: eeedd807df1424746b780cdc0a674547, type: 2}
+  - {fileID: 11400000, guid: 4ae3045fe5cb0dd4cac250101c935c03, type: 2}
+  - {fileID: 11400000, guid: dbef531f23e68654a87bc14bb6e97da6, type: 2}
+  - {fileID: 11400000, guid: 4e99e3b263b50174dbfcbc7ba38f7ef4, type: 2}
+  - {fileID: 11400000, guid: 65b30926d84991743802039a58f06cbd, type: 2}
+  - {fileID: 11400000, guid: ea2e29d148e011a4fbeb9c95ed8a4838, type: 2}
   material1:
   - {fileID: 2100000, guid: 8cf1c1bf6c8b7ce499a07e7fe87e4960, type: 2}
   - {fileID: 2100000, guid: 379906b404abf7d4690b6b200edc32d5, type: 2}
@@ -24638,7 +24641,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: c9246a369c24a684eaf4af7ed4f47d9f, type: 2}
   - {fileID: 2100000, guid: 9c35092fb0a3cb543b31eb3aa306adfa, type: 2}
   - {fileID: 2100000, guid: 8cf1c1bf6c8b7ce499a07e7fe87e4960, type: 2}
-  nullObject: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
 --- !u!4 &1424684505
 Transform:
   m_ObjectHideFlags: 0

@@ -5,27 +5,33 @@ using static Constants;
 
 public class ObjectManager : MonoBehaviour
 {
-    public static ObjectManager Instance { get; private set; }
-    [SerializeField] private CubeManager cubeManager;
+    [Space(10f)]
+    [SerializeField] private GameObject[] friendObjectStatus;
+    [SerializeField] private Transform dieObject;
     [SerializeField] private Object player;
     [SerializeField] private Text goldText;
 
+    public static ObjectManager Instance { get; private set; }
+    [Header("Manager")]
+    [SerializeField] private CubeManager cubeManager;
+
+
+    [Header("Prefabs")]
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject treasurePrefab;
     [SerializeField] private GameObject merchantPrefab;
     [SerializeField] private GameObject portalPrefab;
 
-    [SerializeField] private GameObject[] friendObjectStatus;
-    [SerializeField] private Slider[] friendHpSlider;
 
-    [SerializeField] private Transform dieObject;
 
-    [SerializeField] private GameObject shopPopup;
     private ItemObject[] allShopWeapon;
     private ItemObject[] allShopPortion;
     private ItemObject[] allShopScroll;
 
+    [Header("UI")]
+    [SerializeField] private Slider[] friendHpSlider;
+    [SerializeField] private GameObject shopPopup;
     [SerializeField] private GameObject[] inventorySlotButton;
     [SerializeField] private GameObject[] shopSlotButton;
     private ItemSlot[] shopItemArray;
