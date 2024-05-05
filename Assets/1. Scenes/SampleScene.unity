@@ -10443,7 +10443,8 @@ MonoBehaviour:
   stageStartPanel: {fileID: 75974628}
   gameOverPanel: {fileID: 1358166159}
   clickIgnorePanel: {fileID: 1063095728}
-  onDevelopMode: 1
+  onDevelopMode: 0
+  developEnemyCnt: 0
   enemyCountArray: 010000000200000003000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!4 &608311169
 Transform:

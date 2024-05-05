@@ -6,6 +6,7 @@ public class StaticManager : MonoBehaviour
 {
     public static StaticManager Instance { get; private set; }
 
+    [Range(1, 24)]
     [SerializeField] private int stage;
     public ItemSlot[] inventory;
     public ItemObject nullObject;
