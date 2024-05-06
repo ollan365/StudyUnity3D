@@ -41,8 +41,9 @@ public class Object : MonoBehaviour
         set
         {
             hp = Mathf.Clamp(value, 0, maxHp);
-            if (hpSlider != null)
-                hpSlider.value = hp / maxHp;
+
+            if (hpSlider != null) hpSlider.value = hp / maxHp;
+            if (bottomHP != null) bottomHP.value = hp / maxHp;
         }
     }
     public Colors Color { get => touchCube.Color; }

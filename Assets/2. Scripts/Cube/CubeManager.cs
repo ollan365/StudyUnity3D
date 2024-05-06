@@ -319,6 +319,8 @@ public class CubeManager : MonoBehaviour
                 {
                     StageManager.Instance.StagePlayLogic.UsePortion(itemID, obj.gameObject);
                     ObjectManager.Instance.UseItem(ItemType.PORTION, itemID);
+
+                    playerTurnStatus = PlayerTurnStatus.NORMAL;
                 }
                 break;
             case PlayerTurnStatus.SUMMONS_SELECTED:
