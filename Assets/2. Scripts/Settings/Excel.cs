@@ -1,9 +1,9 @@
 public static class Excel
 {
-    public const string StageInfo = "StageInfo";
-    public const string StageEnemy = "StageEnemy";
-    public const string EnemyInfo = "EnemyInfo";
-    public const string FriendInfo = "FriendInfo";
+    public const string StageInfo = "CSV/StageInfo";
+    public const string StageEnemy = "CSV/StageEnemy";
+    public const string EnemyInfo = "CSV/EnemyInfo";
+    public const string FriendInfo = "CSV/FriendInfo";
 
     // StageInfo
     public const int
