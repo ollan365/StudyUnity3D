@@ -104,6 +104,8 @@ public class StaticManager : MonoBehaviour
                 Debug.Log("i = " + i +  ", add = " + add + ", i + add = " + (int)(i + add));
                 Debug.Log(valueList[valueList.Count-1]);
                 add++;
+
+                if (data.Length <= i + add) break;
             }
 
             stageEnemyDatas.Add(int.Parse(data[i].Split(',')[STAGE_ENEMY_STAGE]), valueList);
@@ -135,6 +137,8 @@ public class StaticManager : MonoBehaviour
             {
                 valueList.Add(int.Parse(data[i + add].Split(',')[FRIEND_STAGE]), data[i]);
                 add++;
+
+                if (data.Length <= i + add) break;
             }
 
             friendDatas.Add(int.Parse(data[i].Split(',')[FRIEND_ID]), valueList);

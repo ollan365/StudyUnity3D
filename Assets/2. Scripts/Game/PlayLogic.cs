@@ -51,6 +51,7 @@ public class PlayLogic : MonoBehaviour
         {
             case StatusEffect.HP:
                 p.GetComponent<Object>().HP += portion.Value;
+                p.GetComponent<Object>().HP_Percent(portion.HealRate);
                 break;
         }
     }

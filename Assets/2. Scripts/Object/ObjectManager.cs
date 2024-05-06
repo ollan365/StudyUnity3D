@@ -178,6 +178,7 @@ public class ObjectManager : MonoBehaviour
                 break;
             }
         }
+        ChangePlayerInventory();
     }
     public void ChangeShop()
     {
