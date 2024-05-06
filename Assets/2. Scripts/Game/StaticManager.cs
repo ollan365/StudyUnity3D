@@ -6,7 +6,12 @@ public class StaticManager : MonoBehaviour
 {
     public static StaticManager Instance { get; private set; }
 
+    [Range(1, 24)]
     [SerializeField] private int stage;
+    public ItemSlot[] inventory;
+    public ItemObject nullObject;
+
+    [Header("Player")]
     [SerializeField] private Object player;
     public int Stage { get => stage; }
 
@@ -23,11 +28,13 @@ public class StaticManager : MonoBehaviour
     private int gold;
     public int Gold { get => gold; set => gold = value; }
 
-    
+    [Header("Item List")]
     [SerializeField] private List<Portion> portionList;
     [SerializeField] private List<Scroll> scrollList;
     [SerializeField] private List<Weapon> weaponList;
 
+
+    //Object Datas
     public Dictionary<int, string> stageDatas;
     public Dictionary<int, List<string>> stageEnemyDatas;
     public Dictionary<int, string> enemyDatas;
@@ -37,11 +44,14 @@ public class StaticManager : MonoBehaviour
     public Dictionary<int, Scroll> scrollDatas;
     public Dictionary<int, Weapon> weaponDatas;
 
-    public ItemSlot[] inventory;
-    [SerializeField] private Material[] material1, material2, material3, material4, material5, material6;
+    [Header("Cube Materials")]
+    [SerializeField] private Material[] material1;
+    [SerializeField] private Material[] material2;
+    [SerializeField] private Material[] material3;
+    [SerializeField] private Material[] material4;
+    [SerializeField] private Material[] material5;
+    [SerializeField] private Material[] material6;
     public Material[][] cubeMaterialSet;
-    
-    public ItemObject nullObject;
 
     private void Awake()
     {
@@ -84,11 +94,15 @@ public class StaticManager : MonoBehaviour
             int add = 0;
             List<string> valueList = new();
 
+            Debug.Log(i + add);
             if (data[i].Split(',')[STAGE_ENEMY_STAGE] == "") break;
 
-            while (data[i].Split(',')[STAGE_ENEMY_STAGE] == data[i + add].Split(',')[STAGE_ENEMY_STAGE])
+            Debug.Log(i + add);
+            while ( (i + add < 112) && data[i].Split(',')[STAGE_ENEMY_STAGE] == data[i + add].Split(',')[STAGE_ENEMY_STAGE])
             {
                 valueList.Add(data[i + add]);
+                Debug.Log("i = " + i +  ", add = " + add + ", i + add = " + (int)(i + add));
+                Debug.Log(valueList[valueList.Count-1]);
                 add++;
 
                 if (data.Length <= i + add) break;
@@ -96,6 +110,7 @@ public class StaticManager : MonoBehaviour
 
             stageEnemyDatas.Add(int.Parse(data[i].Split(',')[STAGE_ENEMY_STAGE]), valueList);
             i += add;
+            
         }
 
         csvData = Resources.Load<TextAsset>(EnemyInfo);
@@ -118,7 +133,7 @@ public class StaticManager : MonoBehaviour
 
             if (data[i].Split(',')[FRIEND_ID] == "") break;
 
-            while (data[i].Split(',')[FRIEND_ID] == data[i + add].Split(',')[FRIEND_ID])
+            while ((i + add < 172) && data[i].Split(',')[FRIEND_ID] == data[i + add].Split(',')[FRIEND_ID])
             {
                 valueList.Add(int.Parse(data[i + add].Split(',')[FRIEND_STAGE]), data[i]);
                 add++;

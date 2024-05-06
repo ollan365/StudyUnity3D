@@ -4,14 +4,35 @@ public class StageCube : MonoBehaviour
 {
     public static StageCube Instance { get; private set; }
 
-    [SerializeField] private GameObject[] whiteArray, redArray, blueArray, greenArray, orangeArray, yellowArray;
-    [SerializeField] private GameObject[] wyArray, roArray, bgArray;
+    [Header("Color Arrays")]
+    [SerializeField] private GameObject[] whiteArray;
+    [SerializeField] private GameObject[] redArray;
+    [SerializeField] private GameObject[] blueArray;
+    [SerializeField] private GameObject[] greenArray;
+    [SerializeField] private GameObject[] orangeArray;
+    [SerializeField] private GameObject[] yellowArray;
+
+    [SerializeField] private GameObject[] wyArray;
+    [SerializeField] private GameObject[] roArray;
+    [SerializeField] private GameObject[] bgArray;
     public GameObject[][] colorArray;
 
-    [SerializeField] private Touch[] whiteTouch, redTouch, blueTouch, greenTouch, orangeTouch, yellowTouch;
+    [Header("Touch Arrays")]
+    [SerializeField] private Touch[] whiteTouch;
+    [SerializeField] private Touch[] redTouch;
+    [SerializeField] private Touch[] blueTouch;
+    [SerializeField] private Touch[] greenTouch;
+    [SerializeField] private Touch[] orangeTouch;
+    [SerializeField] private Touch[] yellowTouch;
     public Touch[][] touchArray;
 
-    [SerializeField] private GameObject[] whiteCoverArray, redCoverArray, blueCoverArray, greenCoverArray, orangeCoverArray, yellowCoverArray;
+    [Header("Cover Arrays")]
+    [SerializeField] private GameObject[] whiteCoverArray;
+    [SerializeField] private GameObject[] redCoverArray;
+    [SerializeField] private GameObject[] blueCoverArray;
+    [SerializeField] private GameObject[] greenCoverArray;
+    [SerializeField] private GameObject[] orangeCoverArray;
+    [SerializeField] private GameObject[] yellowCoverArray;
     public GameObject[][] coverArray;
 
     private void Awake()

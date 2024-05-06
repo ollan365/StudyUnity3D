@@ -8,18 +8,24 @@ using static Excel;
 public class StageManager : MonoBehaviour
 {
     public static StageManager Instance { get; private set; }
+    [SerializeField] private GameObject player;
+    public Object Player { get => player.GetComponent<Object>(); }
 
+    [Header("Cube")]
     [SerializeField] private Transform cube;
     public bool isCubeMove;
 
+    [Header("Manager")]
     [SerializeField] private CubeManager cubeManager;
     [SerializeField] private ColorCheckManager colorCheckManager;
 
+    [Header("Logic")]
     [SerializeField] private FightLogic fightLogic;
     [SerializeField] private PlayLogic playLogic;
     [SerializeField] private EnvLogic envLogic;
     public PlayLogic StagePlayLogic { get => playLogic; }
 
+    [Header("Texts")]
     [SerializeField] private Text[] stageTexts;
     private int[] stageTextValues;
 
@@ -29,18 +35,26 @@ public class StageManager : MonoBehaviour
         return stageDatas[column];
     }
 
-   [SerializeField] private GameObject[] enemy, friend, treasure;
+    [Header("Objects")]
+    [SerializeField] private GameObject[] enemy;
+    [SerializeField] private GameObject[] friend;
+    [SerializeField] private GameObject[] treasure;
     public GameObject[] EnemyList { get => enemy; }
     public GameObject[] FriendList { get => friend; }
     public GameObject[] TreasureList { get => treasure; }
 
-    [SerializeField] private GameObject player;
-    public Object Player { get => player.GetComponent<Object>(); }
-
+    [Header("Panel")]
     [SerializeField] private GameObject stageStartPanel;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject clickIgnorePanel;
 
+    [Header("DevelopMode")]
+    [SerializeField] private bool onDevelopMode;
+    [SerializeField] private int developEnemyCnt;
+    [SerializeField]private int[] enemyCountArray;
+    
+
+    [Header("Status")]
     private StageStatus status;
     public StageStatus StatusOfStage
     { 
@@ -79,7 +93,18 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.WEAPON_CHANGE.ToInt()] = stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]
             = stageDatas[WEAPON_CHANGE];
 
-        enemy = new GameObject[stageDatas[ENEMY_COUNT]];
+        if (onDevelopMode)
+        {
+            developEnemyCnt = 0;
+            foreach (int i in enemyCountArray)
+                developEnemyCnt += i;
+            enemy = new GameObject[developEnemyCnt];
+        }
+        else
+        {
+            enemy = new GameObject[stageDatas[ENEMY_COUNT]];
+        }
+        
         friend = new GameObject[3];
         treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
@@ -129,25 +154,55 @@ public class StageManager : MonoBehaviour
         player.SetActive(true);
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
-        List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         int index = 0;
-        for(int i = 0; i < stageEnemy.Count; i++) // enemy 배치
+        if (onDevelopMode)
         {
-            Touch cube;
-
-            for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
+            for (int i = 0; i < enemyCountArray.Length; i++) // enemy 배치
             {
-                while (true)
+                Touch cube;
+
+                for (int j = 0; j < enemyCountArray[i]; j++)
                 {
-                    cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-                    if (cube.Obj == null)
-                        break;
+                    while (true)
+                    {
+                        cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+                        if (cube.Obj == null)
+                            break;
+                    }
+                    int enemyID = 100000 + i;
+                    enemy[index] = ObjectManager.Instance.Summons(cube, ObjectType.ENEMY, enemyID);
+                    Debug.Log(enemy[index]);
+                    index++;
+                    yield return new WaitForFixedUpdate();
                 }
-                enemy[index] = ObjectManager.Instance.Summons(cube, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
-                index++;
-                yield return new WaitForFixedUpdate();
             }
         }
+        else
+        {
+            List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
+            for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
+            {
+                Touch cube;
+
+                for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
+                {
+                    while (true)
+                    {
+                        cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+                        if (cube.Obj == null)
+                            break;
+                    }
+                    enemy[index] = ObjectManager.Instance.Summons(cube, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
+                    Debug.Log(enemy[index]);
+                    index++;
+                    yield return new WaitForFixedUpdate();
+                }
+            }
+        }
+
+        
+        
+        
 
         for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
         {
