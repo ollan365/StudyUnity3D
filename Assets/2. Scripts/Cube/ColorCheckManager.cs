@@ -96,7 +96,7 @@ public class ColorCheckManager : MonoBehaviour
             StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(false);
 
             ObjectType obj = StageCube.Instance.touchArray[selectedCharacterColor][i].ObjType;
-            if (obj != ObjectType.NULL && obj != ObjectType.PORTAL && obj != ObjectType.TREASURE)
+            if (obj != ObjectType.NULL && obj != ObjectType.PORTAL && obj != ObjectType.TREASURE && obj != ObjectType.MERCHANT)
                 movableCube[i] = false;
 
             if (selectedCharacter.GetComponent<Object>().Type != ObjectType.ENEMY)
@@ -106,7 +106,7 @@ public class ColorCheckManager : MonoBehaviour
     public bool Move(Colors color, int index, bool wantMove)
     {
         if (color != selectedCharacter.GetComponent<Object>().Color || !movableCube[index]) return false;
-        if (wantMove) StartCoroutine(MoveCoroutine(color, index));
+        if (wantMove && StageCube.Instance.touchArray[color.ToInt()][index].ObjType != ObjectType.MERCHANT) StartCoroutine(MoveCoroutine(color, index));
         return true;
     }
     private IEnumerator MoveCoroutine(Colors color, int index)

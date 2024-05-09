@@ -75,7 +75,7 @@ public class StageManager : MonoBehaviour
         for (int i = 0; i < data.Split(',').Length - 1; i++)
             stageDatas[i] = int.Parse(data.Split(',')[i]);
 
-        Player.Init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() });
+        Player.Init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() }, StageCube.Instance.touchArray[WHITE][4]);
 
         // 나중에 계산 공식으로 바꾸기!
         stageTextValues[StageText.MONSTER.ToInt()] = stageTextValues[StageText.MONSTER_INIT.ToInt()]
@@ -100,12 +100,7 @@ public class StageManager : MonoBehaviour
     }
     public void SetStageTextValue(StageText text, int addValue)
     {
-        if (text == StageText.ALL_INIT)
-        {
-            stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()];
-            stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE.ToInt()];
-        }
-        else if (text == StageText.END)
+        if (StatusOfStage == StageStatus.END)
         {
             stageTexts[1].text = "ALL DIE !";
             stageTexts[2].text = "INFINITY";
@@ -113,6 +108,11 @@ public class StageManager : MonoBehaviour
             stageTexts[4].text = "INFINITY";
 
             return;
+        }
+        else if (text == StageText.ALL_INIT)
+        {
+            stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()];
+            stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE.ToInt()];
         }
         else stageTextValues[text.ToInt()] += addValue;
 

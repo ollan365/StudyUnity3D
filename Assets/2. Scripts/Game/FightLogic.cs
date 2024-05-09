@@ -82,7 +82,7 @@ public class FightLogic : MonoBehaviour
         enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
         friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
 
-        if (!StageManager.Instance.EnemyList[enemyAttackOrder[0].Value].activeSelf) // 살아있는 enemy가 없으면
+        if (enemyAttackOrder.Count <= 0) // 살아있는 enemy가 없으면
         {
             StageManager.Instance.ClearStage();
             yield break;
