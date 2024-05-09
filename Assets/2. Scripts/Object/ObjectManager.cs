@@ -65,7 +65,6 @@ public class ObjectManager : MonoBehaviour
                     }
                 Dictionary<int, string> values = StaticManager.Instance.friendDatas[objectID];
                 value = values[StaticManager.Instance.Stage];
-                Debug.Log($"{value}");
                 newObject.GetComponent<Object>().Init(objectType, value.Split(','));
                 ChangePlayerInventory();
                 break;

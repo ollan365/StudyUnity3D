@@ -94,15 +94,11 @@ public class StaticManager : MonoBehaviour
             int add = 0;
             List<string> valueList = new();
 
-            Debug.Log(i + add);
             if (data[i].Split(',')[STAGE_ENEMY_STAGE] == "") break;
 
-            Debug.Log(i + add);
             while ( (i + add < 112) && data[i].Split(',')[STAGE_ENEMY_STAGE] == data[i + add].Split(',')[STAGE_ENEMY_STAGE])
             {
                 valueList.Add(data[i + add]);
-                Debug.Log("i = " + i +  ", add = " + add + ", i + add = " + (int)(i + add));
-                Debug.Log(valueList[valueList.Count-1]);
                 add++;
 
                 if (data.Length <= i + add) break;
