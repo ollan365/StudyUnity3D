@@ -48,12 +48,6 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject clickIgnorePanel;
 
-    [Header("DevelopMode")]
-    [SerializeField] private bool onDevelopMode;
-    [SerializeField] private int developEnemyCnt;
-    [SerializeField] private int[] enemyCountArray;
-
-
     [Header("Status")]
     private StageStatus status;
     public StageStatus StatusOfStage
@@ -93,18 +87,8 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.WEAPON_CHANGE.ToInt()] = stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]
             = stageDatas[WEAPON_CHANGE];
 
-        if (onDevelopMode)
-        {
-            developEnemyCnt = 0;
-            foreach (int i in enemyCountArray)
-                developEnemyCnt += i;
-            enemy = new GameObject[developEnemyCnt];
-        }
-        else
-        {
-            enemy = new GameObject[stageDatas[ENEMY_COUNT]];
-        }
-
+        
+        enemy = new GameObject[stageDatas[ENEMY_COUNT]];
         friend = new GameObject[3];
         treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
@@ -155,55 +139,27 @@ public class StageManager : MonoBehaviour
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
         int index = 0;
-        if (onDevelopMode)
+        
+        List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
+        for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
         {
-            for (int i = 0; i < enemyCountArray.Length; i++) // enemy 배치
-            {
-                Touch cube;
+            Touch cube;
 
-                for (int j = 0; j < enemyCountArray[i]; j++)
+            for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
+            {
+                while (true)
                 {
-                    while (true)
-                    {
-                        cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-                        if (cube.Obj == null)
-                            break;
-                    }
-                    int enemyID = 100000 + i;
-                    enemy[index] = ObjectManager.Instance.Summons(cube, ObjectType.ENEMY, enemyID);
-                    Debug.Log(enemy[index]);
-                    index++;
-                    yield return new WaitForFixedUpdate();
+                    cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+                    if (cube.Obj == null)
+                        break;
                 }
+                enemy[index] = ObjectManager.Instance.Summons(cube, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
+                Debug.Log(enemy[index]);
+                index++;
+                yield return new WaitForFixedUpdate();
             }
         }
-        else
-        {
-            List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
-            for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
-            {
-                Touch cube;
-
-                for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
-                {
-                    while (true)
-                    {
-                        cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-                        if (cube.Obj == null)
-                            break;
-                    }
-                    enemy[index] = ObjectManager.Instance.Summons(cube, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
-                    Debug.Log(enemy[index]);
-                    index++;
-                    yield return new WaitForFixedUpdate();
-                }
-            }
-        }
-
-
-
-
-
+        
         for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
         {
             Touch cube;
