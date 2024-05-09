@@ -51,16 +51,16 @@ public class StageManager : MonoBehaviour
     [Header("DevelopMode")]
     [SerializeField] private bool onDevelopMode;
     [SerializeField] private int developEnemyCnt;
-    [SerializeField]private int[] enemyCountArray;
-    
+    [SerializeField] private int[] enemyCountArray;
+
 
     [Header("Status")]
     private StageStatus status;
     public StageStatus StatusOfStage
-    { 
+    {
         get => status;
         private set
-        { 
+        {
             status = value;
             stageTexts[0].text = $"{StaticManager.Instance.Stage}층 {status}";
         }
@@ -104,7 +104,7 @@ public class StageManager : MonoBehaviour
         {
             enemy = new GameObject[stageDatas[ENEMY_COUNT]];
         }
-        
+
         friend = new GameObject[3];
         treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
@@ -145,7 +145,7 @@ public class StageManager : MonoBehaviour
         clickIgnorePanel.SetActive(true);
         //섞기 전 플레이어 비활성화
         // player.SetActive(false);
-        
+
         cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
 
         yield return new WaitForSeconds(5f);
@@ -200,9 +200,9 @@ public class StageManager : MonoBehaviour
             }
         }
 
-        
-        
-        
+
+
+
 
         for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
         {
@@ -237,7 +237,7 @@ public class StageManager : MonoBehaviour
             StatusOfStage = StageStatus.FIGHT;
             StartCoroutine(fightLogic.BingoReward());
         }
-        else if(StatusOfStage == StageStatus.FIGHT)
+        else if (StatusOfStage == StageStatus.FIGHT)
         {
             StartCoroutine(envLogic.MoveEnemy());
             StatusOfStage = StageStatus.ENV;
@@ -252,13 +252,13 @@ public class StageManager : MonoBehaviour
             clickIgnorePanel.SetActive(false);
         }
 
-        
+
     }
     public void ClearStage()
     {
         StatusOfStage = StageStatus.END;
 
-        foreach(GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
+        foreach (GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
             t.GetComponent<Object>().OnHit(9999);
 
         // 상인과 포탈 소환
@@ -330,11 +330,10 @@ public class StageManager : MonoBehaviour
         isCubeMove = false;
     }
 
-    public bool SummonsFriend(Colors color, int index, int scrollID)
+    public void SummonsFriend(Colors color, int index, int scrollID)
     {
         Touch cube = StageCube.Instance.touchArray[color.ToInt()][index];
-        if (cube.Obj != null)
-            return false;
+        if (cube.Obj != null) return;
         for (int i = 0; i < 3; i++)
         {
             if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
@@ -342,10 +341,9 @@ public class StageManager : MonoBehaviour
                 friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 ObjectManager.Instance.UseItem(ItemType.SCROLL, scrollID);
                 Debug.Log("summons success!");
-                return true;
+                break;
             }
         }
-        return false;
     }
-    
+
 }

@@ -65,7 +65,6 @@ public class ObjectManager : MonoBehaviour
                     }
                 Dictionary<int, string> values = StaticManager.Instance.friendDatas[objectID];
                 value = values[StaticManager.Instance.Stage];
-                Debug.Log($"{value}");
                 newObject.GetComponent<Object>().Init(objectType, value.Split(','));
                 ChangePlayerInventory();
                 break;
@@ -163,7 +162,15 @@ public class ObjectManager : MonoBehaviour
                 cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].item.ID, ItemType.PORTION);
                 break;
             case ItemType.SCROLL:
-                cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].item.ID, ItemType.SCROLL);
+                for (int i = 0; i < 3; i++)
+                {
+                    if (StageManager.Instance.FriendList[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
+                    {
+                        cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].item.ID, ItemType.SCROLL);
+                        return;
+                    }
+                }
+                Debug.Log("Already 3 Friends!");
                 break;
         }
         ChangePlayerInventory();

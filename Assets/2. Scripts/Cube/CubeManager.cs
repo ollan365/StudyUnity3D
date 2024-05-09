@@ -22,12 +22,12 @@ public class CubeManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButton(2) &&(StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
+        if (Input.GetMouseButton(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
         {
             transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
             transform.Rotate(Input.GetAxis("Mouse Y") * rotateSpeed, 0f, Input.GetAxis("Mouse Y") * rotateSpeed, Space.World);
         }
-    
+
         if (Input.GetMouseButtonDown(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -116,8 +116,10 @@ public class CubeManager : MonoBehaviour
                         ChangeToNormal();
                 }
                 if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                    playerTurnStatus = StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID)
-                        ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.SUMMONS_SELECTED;
+                {
+                    StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID);
+                    playerTurnStatus = PlayerTurnStatus.NORMAL;
+                }
             }
             else
             {
@@ -126,7 +128,7 @@ public class CubeManager : MonoBehaviour
             }
             return;
         }
-        else if(script.ObjType == ObjectType.NULL && playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+        else if (script.ObjType == ObjectType.NULL && playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
         {
             ChangeToNormal();
             return;
@@ -137,9 +139,9 @@ public class CubeManager : MonoBehaviour
         Touch start = mouseStartTouchCube;
         Touch end = script;
 
-        for (int i =0;i<start.TouchColors.Length;i++)
-            for(int j=0;j<end.TouchColors.Length;j++)
-                if(start.TouchColors[i] == end.TouchColors[j])
+        for (int i = 0; i < start.TouchColors.Length; i++)
+            for (int j = 0; j < end.TouchColors.Length; j++)
+                if (start.TouchColors[i] == end.TouchColors[j])
                 {
                     int direction = end.TouchInts[j] - start.TouchInts[i];
                     if (direction < 0) Turn(end.TouchColors[j], -1);
