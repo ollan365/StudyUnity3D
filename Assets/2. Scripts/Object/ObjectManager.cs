@@ -193,7 +193,7 @@ public class ObjectManager : MonoBehaviour
                 shopItemSlotArray[i] = new(shopItemArray[i], 5);
                 shopSlotButton[i].GetComponent<Image>().color = shopItemArray[i].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = shopItemArray[i].SellCost.ToString(); 
+                    = shopItemSlotArray[i].count + " / $" + shopItemArray[i].SellCost.ToString();
             }
             else if (i < 5) // 스크롤 3개 랜덤
             {
@@ -202,10 +202,10 @@ public class ObjectManager : MonoBehaviour
                     random = Random.Range(2, 11);
                 scroll[i - 2] = random;
 
-                shopItemSlotArray[i] = new(shopItemArray[random], shopItemArray[random].SellCost);
+                shopItemSlotArray[i] = new(shopItemArray[random], 3);
                 shopSlotButton[i].GetComponent<Image>().color = shopItemArray[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = shopItemArray[random].SellCost.ToString();
+                    = shopItemSlotArray[i].count + " / $" + shopItemArray[random].SellCost.ToString();
             }
             else // 무기 4개
             {
@@ -221,33 +221,58 @@ public class ObjectManager : MonoBehaviour
     }
     public void Buy(int index)
     {
-        if (StaticManager.Instance.Gold < shopItemSlotArray[index].count) return;
+        if (StaticManager.Instance.Gold < shopItemSlotArray[index].item.SellCost) return;
 
-        for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
+        int inventoryIndex = -1;
+
+        for (int i = 0; i < StaticManager.Instance.inventory.Length; i++) // 먼저, 이미 있는 아이템인지 확인
         {
-            if (StaticManager.Instance.inventory[i].item == shopItemSlotArray[index].item)
+            if (StaticManager.Instance.inventory[i].item == shopItemSlotArray[index].item) // 이미 있는 아이템인 경우
             {
                 if (shopItemSlotArray[index].item.ItemType == ItemType.WEAPON) return; // 무기는 하나만 소유 가능
-
-                StaticManager.Instance.inventory[i].count++;
-                inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = StaticManager.Instance.inventory[i].count.ToString();
-                StaticManager.Instance.Gold -= shopItemSlotArray[index].count;
-                shopSlotButton[index].SetActive(false);
-                ChangePlayerInventory();
-                break;
-            }
-            else if (StaticManager.Instance.inventory[i].item.ItemType == ItemType.NULL)
-            {
-                StaticManager.Instance.inventory[i].item = shopItemSlotArray[index].item;
-                StaticManager.Instance.inventory[i].count = 1;
-                inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = StaticManager.Instance.inventory[i].count.ToString();
-                StaticManager.Instance.Gold -= shopItemSlotArray[index].count;
-                shopSlotButton[index].SetActive(false);
-                ChangePlayerInventory();
+                inventoryIndex = i;
                 break;
             }
         }
+
+        if (inventoryIndex == -1) // 없는 아이템인 경우
+        {
+            for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
+            {
+                if (StaticManager.Instance.inventory[i].item.ItemType == ItemType.NULL)
+                {
+                    inventoryIndex = i;
+                    StaticManager.Instance.inventory[i].item = shopItemSlotArray[index].item;
+                    StaticManager.Instance.inventory[i].count = 0;
+                    break;
+                }
+            }
+        }
+
+        if(inventoryIndex == -1) // 인벤토리에 더 이상 남은 슬롯이 없을 때
+        {
+            Debug.Log("There is no more slot!");
+            return;
+        }
+
+        // 인벤토리의 아이템 개수 변경
+        StaticManager.Instance.inventory[inventoryIndex].count++;
+        inventorySlotButton[inventoryIndex].transform.Find("Item Count").GetComponent<Text>().text
+            = StaticManager.Instance.inventory[inventoryIndex].count.ToString();
+
+        // 가진 돈 변경
+        StaticManager.Instance.Gold -= shopItemSlotArray[index].item.SellCost;
+
+        // 상점 슬롯 변경
+        shopItemSlotArray[index].count--;
+        if (shopItemSlotArray[index].count <= 0) // 물건이 다 팔렸을 때
+            shopSlotButton[index].SetActive(false);
+        else
+            shopSlotButton[index].transform.Find("Item Count").GetComponent<Text>().text
+            = shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString();
+
+        // 인벤토리 변경
+        ChangePlayerInventory();
+        return;
     }
 }

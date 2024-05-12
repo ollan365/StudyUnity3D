@@ -95,7 +95,8 @@ public class StageManager : MonoBehaviour
         friend = new GameObject[3];
         treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
-        StartCoroutine(StartStage());
+        clickIgnorePanel.SetActive(true);
+        cubeManager.StartRandomTurn(stageDatas[MIX]);
     }
     public int GetStageTextValue(StageText text)
     {
@@ -115,7 +116,7 @@ public class StageManager : MonoBehaviour
         else if (text == StageText.ALL_INIT)
         {
             stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()];
-            stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE.ToInt()];
+            stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()];
         }
         else stageTextValues[text.ToInt()] += addValue;
 
@@ -127,16 +128,8 @@ public class StageManager : MonoBehaviour
         stageTexts[3].text = $"Rotate: {stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
         stageTexts[4].text = $"Weapon: {stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
     }
-    private IEnumerator StartStage()
+    public IEnumerator StartStage()
     {
-        clickIgnorePanel.SetActive(true);
-        //섞기 전 플레이어 비활성화
-        // player.SetActive(false);
-
-        cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
-
-        yield return new WaitForSeconds(5f);
-
         //섞은 후 플레이어 활성화
         player.SetActive(true);
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
@@ -204,6 +197,8 @@ public class StageManager : MonoBehaviour
         else if (StatusOfStage == StageStatus.ENV || StatusOfStage == StageStatus.INIT)
         {
             if (StatusOfStage == StageStatus.ENV) colorCheckManager.ToNextBingo();
+
+            StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
 
             colorCheckManager.BingoTextChange(-1);
             SetStageTextValue(StageText.ALL_INIT, 0);

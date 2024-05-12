@@ -26,7 +26,7 @@ public class StaticManager : MonoBehaviour
             player.SetWeapon(playerWeapon.MinDamage, playerWeapon.MaxDamage, playerWeapon.WeaponType);
         }
     }
-    private int gold;
+    private int gold = 1000; // 일단 테스트를 위해 1000골드
     public int Gold { get => gold; set => gold = value; }
 
     [Header("Item List")]

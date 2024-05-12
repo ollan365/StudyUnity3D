@@ -214,7 +214,7 @@ MonoBehaviour:
   - {fileID: 684807125}
   - {fileID: 1390448567}
   - {fileID: 2147346132}
-  duration: 0.05
+  duration: 1.3
   rotateSpeed: 10
   playerTurnStatus: 0
 --- !u!114 &924634

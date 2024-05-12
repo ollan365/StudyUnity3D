@@ -19,7 +19,6 @@ public class CubeManager : MonoBehaviour
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
-
     private void Update()
     {
         if (Input.GetMouseButton(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
@@ -205,11 +204,13 @@ public class CubeManager : MonoBehaviour
         Quaternion endRotation = Quaternion.Euler(rotation) * startRotation;
 
         float elapsedTime = 0f;
+        float speed = duration / 5;
 
         while (elapsedTime < duration)
         {
             turnPoint.transform.localRotation = Quaternion.Slerp(startRotation, endRotation, elapsedTime / duration);
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.deltaTime / 10 + speed;
+            speed = speed - Time.deltaTime * 2 > Time.deltaTime / 10 ? speed - Time.deltaTime * 2 : Time.deltaTime / 10;
             yield return new WaitForFixedUpdate();
         }
 
@@ -235,6 +236,10 @@ public class CubeManager : MonoBehaviour
     }
     private IEnumerator RandomTurn(int randomCount)
     {
+        yield return new WaitForFixedUpdate(); // 반드시 필요!
+
+        duration *= 2; // 애니메이션 안 넣을 거면 나누는 게 맞음
+
         for (int i = 0; i < randomCount; i++)
         {
             while (playerTurnStatus == PlayerTurnStatus.TURN)
@@ -246,6 +251,13 @@ public class CubeManager : MonoBehaviour
 
             Turn(value.ToColor(), direction);
         }
+        while (playerTurnStatus == PlayerTurnStatus.TURN)
+            yield return new WaitForFixedUpdate();
+
+        duration /= 2;
+
+        // 스테이지 시작
+        StartCoroutine(StageManager.Instance.StartStage());
     }
 
     public void SwitchPlayerTurnStatus(int itemIndex, ItemType itemType)
