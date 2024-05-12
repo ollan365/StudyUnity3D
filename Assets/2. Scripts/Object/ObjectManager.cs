@@ -26,6 +26,7 @@ public class ObjectManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Slider[] friendHpSlider;
     [SerializeField] private GameObject shopPopup;
+    [SerializeField] private GameObject inventoryPopup;
     [SerializeField] private GameObject[] inventorySlotButton;
     [SerializeField] private GameObject[] shopSlotButton;
     [SerializeField] private ItemObject[] shopItemArray;
@@ -215,6 +216,8 @@ public class ObjectManager : MonoBehaviour
         }
 
         shopPopup.SetActive(true);
+        ChangePlayerInventory();
+        inventoryPopup.SetActive(true);
     }
     public void Buy(int index)
     {

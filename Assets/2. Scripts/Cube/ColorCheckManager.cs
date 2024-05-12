@@ -106,7 +106,7 @@ public class ColorCheckManager : MonoBehaviour
     public bool Move(Colors color, int index, bool wantMove)
     {
         if (color != selectedCharacter.GetComponent<Object>().Color || !movableCube[index]) return false;
-        if (wantMove && StageCube.Instance.touchArray[color.ToInt()][index].ObjType != ObjectType.MERCHANT) StartCoroutine(MoveCoroutine(color, index));
+        if (wantMove) StartCoroutine(MoveCoroutine(color, index));
         return true;
     }
     private IEnumerator MoveCoroutine(Colors color, int index)

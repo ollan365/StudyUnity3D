@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using static Excel;
 
 public class StaticManager : MonoBehaviour
@@ -12,7 +13,7 @@ public class StaticManager : MonoBehaviour
     public ItemObject nullObject;
 
     [Header("Player")]
-    [SerializeField] private Object player;
+    public Object player;
     public int Stage { get => stage; }
 
     [SerializeField] private Weapon playerWeapon;
@@ -67,12 +68,20 @@ public class StaticManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        StageManager.Instance.StageInit(stageDatas[stage]);
-        PlayerWeapon = playerWeapon;
-
         cubeMaterialSet = new Material[][] { material1, material2, material3, material4, material5, material6 };
 
+    }
+    public void GameStart(bool isLobby)
+    {
+        if (isLobby) // 여기서 저장된 게임 데이터 로드 해야될듯?
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+        if (!isLobby)
+        {
+            stage++;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
     private void SaveExcelDatas()
     {

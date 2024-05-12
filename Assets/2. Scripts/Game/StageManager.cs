@@ -65,11 +65,14 @@ public class StageManager : MonoBehaviour
         else Destroy(gameObject);
 
         stageTextValues = new int[8];
+        StageInit(StaticManager.Instance.stageDatas[StaticManager.Instance.Stage]);
     }
 
     public void StageInit(string data)
     {
         StatusOfStage = StageStatus.INIT;
+        StaticManager.Instance.player = player.GetComponent<Object>();
+        StaticManager.Instance.PlayerWeapon = StaticManager.Instance.PlayerWeapon;
 
         stageDatas = new int[data.Split(',').Length - 1];
         for (int i = 0; i < data.Split(',').Length - 1; i++)
@@ -207,12 +210,11 @@ public class StageManager : MonoBehaviour
             StatusOfStage = StageStatus.PLAYER;
             clickIgnorePanel.SetActive(false);
         }
-
-
     }
     public void ClearStage()
     {
         StatusOfStage = StageStatus.END;
+        clickIgnorePanel.SetActive(false);
 
         foreach (GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
             t.GetComponent<Object>().OnHit(9999);
@@ -237,6 +239,7 @@ public class StageManager : MonoBehaviour
     public void NextStage()
     {
         Debug.Log("Next Stage!");
+        StaticManager.Instance.GameStart(false);
     }
     public void GameOver()
     {
