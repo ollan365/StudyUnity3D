@@ -96,6 +96,11 @@ public class Object : MonoBehaviour
         Debug.Log($"{HP}");
     }
 
+    public void RotateCube()
+    {
+        StartCoroutine(StageManager.Instance.CubeRotate(Color));
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<Touch>() != null) touchCube = other.GetComponent<Touch>();
