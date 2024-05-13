@@ -106,10 +106,10 @@ public class StageManager : MonoBehaviour
     {
         if (StatusOfStage == StageStatus.END)
         {
-            stageTexts[1].text = "ALL DIE !";
             stageTexts[2].text = "INFINITY";
             stageTexts[3].text = "INFINITY";
             stageTexts[4].text = "INFINITY";
+            stageTexts[5].text = "ALL DIE !";
 
             return;
         }
@@ -123,10 +123,10 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.MONSTER.ToInt()] = 0;
         foreach (GameObject e in enemy) stageTextValues[StageText.MONSTER.ToInt()]++;
 
-        stageTexts[1].text = $"Monster: {stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
-        stageTexts[2].text = $"Move: {stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
-        stageTexts[3].text = $"Rotate: {stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
+        stageTexts[2].text = $"Rotate: {stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
+        stageTexts[3].text = $"Move: {stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
         stageTexts[4].text = $"Weapon: {stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
+        stageTexts[5].text = $"Monster: {stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
     }
     public IEnumerator StartStage()
     {
