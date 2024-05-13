@@ -18,7 +18,7 @@ MonoBehaviour:
   sellCost: 550
   buyCost: 1800
   description: 
-  icon: {r: 0, g: 0, b: 0, a: 0}
+  icon: {r: 0, g: 0, b: 0, a: 1}
   weaponType: 0
   level: 0
   weaponLevel:

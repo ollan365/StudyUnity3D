@@ -23,8 +23,6 @@ public class EnvLogic : MonoBehaviour
 
                     if (colorCheckManager.Move(enemyObj.Color, random, false))
                     {
-                        Debug.Log($"{enemyObj.Color}: {random}");
-
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
                         yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
 
@@ -48,8 +46,6 @@ public class EnvLogic : MonoBehaviour
 
                     if (colorCheckManager.Move(enemyObj.Color, priority[i], false))
                     {
-                        Debug.Log($"{priority[i]}");
-
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
                         yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
 

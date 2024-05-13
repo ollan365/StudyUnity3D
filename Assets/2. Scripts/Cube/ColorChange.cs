@@ -11,8 +11,6 @@ public class ColorChange : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(StaticManager.Instance);
-        
         //cubeMaterialSet[stage][white]
         stage = StaticManager.Instance.Stage;
         
