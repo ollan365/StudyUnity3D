@@ -17,8 +17,10 @@ MonoBehaviour:
   itemType: 0
   sellCost: 450
   buyCost: 1600
-  description: 
+  spawnMinStage: 20
+  spawnMaxStage: 22
   icon: {r: 0, g: 0, b: 0, a: 1}
+  description: 
   weaponType: 0
   level: 0
   weaponLevel:

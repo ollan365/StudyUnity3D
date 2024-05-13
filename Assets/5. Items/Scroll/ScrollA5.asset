@@ -17,6 +17,8 @@ MonoBehaviour:
   itemType: 2
   sellCost: 60
   buyCost: 130
-  description: 
+  spawnMinStage: 5
+  spawnMaxStage: 23
   icon: {r: 0, g: 1, b: 0, a: 1}
+  description: 
   friendIndex: 120004
