@@ -48,9 +48,10 @@ public class Object : MonoBehaviour
     }
     public Colors Color { get => touchCube.Color; }
     public int Index { get => touchCube.Index; }
-    public void Init(ObjectType objType, string[] datas)
+    public void Init(ObjectType objType, string[] datas, Touch touchCube)
     {
         type = objType;
+
         if (objType == ObjectType.PLAYER)
         {
             maxHp = int.Parse(datas[0]);
@@ -68,11 +69,12 @@ public class Object : MonoBehaviour
             maxHp = int.Parse(datas[FRIEND_HP]);
             SetWeapon(int.Parse(datas[FRIEND_MIN]), int.Parse(datas[FRIEND_MAX]), datas[FRIEND_WEAPON_TYPE].ToEnum());
         }
-        else
-            type = objType;
 
         hp = maxHp;
         HP = hp;
+
+        this.touchCube = touchCube;
+        Debug.Log($"{this.touchCube} / {touchCube}");
     }
     public void OnHit(int damage)
     {
@@ -96,6 +98,6 @@ public class Object : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        touchCube = other.GetComponent<Touch>();
+        if (other.GetComponent<Touch>() != null) touchCube = other.GetComponent<Touch>();
     }
 }

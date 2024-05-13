@@ -18,7 +18,7 @@ MonoBehaviour:
   sellCost: 10
   buyCost: 30
   description: 
-  icon: {r: 0, g: 0, b: 0, a: 0}
+  icon: {r: 1, g: 0, b: 0, a: 1}
   statusEffect: 0
   value: 0
   healRate: 30

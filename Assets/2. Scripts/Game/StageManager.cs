@@ -65,17 +65,20 @@ public class StageManager : MonoBehaviour
         else Destroy(gameObject);
 
         stageTextValues = new int[8];
+        StageInit(StaticManager.Instance.stageDatas[StaticManager.Instance.Stage]);
     }
 
     public void StageInit(string data)
     {
         StatusOfStage = StageStatus.INIT;
+        StaticManager.Instance.player = player.GetComponent<Object>();
+        StaticManager.Instance.PlayerWeapon = StaticManager.Instance.PlayerWeapon;
 
         stageDatas = new int[data.Split(',').Length - 1];
         for (int i = 0; i < data.Split(',').Length - 1; i++)
             stageDatas[i] = int.Parse(data.Split(',')[i]);
 
-        Player.Init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() });
+        Player.Init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() }, StageCube.Instance.touchArray[WHITE][4]);
 
         // 나중에 계산 공식으로 바꾸기!
         stageTextValues[StageText.MONSTER.ToInt()] = stageTextValues[StageText.MONSTER_INIT.ToInt()]
@@ -92,7 +95,8 @@ public class StageManager : MonoBehaviour
         friend = new GameObject[3];
         treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
-        StartCoroutine(StartStage());
+        clickIgnorePanel.SetActive(true);
+        cubeManager.StartRandomTurn(stageDatas[MIX]);
     }
     public int GetStageTextValue(StageText text)
     {
@@ -100,12 +104,7 @@ public class StageManager : MonoBehaviour
     }
     public void SetStageTextValue(StageText text, int addValue)
     {
-        if (text == StageText.ALL_INIT)
-        {
-            stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()];
-            stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE.ToInt()];
-        }
-        else if (text == StageText.END)
+        if (StatusOfStage == StageStatus.END)
         {
             stageTexts[1].text = "ALL DIE !";
             stageTexts[2].text = "INFINITY";
@@ -113,6 +112,11 @@ public class StageManager : MonoBehaviour
             stageTexts[4].text = "INFINITY";
 
             return;
+        }
+        else if (text == StageText.ALL_INIT)
+        {
+            stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()];
+            stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()];
         }
         else stageTextValues[text.ToInt()] += addValue;
 
@@ -124,16 +128,8 @@ public class StageManager : MonoBehaviour
         stageTexts[3].text = $"Rotate: {stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
         stageTexts[4].text = $"Weapon: {stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
     }
-    private IEnumerator StartStage()
+    public IEnumerator StartStage()
     {
-        clickIgnorePanel.SetActive(true);
-        //섞기 전 플레이어 비활성화
-        // player.SetActive(false);
-
-        cubeManager.StartRandomTurn(stageDatas[MIX]); // 큐브를 섞는다
-
-        yield return new WaitForSeconds(5f);
-
         //섞은 후 플레이어 활성화
         player.SetActive(true);
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
@@ -202,17 +198,18 @@ public class StageManager : MonoBehaviour
         {
             if (StatusOfStage == StageStatus.ENV) colorCheckManager.ToNextBingo();
 
+            StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
+
             colorCheckManager.BingoTextChange(-1);
             SetStageTextValue(StageText.ALL_INIT, 0);
             StatusOfStage = StageStatus.PLAYER;
             clickIgnorePanel.SetActive(false);
         }
-
-
     }
     public void ClearStage()
     {
         StatusOfStage = StageStatus.END;
+        clickIgnorePanel.SetActive(false);
 
         foreach (GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
             t.GetComponent<Object>().OnHit(9999);
@@ -237,6 +234,7 @@ public class StageManager : MonoBehaviour
     public void NextStage()
     {
         Debug.Log("Next Stage!");
+        StaticManager.Instance.GameStart(false);
     }
     public void GameOver()
     {

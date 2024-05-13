@@ -23,25 +23,21 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private GameObject merchantPrefab;
     [SerializeField] private GameObject portalPrefab;
 
-
-
-    private ItemObject[] allShopWeapon;
-    private ItemObject[] allShopPortion;
-    private ItemObject[] allShopScroll;
-
     [Header("UI")]
     [SerializeField] private Slider[] friendHpSlider;
     [SerializeField] private GameObject shopPopup;
+    [SerializeField] private GameObject inventoryPopup;
     [SerializeField] private GameObject[] inventorySlotButton;
     [SerializeField] private GameObject[] shopSlotButton;
-    private ItemSlot[] shopItemArray;
+    [SerializeField] private ItemObject[] shopItemArray;
+    private ItemSlot[] shopItemSlotArray;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        shopItemArray = new ItemSlot[16];
+        shopItemSlotArray = new ItemSlot[9];
     }
     
     public GameObject Summons(Touch cube, ObjectType objectType, int objectID)
@@ -52,7 +48,7 @@ public class ObjectManager : MonoBehaviour
             case ObjectType.ENEMY:
                 newObject = Instantiate(enemyPrefab);
                 string value = StaticManager.Instance.enemyDatas[objectID];
-                newObject.GetComponent<Object>().Init(objectType, value.Split(','));
+                newObject.GetComponent<Object>().Init(objectType, value.Split(','), cube);
                 break;
             case ObjectType.FRIEND:
                 newObject = Instantiate(friendPrefab);
@@ -65,20 +61,20 @@ public class ObjectManager : MonoBehaviour
                     }
                 Dictionary<int, string> values = StaticManager.Instance.friendDatas[objectID];
                 value = values[StaticManager.Instance.Stage];
-                newObject.GetComponent<Object>().Init(objectType, value.Split(','));
+                newObject.GetComponent<Object>().Init(objectType, value.Split(','), cube);
                 ChangePlayerInventory();
                 break;
             case ObjectType.TREASURE:
                 newObject = Instantiate(treasurePrefab);
-                newObject.GetComponent<Object>().Init(objectType, null);
+                newObject.GetComponent<Object>().Init(objectType, null, cube);
                 break;
             case ObjectType.MERCHANT:
                 newObject = Instantiate(merchantPrefab);
-                newObject.GetComponent<Object>().Init(objectType, null);
+                newObject.GetComponent<Object>().Init(objectType, null, cube);
                 break;
             case ObjectType.PORTAL:
                 newObject = Instantiate(portalPrefab);
-                newObject.GetComponent<Object>().Init(objectType, null);
+                newObject.GetComponent<Object>().Init(objectType, null, cube);
                 break;
             default:
                 newObject = null;
@@ -90,7 +86,6 @@ public class ObjectManager : MonoBehaviour
         newObject.transform.rotation = cube.ObjectPostion.rotation;
 
         newObject.GetComponent<Object>().objectManager = this;
-        newObject.GetComponent<Object>().touchCube = cube;
 
         return newObject;
     }
@@ -189,68 +184,95 @@ public class ObjectManager : MonoBehaviour
     }
     public void ChangeShop()
     {
-        for(int i = 0; i<shopItemArray.Length; i++)
+        int[] scroll = new int[3] { -1, -1, -1 };
+
+        for(int i = 0; i<shopItemSlotArray.Length; i++)
         {
-            if (i < 4)
+            if (i < 2) // 포션 2개 (무조건)
             {
-                int random = Random.Range(0, allShopWeapon.Length);
-
-                shopItemArray[i] = new(allShopWeapon[random], allShopWeapon[random].SellCost);
-                shopSlotButton[i].GetComponent<Image>().color = allShopWeapon[random].Icon;
+                shopItemSlotArray[i] = new(shopItemArray[i], 5);
+                shopSlotButton[i].GetComponent<Image>().color = shopItemArray[i].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = allShopWeapon[random].SellCost.ToString(); 
+                    = shopItemSlotArray[i].count + " / $" + shopItemArray[i].SellCost.ToString();
             }
-            else if (i < 8)
+            else if (i < 5) // 스크롤 3개 랜덤
             {
-                int random = Random.Range(0, allShopPortion.Length);
+                int random = Random.Range(2, 11);
+                while (random == scroll[0] || random == scroll[1] || random == scroll[2])
+                    random = Random.Range(2, 11);
+                scroll[i - 2] = random;
 
-                shopItemArray[i] = new(allShopPortion[random], allShopPortion[random].SellCost);
-                shopSlotButton[i].GetComponent<Image>().color = allShopPortion[random].Icon;
+                shopItemSlotArray[i] = new(shopItemArray[random], 3);
+                shopSlotButton[i].GetComponent<Image>().color = shopItemArray[random].Icon;
                 shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = allShopPortion[random].SellCost.ToString();
+                    = shopItemSlotArray[i].count + " / $" + shopItemArray[random].SellCost.ToString();
             }
-            else
+            else // 무기 4개
             {
-                int random = Random.Range(0, allShopScroll.Length);
-
-                shopItemArray[i] = new(allShopScroll[random], allShopScroll[random].SellCost);
-                shopSlotButton[i].GetComponent<Image>().color = allShopScroll[random].Icon;
-                shopSlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = allShopScroll[random].SellCost.ToString();
+                ItemSlot newItemSlot = new ItemSlot(null, 1);
+                newItemSlot.init();
+                shopItemSlotArray[i] = newItemSlot;
             }
         }
 
         shopPopup.SetActive(true);
+        ChangePlayerInventory();
+        inventoryPopup.SetActive(true);
     }
     public void Buy(int index)
     {
-        if (StaticManager.Instance.Gold < shopItemArray[index].count) return;
+        if (StaticManager.Instance.Gold < shopItemSlotArray[index].item.SellCost) return;
 
-        for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
+        int inventoryIndex = -1;
+
+        for (int i = 0; i < StaticManager.Instance.inventory.Length; i++) // 먼저, 이미 있는 아이템인지 확인
         {
-            if (StaticManager.Instance.inventory[i].item == shopItemArray[index].item)
+            if (StaticManager.Instance.inventory[i].item == shopItemSlotArray[index].item) // 이미 있는 아이템인 경우
             {
-                if (shopItemArray[index].item.ItemType == ItemType.WEAPON) return; // 무기는 하나만 소유 가능
-
-                StaticManager.Instance.inventory[i].count++;
-                inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = StaticManager.Instance.inventory[i].count.ToString();
-                StaticManager.Instance.Gold -= shopItemArray[index].count;
-                shopSlotButton[index].SetActive(false);
-                ChangePlayerInventory();
-                break;
-            }
-            else if (StaticManager.Instance.inventory[i].item.ItemType == ItemType.NULL)
-            {
-                StaticManager.Instance.inventory[i].item = shopItemArray[index].item;
-                StaticManager.Instance.inventory[i].count = 1;
-                inventorySlotButton[i].transform.Find("Item Count").GetComponent<Text>().text
-                    = StaticManager.Instance.inventory[i].count.ToString();
-                StaticManager.Instance.Gold -= shopItemArray[index].count;
-                shopSlotButton[index].SetActive(false);
-                ChangePlayerInventory();
+                if (shopItemSlotArray[index].item.ItemType == ItemType.WEAPON) return; // 무기는 하나만 소유 가능
+                inventoryIndex = i;
                 break;
             }
         }
+
+        if (inventoryIndex == -1) // 없는 아이템인 경우
+        {
+            for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
+            {
+                if (StaticManager.Instance.inventory[i].item.ItemType == ItemType.NULL)
+                {
+                    inventoryIndex = i;
+                    StaticManager.Instance.inventory[i].item = shopItemSlotArray[index].item;
+                    StaticManager.Instance.inventory[i].count = 0;
+                    break;
+                }
+            }
+        }
+
+        if(inventoryIndex == -1) // 인벤토리에 더 이상 남은 슬롯이 없을 때
+        {
+            Debug.Log("There is no more slot!");
+            return;
+        }
+
+        // 인벤토리의 아이템 개수 변경
+        StaticManager.Instance.inventory[inventoryIndex].count++;
+        inventorySlotButton[inventoryIndex].transform.Find("Item Count").GetComponent<Text>().text
+            = StaticManager.Instance.inventory[inventoryIndex].count.ToString();
+
+        // 가진 돈 변경
+        StaticManager.Instance.Gold -= shopItemSlotArray[index].item.SellCost;
+
+        // 상점 슬롯 변경
+        shopItemSlotArray[index].count--;
+        if (shopItemSlotArray[index].count <= 0) // 물건이 다 팔렸을 때
+            shopSlotButton[index].SetActive(false);
+        else
+            shopSlotButton[index].transform.Find("Item Count").GetComponent<Text>().text
+            = shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString();
+
+        // 인벤토리 변경
+        ChangePlayerInventory();
+        return;
     }
 }
