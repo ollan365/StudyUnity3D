@@ -17,8 +17,10 @@ MonoBehaviour:
   itemType: 1
   sellCost: 10
   buyCost: 30
-  description: 
+  spawnMinStage: 1
+  spawnMaxStage: 23
   icon: {r: 1, g: 0, b: 0, a: 1}
+  description: 
   statusEffect: 0
   value: 0
   healRate: 30
