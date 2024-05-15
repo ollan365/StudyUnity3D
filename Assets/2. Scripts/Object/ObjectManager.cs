@@ -25,14 +25,18 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private GameObject portalPrefab;
 
     [Header("UI")]
+    [SerializeField] private GameObject clickIgnorePanel;
     [SerializeField] private Slider[] friendHpSlider;
     [SerializeField] private GameObject shopPopup;
     [SerializeField] private GameObject inventoryPopup;
-    [SerializeField] private GameObject[] inventorySlotButton;
-    [SerializeField] private GameObject[] shopInventorySlotButton;
-    [SerializeField] private GameObject[] shopSlotButton;
+    [SerializeField] private Slot[] inventorySlot;
+    [SerializeField] private Slot[] shopInventorySlot;
+    [SerializeField] private Slot[] shopSlot;
     [SerializeField] private ItemObject[] shopItemArray;
     private ItemSlot[] shopItemSlotArray;
+
+    // 변수
+    public bool isShopChanged = false;
 
     private void Awake()
     {
@@ -60,6 +64,9 @@ public class ObjectManager : MonoBehaviour
                     newObject.transform.GetChild(3).gameObject.SetActive(true);
                 break;
             case ObjectType.FRIEND:
+                Dictionary<int, string> values = StaticManager.Instance.friendDatas[objectID];
+                value = values[StaticManager.Instance.Stage];
+                if (value == null) return null;
                 newObject = Instantiate(friendPrefab);
                 for (int i = 0; i < 3; i++)
                     if (!friendObjectStatus[i].activeSelf)
@@ -68,8 +75,6 @@ public class ObjectManager : MonoBehaviour
                         friendObjectStatus[i].SetActive(true);
                         break;
                     }
-                Dictionary<int, string> values = StaticManager.Instance.friendDatas[objectID];
-                value = values[StaticManager.Instance.Stage];
                 newObject.GetComponent<Object>().Init(objectType, value.Split(','), cube);
                 ChangePlayerInventory();
                 break;
@@ -126,27 +131,21 @@ public class ObjectManager : MonoBehaviour
             switch (StaticManager.Instance.inventory[i].item.ItemType)
             {
                 case ItemType.WEAPON:
-                    inventorySlotButton[i].GetComponentInChildren<Image>().color = StaticManager.Instance.inventory[i].item.Icon;
+                    inventorySlot[i].ChangeImage(StaticManager.Instance.inventory[i].item.Icon);
                     if (StaticManager.Instance.PlayerWeapon == (Weapon)StaticManager.Instance.inventory[i].item)
-                        inventorySlotButton[i].transform.GetComponentInChildren<Text>().text = "use";
+                        inventorySlot[i].ChangeText("use");
                     else
-                        inventorySlotButton[i].transform.GetComponentInChildren<Text>().text = "";
-                    inventorySlotButton[i].SetActive(true);
+                        inventorySlot[i].ChangeText("unuse");
+                    inventorySlot[i].SetActive(true);
                     break;
                 case ItemType.PORTION:
-                    inventorySlotButton[i].GetComponentInChildren<Image>().color = StaticManager.Instance.inventory[i].item.Icon;
-                    inventorySlotButton[i].transform.GetComponentInChildren<Text>().text
-                        = StaticManager.Instance.inventory[i].count.ToString();
-                    inventorySlotButton[i].SetActive(true);
-                    break;
                 case ItemType.SCROLL:
-                    inventorySlotButton[i].GetComponentInChildren<Image>().color = StaticManager.Instance.inventory[i].item.Icon;
-                    inventorySlotButton[i].transform.GetComponentInChildren<Text>().text
-                        = StaticManager.Instance.inventory[i].count.ToString();
-                    inventorySlotButton[i].SetActive(true);
+                    inventorySlot[i].ChangeImage(StaticManager.Instance.inventory[i].item.Icon);
+                    inventorySlot[i].ChangeText(StaticManager.Instance.inventory[i].count.ToString());
+                    inventorySlot[i].SetActive(true);
                     break;
                 case ItemType.NULL:
-                    inventorySlotButton[i].SetActive(false);
+                    inventorySlot[i].SetActive(false);
                     break;
             }
         }
@@ -161,27 +160,21 @@ public class ObjectManager : MonoBehaviour
             switch (StaticManager.Instance.inventory[i].item.ItemType)
             {
                 case ItemType.WEAPON:
-                    shopInventorySlotButton[i].GetComponentInChildren<Image>().color = StaticManager.Instance.inventory[i].item.Icon;
+                    shopInventorySlot[i].ChangeImage(StaticManager.Instance.inventory[i].item.Icon);
                     if (StaticManager.Instance.PlayerWeapon == (Weapon)StaticManager.Instance.inventory[i].item)
-                        shopInventorySlotButton[i].transform.GetComponentInChildren<Text>().text = "use";
+                        shopInventorySlot[i].ChangeText("use");
                     else
-                        shopInventorySlotButton[i].transform.GetComponentInChildren<Text>().text = "";
-                    shopInventorySlotButton[i].SetActive(true);
+                        shopInventorySlot[i].ChangeText("unuse");
+                    shopInventorySlot[i].SetActive(true);
                     break;
                 case ItemType.PORTION:
-                    shopInventorySlotButton[i].GetComponentInChildren<Image>().color = StaticManager.Instance.inventory[i].item.Icon;
-                    shopInventorySlotButton[i].transform.GetComponentInChildren<Text>().text
-                        = StaticManager.Instance.inventory[i].count.ToString();
-                    shopInventorySlotButton[i].SetActive(true);
-                    break;
                 case ItemType.SCROLL:
-                    shopInventorySlotButton[i].GetComponentInChildren<Image>().color = StaticManager.Instance.inventory[i].item.Icon;
-                    shopInventorySlotButton[i].transform.GetComponentInChildren<Text>().text
-                        = StaticManager.Instance.inventory[i].count.ToString();
-                    shopInventorySlotButton[i].SetActive(true);
+                    shopInventorySlot[i].ChangeImage(StaticManager.Instance.inventory[i].item.Icon);
+                    shopInventorySlot[i].ChangeText(StaticManager.Instance.inventory[i].count.ToString());
+                    shopInventorySlot[i].SetActive(true);
                     break;
                 case ItemType.NULL:
-                    shopInventorySlotButton[i].SetActive(false);
+                    shopInventorySlot[i].SetActive(false);
                     break;
             }
         }
@@ -226,36 +219,70 @@ public class ObjectManager : MonoBehaviour
         }
         ChangePlayerInventory();
     }
-    public void ChangeShop()
+    public void ChangeShop() // 나중에 갈아엎자...
     {
-        int[] scroll = new int[3] { -1, -1, -1 };
+        clickIgnorePanel.SetActive(true);
 
-        for(int i = 0; i<shopItemSlotArray.Length; i++)
+        if (!isShopChanged)
         {
-            if (i < 2) // 포션 2개 (무조건)
-            {
-                shopItemSlotArray[i] = new(shopItemArray[i], 5);
-                shopSlotButton[i].GetComponentInChildren<Image>().color = shopItemArray[i].Icon;
-                shopSlotButton[i].transform.GetComponentInChildren<Text>().text
-                    = shopItemSlotArray[i].count + " / $" + shopItemArray[i].SellCost.ToString();
-            }
-            else if (i < 5) // 스크롤 3개 랜덤
-            {
-                int random = Random.Range(2, 11);
-                while (random == scroll[0] || random == scroll[1] || random == scroll[2])
-                    random = Random.Range(2, 11);
-                scroll[i - 2] = random;
+            isShopChanged = true;
 
-                shopItemSlotArray[i] = new(shopItemArray[random], 3);
-                shopSlotButton[i].GetComponentInChildren<Image>().color = shopItemArray[random].Icon;
-                shopSlotButton[i].transform.GetComponentInChildren<Text>().text
-                    = shopItemSlotArray[i].count + " / $" + shopItemArray[random].SellCost.ToString();
-            }
-            else // 무기 4개
+            int[] scroll = new int[3] { -1, -1, -1 };
+            int stage = StaticManager.Instance.Stage;
+
+            for (int i = 0; i < shopItemSlotArray.Length; i++)
             {
-                ItemSlot newItemSlot = new ItemSlot(null, 1);
-                newItemSlot.init();
-                shopItemSlotArray[i] = newItemSlot;
+                if (i < 2) // 포션 2개 (무조건)
+                {
+                    if (shopItemArray[i].SpawnMinStage > stage || shopItemArray[i].SpawnMaxStage < stage)
+                    {
+                        shopSlot[i].SetActive(false);
+                        continue;
+                    }
+
+                    shopSlot[i].SetActive(true);
+
+                    shopItemSlotArray[i] = new(shopItemArray[i], 5);
+                    shopSlot[i].ChangeImage(shopItemArray[i].Icon);
+                    shopSlot[i].ChangeText(shopItemSlotArray[i].count + " / $" + shopItemArray[i].SellCost.ToString());
+                }
+                else if (i < 5) // 스크롤 3개 랜덤
+                {
+                    if (StaticManager.Instance.Stage < 5) // 스크롤은 5 스테이지 이후부터 구매 가능
+                    {
+                        shopSlot[i].SetActive(false);
+                        continue;
+                    }
+
+                    shopSlot[i].SetActive(true);
+
+                    int random = Random.Range(2, 11);
+                    while (random == scroll[0] || random == scroll[1] || random == scroll[2])
+                        random = Random.Range(2, 11);
+                    scroll[i - 2] = random;
+
+                    shopItemSlotArray[i] = new(shopItemArray[random], 3);
+                    shopSlot[i].ChangeImage(shopItemArray[random].Icon);
+                    shopSlot[i].ChangeText(shopItemSlotArray[i].count + " / $" + shopItemArray[random].SellCost.ToString());
+                }
+                else // 무기 4개
+                {
+                    int index = 0;
+                    for (int j = 11; j < 25; j++)
+                    {
+                        if (shopItemArray[j].SpawnMinStage > stage || shopItemArray[j].SpawnMaxStage < stage) continue;
+
+                        shopSlot[i + index].SetActive(true);
+
+                        shopItemSlotArray[i + index] = new(shopItemArray[j], 1);
+                        shopSlot[i + index].ChangeImage(shopItemArray[j].Icon);
+                        shopSlot[i + index].ChangeText(shopItemSlotArray[i + index].count + " / $" + shopItemArray[i + index].SellCost.ToString());
+                    }
+                    for (i = i + index; i < shopItemSlotArray.Length; i++)
+                        shopSlot[i].SetActive(false);
+
+                    return;
+                }
             }
         }
 
@@ -301,10 +328,8 @@ public class ObjectManager : MonoBehaviour
 
         // 인벤토리의 아이템 개수 변경
         StaticManager.Instance.inventory[inventoryIndex].count++;
-        inventorySlotButton[inventoryIndex].transform.GetComponentInChildren<Text>().text
-            = StaticManager.Instance.inventory[inventoryIndex].count.ToString();
-        shopInventorySlotButton[inventoryIndex].transform.GetComponentInChildren<Text>().text
-            = StaticManager.Instance.inventory[inventoryIndex].count.ToString();
+        inventorySlot[inventoryIndex].ChangeText(StaticManager.Instance.inventory[inventoryIndex].count.ToString());
+        shopInventorySlot[inventoryIndex].ChangeText(StaticManager.Instance.inventory[inventoryIndex].count.ToString());
 
         // 가진 돈 변경
         StaticManager.Instance.Gold -= shopItemSlotArray[index].item.SellCost;
@@ -312,10 +337,9 @@ public class ObjectManager : MonoBehaviour
         // 상점 슬롯 변경
         shopItemSlotArray[index].count--;
         if (shopItemSlotArray[index].count <= 0) // 물건이 다 팔렸을 때
-            shopSlotButton[index].SetActive(false);
+            shopSlot[index].SetActive(false);
         else
-            shopSlotButton[index].transform.GetComponentInChildren<Text>().text
-            = shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString();
+            shopSlot[index].ChangeText(shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString());
 
         // 인벤토리 변경
         ChangePlayerInventory();

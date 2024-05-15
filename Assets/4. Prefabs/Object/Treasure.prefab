@@ -122,4 +122,12 @@ MonoBehaviour:
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 0}
   goldText: {fileID: 0}
+  id: 0
+  objName: 
+  minDamage: 0
+  maxDamage: 0
+  type: 3
+  weaponType: 0
   touchCube: {fileID: 0}
+  maxHp: 0
+  hp: 0

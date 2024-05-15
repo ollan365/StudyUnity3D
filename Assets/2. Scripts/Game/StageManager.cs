@@ -49,6 +49,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject clickIgnorePanel;
 
     [Header("Status")]
+    private int turn = 1;
     private StageStatus status;
     public StageStatus StatusOfStage
     {
@@ -106,6 +107,7 @@ public class StageManager : MonoBehaviour
     {
         if (StatusOfStage == StageStatus.END)
         {
+            stageTexts[1].text = "CLEAR !";
             stageTexts[2].text = "INFINITY";
             stageTexts[3].text = "INFINITY";
             stageTexts[4].text = "INFINITY";
@@ -133,6 +135,9 @@ public class StageManager : MonoBehaviour
         //섞은 후 플레이어 활성화
         player.SetActive(true);
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
+
+        // 값 초기화
+        ObjectManager.Instance.isShopChanged = false;
 
         int index = 0;
         
@@ -196,7 +201,12 @@ public class StageManager : MonoBehaviour
         }
         else if (StatusOfStage == StageStatus.ENV || StatusOfStage == StageStatus.INIT)
         {
-            if (StatusOfStage == StageStatus.ENV) colorCheckManager.ToNextBingo();
+            if (StatusOfStage == StageStatus.ENV)
+            {
+                turn++;
+                stageTexts[1].text = $"{turn} Turn";
+                colorCheckManager.ToNextBingo();
+            }
 
             StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
 

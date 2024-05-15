@@ -204,13 +204,11 @@ public class CubeManager : MonoBehaviour
         Quaternion endRotation = Quaternion.Euler(rotation) * startRotation;
 
         float elapsedTime = 0f;
-        float speed = duration / 5;
 
         while (elapsedTime < duration)
         {
             turnPoint.transform.localRotation = Quaternion.Slerp(startRotation, endRotation, elapsedTime / duration);
-            elapsedTime += Time.deltaTime / 10 + speed;
-            speed = speed - Time.deltaTime * 2 > Time.deltaTime / 10 ? speed - Time.deltaTime * 2 : Time.deltaTime / 10;
+            elapsedTime += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
 
@@ -238,7 +236,7 @@ public class CubeManager : MonoBehaviour
     {
         yield return new WaitForFixedUpdate(); // 반드시 필요!
 
-        duration *= 2; // 애니메이션 안 넣을 거면 나누는 게 맞음
+        duration /= 2;
 
         for (int i = 0; i < randomCount; i++)
         {
@@ -254,7 +252,7 @@ public class CubeManager : MonoBehaviour
         while (playerTurnStatus == PlayerTurnStatus.TURN)
             yield return new WaitForFixedUpdate();
 
-        duration /= 2;
+        duration *= 2;
 
         // 스테이지 시작
         StartCoroutine(StageManager.Instance.StartStage());
