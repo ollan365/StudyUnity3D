@@ -57,7 +57,10 @@ public class FightLogic : MonoBehaviour
         List<GameObject> attackableEnemy = AttackableObject(StageManager.Instance.Player.AttackType, StageManager.Instance.Player.Color, StageManager.Instance.Player.Index, ObjectType.ENEMY);
         foreach (GameObject enemy in attackableEnemy)
         {
+            //플레이어가 적 공격
+            LookAt(StageManager.Instance.Player.gameObject, enemy);
             enemy.GetComponent<Object>().OnHit(StageManager.Instance.Player.Damage);
+
             yield return new WaitForFixedUpdate();
 
             yield return new WaitForSeconds(0.1f);
@@ -107,7 +110,10 @@ public class FightLogic : MonoBehaviour
 
                     foreach (GameObject enemy in attackableEnemy)
                     {
+                        //동료가 적 공격
+                        LookAt(friendObj.gameObject, enemy);
                         enemy.GetComponent<Object>().OnHit(friendAttackOrder[i].Key);
+
                         yield return new WaitForSeconds(0.5f);
                     }
                 }
@@ -130,7 +136,10 @@ public class FightLogic : MonoBehaviour
 
                 foreach (GameObject p in attackablePlayerTeam)
                 {
+                    //적이 플레이어 진영 공격
+                    LookAt(enemyObj.gameObject, p);
                     p.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
+                   
                     yield return new WaitForSeconds(0.5f);
                 }
 
@@ -146,6 +155,20 @@ public class FightLogic : MonoBehaviour
         // statge statue를 바꾼다
         StageManager.Instance.ChangeStatus();
     }
+
+    private void LookAt(GameObject src, GameObject dst)
+    {
+        Vector3 direc = src.transform.position - dst.transform.position;
+        Debug.Log("src: " + src + " " + src.transform.position);
+        Debug.Log("dst: " + dst + " " + dst.transform.position);
+        Debug.Log(direc.normalized);
+        
+        Quaternion rot = Quaternion.LookRotation(direc);
+        Debug.Log(rot.eulerAngles);
+        
+        src.transform.rotation = rot;
+    }
+
     private List<GameObject> AttackableObject(WeaponType weaponType, Colors color, int index, ObjectType objType)
     {
         List<GameObject> attackable = new();
@@ -204,6 +227,8 @@ public class FightLogic : MonoBehaviour
         }
         return attackable;
     }
+
+    
     private bool[] AttackableRange(WeaponType weaponType, int index)
     {
         bool[] attackable = new bool[9];
