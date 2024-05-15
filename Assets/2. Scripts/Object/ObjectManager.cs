@@ -51,6 +51,13 @@ public class ObjectManager : MonoBehaviour
                 newObject = Instantiate(enemyPrefab);
                 string value = StaticManager.Instance.enemyDatas[objectID];
                 newObject.GetComponent<Object>().Init(objectType, value.Split(','), cube);
+                //newObject.transform.GetChild(objectID - 100000).gameObject.SetActive(true);
+                if (objectID == 100001)
+                    newObject.transform.GetChild(1).gameObject.SetActive(true);
+                else if (objectID == 100002)
+                    newObject.transform.GetChild(2).gameObject.SetActive(true);
+                else
+                    newObject.transform.GetChild(3).gameObject.SetActive(true);
                 break;
             case ObjectType.FRIEND:
                 newObject = Instantiate(friendPrefab);
