@@ -19,7 +19,7 @@ MonoBehaviour:
   buyCost: 0
   spawnMinStage: 2
   spawnMaxStage: 4
-  icon: {r: 0, g: 0, b: 0, a: 1}
+  icon: {r: 0, g: 0, b: 1, a: 1}
   description: 
   weaponType: 0
   level: 0

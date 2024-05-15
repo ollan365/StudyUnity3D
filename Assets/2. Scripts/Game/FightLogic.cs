@@ -60,7 +60,9 @@ public class FightLogic : MonoBehaviour
             //플레이어가 적 공격
             LookAt(StageManager.Instance.Player.gameObject, enemy);
             enemy.GetComponent<Object>().OnHit(StageManager.Instance.Player.Damage);
-
+            if (!enemy.activeSelf) {
+                StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
+            }
             yield return new WaitForFixedUpdate();
 
             yield return new WaitForSeconds(0.1f);
@@ -113,6 +115,10 @@ public class FightLogic : MonoBehaviour
                         //동료가 적 공격
                         LookAt(friendObj.gameObject, enemy);
                         enemy.GetComponent<Object>().OnHit(friendAttackOrder[i].Key);
+                        if (!enemy.activeSelf)
+                        {
+                            StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
+                        }
 
                         yield return new WaitForSeconds(0.5f);
                     }

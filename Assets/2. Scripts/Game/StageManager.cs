@@ -123,8 +123,15 @@ public class StageManager : MonoBehaviour
         }
         else stageTextValues[text.ToInt()] += addValue;
 
+        Debug.Log(stageTextValues[StageText.MONSTER.ToInt()]);
+
         stageTextValues[StageText.MONSTER.ToInt()] = 0;
-        foreach (GameObject e in enemy) stageTextValues[StageText.MONSTER.ToInt()]++;
+        foreach (GameObject e in enemy)
+        {
+            if(e.activeSelf)
+                stageTextValues[StageText.MONSTER.ToInt()]++;
+        }
+            
 
         stageTexts[2].text = $"{stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
         stageTexts[3].text = $"{stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
