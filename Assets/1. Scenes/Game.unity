@@ -4016,6 +4016,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1448480021}
     m_Modifications:
+    - target: {fileID: 1989979850526352284, guid: 796b503855e2a364bb0beb5bfb7c814f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
     - target: {fileID: 7729280503450332981, guid: 796b503855e2a364bb0beb5bfb7c814f, type: 3}
       propertyPath: m_Name
       value: Color Point White

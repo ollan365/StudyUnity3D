@@ -122,6 +122,14 @@ public class ColorCheckManager : MonoBehaviour
 
         float travelTIme = 0f;
 
+        //localPosition의 0,0 으로 이동하는 것이기 때문에 originPos - vector3.zero 를 lookRotation 함수의 인자로
+        //전달해줘야 하지만 어차피 0을 뺀 값을 자기자신과 같기 때문에 그냥 originPos를 넣으면 된다.
+        Quaternion rot = Quaternion.LookRotation(originPos);
+        selectedCharacter.transform.localRotation = rot;
+        
+        
+
+
 
         while (travelTIme < 0.15f)
         {
@@ -137,6 +145,7 @@ public class ColorCheckManager : MonoBehaviour
         }
 
         yield return new WaitForFixedUpdate();
+
 
         MovableCubeSetting(index);
     }
