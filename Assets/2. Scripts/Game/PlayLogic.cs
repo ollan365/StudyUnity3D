@@ -8,15 +8,17 @@ public class PlayLogic : MonoBehaviour
     [SerializeField] private ColorCheckManager colorCheckManager;
     public void OpenTreasureBox(GameObject obj)
     {
-        StaticManager.Instance.Gold += obj.GetComponent<Object>().Damage;
+        int gold = obj.GetComponent<Object>().Damage;
+        StaticManager.Instance.Gold += gold;
         ObjectManager.Instance.ObjectDie(obj);
 
-        StartCoroutine(GoldText());
+        StartCoroutine(GoldText(gold));
     }
-    private IEnumerator GoldText()
+    private IEnumerator GoldText(int gold)
     {
         GameObject goldTextObj = colorCheckManager.SelectedCharacter.GetComponent<Object>().GoldText;
         Text goldText = goldTextObj.GetComponent<Text>();
+        goldText.text = $"+{gold}";
         RectTransform rectTransform = goldTextObj.GetComponent<RectTransform>();
         goldText.color = new Color(1, 1, 0, 1);
         Vector3 originPosition =  rectTransform.position;
