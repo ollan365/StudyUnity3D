@@ -14,6 +14,10 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private PlayerTurnStatus playerTurnStatus;
     private int itemID;
 
+    [SerializeField] private float scrollSpeed;
+    private float maxValue = 75f;
+    private float minValue = 40f;
+
 
     private void Awake()
     {
@@ -21,6 +25,25 @@ public class CubeManager : MonoBehaviour
     }
     private void Update()
     {
+        if(StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT)
+        {
+            float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
+            if(Camera.main.fieldOfView >= maxValue)
+            {
+                //minZoom
+                Camera.main.fieldOfView = maxValue;
+                scrollWheel = Mathf.Max(0, scrollWheel);
+            }else if(Camera.main.fieldOfView <= minValue)
+            {
+                //maxZoom
+                Camera.main.fieldOfView = minValue;
+                scrollWheel = Mathf.Min(0, scrollWheel);
+            }
+            Debug.Log(Camera.main);
+            Debug.Log(scrollWheel);
+            Camera.main.fieldOfView -= scrollWheel * Time.deltaTime * scrollSpeed;
+        }
+
         if (Input.GetMouseButton(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
         {
             transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);

@@ -217,6 +217,7 @@ MonoBehaviour:
   duration: 0.3
   rotateSpeed: 10
   playerTurnStatus: 0
+  scrollSpeed: 300
 --- !u!114 &924634
 MonoBehaviour:
   m_ObjectHideFlags: 0
