@@ -8,10 +8,10 @@ public class CubeManager : MonoBehaviour
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
     [SerializeField] private float rotateSpeed; //Cube Object Rotation Speed
+    private float currentRotateSpeed = 0;
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private Vector3 startPosition;
-    private float value;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
     [SerializeField] private PlayerTurnStatus playerTurnStatus;
     private int itemID;
@@ -23,22 +23,31 @@ public class CubeManager : MonoBehaviour
     }
     private void Update()
     {
+        if (Input.GetMouseButtonDown(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
+        {
+            currentRotateSpeed = 0;
+        }
         if (Input.GetMouseButton(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
         {
-            transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
-            transform.Rotate(Input.GetAxis("Mouse Y") * rotateSpeed, 0f, Input.GetAxis("Mouse Y") * rotateSpeed, Space.World);
+            transform.Rotate(0f, -Input.GetAxis("Mouse X") * currentRotateSpeed, 0f, Space.World);
+            transform.Rotate(Input.GetAxis("Mouse Y") * currentRotateSpeed, 0f, Input.GetAxis("Mouse Y") * currentRotateSpeed, Space.World);
+            
+            currentRotateSpeed = Mathf.Clamp(currentRotateSpeed + Time.deltaTime * 10, 0, rotateSpeed);
         }
 
         if (Input.GetMouseButtonDown(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
         {
+            // 초기화
+            mouseStartObject = null;
+            mouseStartTouchCube = null;
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
             hits = Physics.RaycastAll(ray);
 
             foreach (RaycastHit hit in hits)
             {
-                if (hit.collider.gameObject.layer == 6) // 큐브 너머의 오브젝트는 확인 안 함
-                    break;
+                if (hit.collider.gameObject.layer == 6) break; // 큐브 너머의 오브젝트는 확인 안 함
 
                 Object script = hit.collider.gameObject.GetComponent<Object>();
                 if (script != null) // 클릭된 객체들 중 Object 컴포넌트를 가진 객체가 있으면
@@ -50,6 +59,8 @@ public class CubeManager : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
+                if (hit.collider.gameObject.layer == 6) break; // 큐브 너머의 오브젝트는 확인 안 함
+
                 Touch script = hit.collider.gameObject.GetComponent<Touch>();
                 if (script != null) // 클릭된 객체들 중 Touch 컴포넌트를 가진 객체가 있으면
                 {
@@ -88,7 +99,6 @@ public class CubeManager : MonoBehaviour
                 if (obj != null && mouseStartObject == hit.collider.gameObject) // 오브젝트를 클릭했다면
                 {
                     ClickObject(obj);
-                    mouseStartObject = null;
                     return;
                 }
             }
@@ -119,7 +129,7 @@ public class CubeManager : MonoBehaviour
             mouseStartTouchCube = null;
             return;
         }
-        startPosition = Input.mousePosition; // 근데 이거 mouseEnd에서 초기화 안 해도 되나?
+        startPosition = Input.mousePosition;
         mouseStartTouchCube = script;
     }
     public void MouseEnd(Touch script)
@@ -143,7 +153,6 @@ public class CubeManager : MonoBehaviour
         else
         {
             ClickObject(script.Obj);
-            mouseStartObject = null;
         }
         return;
     }
@@ -191,7 +200,6 @@ public class CubeManager : MonoBehaviour
         }
 
         if (isTime) StartCoroutine(TurnEffect(turnPoint, rotation, array));
-        else DiscreteTurnEffect(turnPoint, rotation, array);
     }
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {
@@ -220,18 +228,6 @@ public class CubeManager : MonoBehaviour
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
-    private void DiscreteTurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
-    {
-        Quaternion startRotation = turnPoint.transform.localRotation;
-        Quaternion endRotation = Quaternion.Euler(rotation) * startRotation;
-
-        turnPoint.transform.localRotation = Quaternion.Slerp(startRotation, endRotation, value);
-        
-        foreach (GameObject position in array) position.GetComponent<CubePosition>().FindPriorChild();
-
-        playerTurnStatus = PlayerTurnStatus.NORMAL;
-    }
-
     public void StartRandomTurn(int randomCount)
     {
         StartCoroutine(RandomTurn(randomCount));

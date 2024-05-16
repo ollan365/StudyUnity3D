@@ -123,8 +123,6 @@ public class StageManager : MonoBehaviour
         }
         else stageTextValues[text.ToInt()] += addValue;
 
-        Debug.Log(stageTextValues[StageText.MONSTER.ToInt()]);
-
         stageTextValues[StageText.MONSTER.ToInt()] = 0;
         foreach (GameObject e in enemy)
         {
