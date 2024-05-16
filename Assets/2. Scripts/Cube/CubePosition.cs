@@ -2,16 +2,25 @@ using UnityEngine;
 
 public class CubePosition : MonoBehaviour
 {
-    Transform child;
+    [SerializeField] private Transform child;
+    [SerializeField] private Transform newChild;
 
-    public void FindChild()
+    public void FindPriorChild()
     {
+        child.parent = transform;
+    }
+
+    public void FindNewChild()
+    {
+        if (newChild == null) return;
+
+        child = newChild;
         child.parent = transform;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == 3)
-            child = other.transform;
+            newChild = other.transform;
     }
 }

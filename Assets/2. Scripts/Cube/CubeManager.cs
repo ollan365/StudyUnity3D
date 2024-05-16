@@ -10,6 +10,8 @@ public class CubeManager : MonoBehaviour
     [SerializeField] private float rotateSpeed; //Cube Object Rotation Speed
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
+    private Vector3 startPosition;
+    private float value;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
     [SerializeField] private PlayerTurnStatus playerTurnStatus;
     private int itemID;
@@ -51,11 +53,25 @@ public class CubeManager : MonoBehaviour
                 Touch script = hit.collider.gameObject.GetComponent<Touch>();
                 if (script != null) // 클릭된 객체들 중 Touch 컴포넌트를 가진 객체가 있으면
                 {
+                    script.DrawRay();
                     MouseStart(script);
                     break;
                 }
             }
         }
+
+        // 추가 중
+        //if (Input.GetMouseButton(0) && StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END)
+        //{
+        //    if (mouseStartTouchCube != null)
+        //    {
+        //        value = Vector3.Distance(Input.mousePosition, startPosition) / 2000;
+        //        Debug.Log($"{value}");
+        //        int index = mouseStartTouchCube.Direction(startPosition);
+        //        Turn(mouseStartTouchCube.TouchColors[index], mouseStartTouchCube.TouchInts[index], false);
+        //    }
+        //}
+
         if (Input.GetMouseButtonUp(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -80,11 +96,18 @@ public class CubeManager : MonoBehaviour
             {
                 Touch touchScript = hit.collider.gameObject.GetComponent<Touch>();
                 // 여기서 hit.collider.gameObject는 클릭된 객체를 나타냅니다.
-                if (touchScript != null)
+                if (touchScript != null && touchScript == mouseStartTouchCube)
                 {
-                    MouseEnd(touchScript);
-                    break;
+                    MouseEnd(touchScript); // 같은 곳을 클릭한 경우
+                    return;
                 }
+            }
+
+            // 그냥 허공에 마우스를 뗀 경우
+            if (mouseStartTouchCube != null)
+            {
+                int index = mouseStartTouchCube.Direction(startPosition);
+                Turn(mouseStartTouchCube.TouchColors[index], mouseStartTouchCube.TouchInts[index], true);
             }
         }
     }
@@ -96,71 +119,47 @@ public class CubeManager : MonoBehaviour
             mouseStartTouchCube = null;
             return;
         }
+        startPosition = Input.mousePosition; // 근데 이거 mouseEnd에서 초기화 안 해도 되나?
         mouseStartTouchCube = script;
     }
     public void MouseEnd(Touch script)
     {
-        if (mouseStartTouchCube == null) return;
-
-        if (mouseStartTouchCube == script) // 같은 곳을 클릭했을 때
+        ObjectType type = script.ObjType;
+        if (type == ObjectType.NULL)
         {
-            ObjectType type = script.ObjType;
-            if (type == ObjectType.NULL)
+            if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
             {
-                if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
-                {
-                    if (StageManager.Instance.GetStageTextValue(StageText.MOVE) > 0 && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
-                        StageManager.Instance.SetStageTextValue(StageText.MOVE, -1);
-                    else
-                        ChangeToNormal();
-                }
-                if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                {
-                    StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID);
-                    playerTurnStatus = PlayerTurnStatus.NORMAL;
-                }
+                if (StageManager.Instance.GetStageTextValue(StageText.MOVE) > 0 && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
+                    StageManager.Instance.SetStageTextValue(StageText.MOVE, -1);
+                else
+                    ChangeToNormal();
             }
-            else
+            if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
             {
-                ClickObject(script.Obj);
-                mouseStartObject = null;
+                StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID);
+                playerTurnStatus = PlayerTurnStatus.NORMAL;
             }
-            return;
         }
-        else if (script.ObjType == ObjectType.NULL && playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+        else
         {
-            ChangeToNormal();
-            return;
+            ClickObject(script.Obj);
+            mouseStartObject = null;
         }
-        else if (playerTurnStatus != PlayerTurnStatus.NORMAL)
-            return;
-
-        Touch start = mouseStartTouchCube;
-        Touch end = script;
-
-        for (int i = 0; i < start.TouchColors.Length; i++)
-            for (int j = 0; j < end.TouchColors.Length; j++)
-                if (start.TouchColors[i] == end.TouchColors[j])
-                {
-                    int direction = end.TouchInts[j] - start.TouchInts[i];
-                    if (direction < 0) Turn(end.TouchColors[j], -1);
-                    else if (direction > 0) Turn(end.TouchColors[j], 1);
-                    return;
-                }
+        return;
     }
     public void ChangeToNormal()
     {
         gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(null, true);
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
-    private void Turn(Colors color, int direction)
+    private void Turn(Colors color, int direction, bool isTime)
     {
         if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL
             || (StageManager.Instance.GetStageTextValue(StageText.ROTATE) <= 0 && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)) return;
 
         if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER) StageManager.Instance.SetStageTextValue(StageText.ROTATE, -1);
 
-        playerTurnStatus = PlayerTurnStatus.TURN;
+        if (isTime) playerTurnStatus = PlayerTurnStatus.TURN;
 
         GameObject turnPoint = turnPoints[color.ToInt()];
         GameObject[] array = StageCube.Instance.colorArray[color.ToInt()];
@@ -169,34 +168,30 @@ public class CubeManager : MonoBehaviour
         {
             case WHITE:
             case WY:
-                rotation.y += direction * 90;
-                break;
+                rotation.y += direction * 90; break;
             case RED:
             case RO:
-                rotation.x += direction * 90;
-                break;
+                rotation.x += direction * 90; break;
             case BLUE:
             case BG:
-                rotation.z += direction * 90;
-                break;
+                rotation.z += direction * 90; break;
             case GREEN:
-                rotation.z -= direction * 90;
-                break;
+                rotation.z -= direction * 90; break;
             case ORANGE:
-                rotation.x -= direction * 90;
-                break;
+                rotation.x -= direction * 90; break;
             case YELLOW:
-                rotation.y -= direction * 90;
-                break;
+                rotation.y -= direction * 90; break;
             default:
-                rotation = Vector3.zero;
-                break;
+                rotation = Vector3.zero; break;
         }
         foreach (GameObject position in array) // 큐브의 부모를 turnPoint로 설정하여 함께 회전시킨다
         {
+            position.GetComponent<CubePosition>().FindNewChild();
             position.transform.GetChild(0).parent = turnPoint.transform;
         }
-        StartCoroutine(TurnEffect(turnPoint, rotation, array));
+
+        if (isTime) StartCoroutine(TurnEffect(turnPoint, rotation, array));
+        else DiscreteTurnEffect(turnPoint, rotation, array);
     }
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {
@@ -211,14 +206,13 @@ public class CubeManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
-
+        
         // 보정을 위해 최종 회전 각도로 설정
         turnPoint.transform.localRotation = endRotation;
 
         yield return new WaitForFixedUpdate();
 
-        foreach (GameObject position in array)
-            position.GetComponent<CubePosition>().FindChild();
+        foreach (GameObject position in array) position.GetComponent<CubePosition>().FindNewChild();
 
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
@@ -226,7 +220,17 @@ public class CubeManager : MonoBehaviour
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
+    private void DiscreteTurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
+    {
+        Quaternion startRotation = turnPoint.transform.localRotation;
+        Quaternion endRotation = Quaternion.Euler(rotation) * startRotation;
 
+        turnPoint.transform.localRotation = Quaternion.Slerp(startRotation, endRotation, value);
+        
+        foreach (GameObject position in array) position.GetComponent<CubePosition>().FindPriorChild();
+
+        playerTurnStatus = PlayerTurnStatus.NORMAL;
+    }
 
     public void StartRandomTurn(int randomCount)
     {
@@ -247,7 +251,7 @@ public class CubeManager : MonoBehaviour
             direction = direction == 1 ? 1 : -1;
             int value = Random.Range(0, 9);
 
-            Turn(value.ToColor(), direction);
+            Turn(value.ToColor(), direction, true);
         }
         while (playerTurnStatus == PlayerTurnStatus.TURN)
             yield return new WaitForFixedUpdate();
