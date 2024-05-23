@@ -6,10 +6,12 @@ public class CubeManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] turnPoints;
 
-    [SerializeField] private float duration; // È¸Àü¿¡ °É¸®´Â ½Ã°£
+    [SerializeField] private float duration; // íšŒì „ì— ê±¸ë¦¬ëŠ” ì‹œê°„
     [SerializeField] private float rotateSpeed; //Cube Object Rotation Speed
+    private float currentRotateSpeed = 0;
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
+    private Vector3 startPosition;
     private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
     [SerializeField] private PlayerTurnStatus playerTurnStatus;
     private int itemID;
@@ -43,26 +45,34 @@ public class CubeManager : MonoBehaviour
             Debug.Log(scrollWheel);
             Camera.main.fieldOfView -= scrollWheel * Time.deltaTime * scrollSpeed;
         }
-
+        if (Input.GetMouseButtonDown(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
+        {
+            currentRotateSpeed = 0;
+        }
         if (Input.GetMouseButton(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
         {
-            transform.Rotate(0f, -Input.GetAxis("Mouse X") * rotateSpeed, 0f, Space.World);
-            transform.Rotate(Input.GetAxis("Mouse Y") * rotateSpeed, 0f, Input.GetAxis("Mouse Y") * rotateSpeed, Space.World);
+            transform.Rotate(0f, -Input.GetAxis("Mouse X") * currentRotateSpeed, 0f, Space.World);
+            transform.Rotate(Input.GetAxis("Mouse Y") * currentRotateSpeed, 0f, Input.GetAxis("Mouse Y") * currentRotateSpeed, Space.World);
+            
+            currentRotateSpeed = Mathf.Clamp(currentRotateSpeed + Time.deltaTime * 10, 0, rotateSpeed);
         }
 
         if (Input.GetMouseButtonDown(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
         {
+            // ì´ˆê¸°í™”
+            mouseStartObject = null;
+            mouseStartTouchCube = null;
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
             hits = Physics.RaycastAll(ray);
 
             foreach (RaycastHit hit in hits)
             {
-                if (hit.collider.gameObject.layer == 6) // Å¥ºê ³Ê¸ÓÀÇ ¿ÀºêÁ§Æ®´Â È®ÀÎ ¾È ÇÔ
-                    break;
+                if (hit.collider.gameObject.layer == 6) break; // íë¸Œ ë„ˆë¨¸ì˜ ì˜¤ë¸Œì íŠ¸ëŠ” í™•ì¸ ì•ˆ í•¨
 
                 Object script = hit.collider.gameObject.GetComponent<Object>();
-                if (script != null) // Å¬¸¯µÈ °´Ã¼µé Áß Object ÄÄÆ÷³ÍÆ®¸¦ °¡Áø °´Ã¼°¡ ÀÖÀ¸¸é
+                if (script != null) // í´ë¦­ëœ ê°ì²´ë“¤ ì¤‘ Object ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì§„ ê°ì²´ê°€ ìˆìœ¼ë©´
                 {
                     mouseStartObject = hit.collider.gameObject;
                     break;
@@ -71,14 +81,30 @@ public class CubeManager : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
+                if (hit.collider.gameObject.layer == 6) break; // íë¸Œ ë„ˆë¨¸ì˜ ì˜¤ë¸Œì íŠ¸ëŠ” í™•ì¸ ì•ˆ í•¨
+
                 Touch script = hit.collider.gameObject.GetComponent<Touch>();
-                if (script != null) // Å¬¸¯µÈ °´Ã¼µé Áß Touch ÄÄÆ÷³ÍÆ®¸¦ °¡Áø °´Ã¼°¡ ÀÖÀ¸¸é
+                if (script != null) // í´ë¦­ëœ ê°ì²´ë“¤ ì¤‘ Touch ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì§„ ê°ì²´ê°€ ìˆìœ¼ë©´
                 {
+                    script.DrawRay();
                     MouseStart(script);
                     break;
                 }
             }
         }
+
+        // ì¶”ê°€ ì¤‘
+        //if (Input.GetMouseButton(0) && StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END)
+        //{
+        //    if (mouseStartTouchCube != null)
+        //    {
+        //        value = Vector3.Distance(Input.mousePosition, startPosition) / 2000;
+        //        Debug.Log($"{value}");
+        //        int index = mouseStartTouchCube.Direction(startPosition);
+        //        Turn(mouseStartTouchCube.TouchColors[index], mouseStartTouchCube.TouchInts[index], false);
+        //    }
+        //}
+
         if (Input.GetMouseButtonUp(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -87,27 +113,33 @@ public class CubeManager : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
-                if (hit.collider.gameObject.layer == 6) // Å¥ºê ³Ê¸ÓÀÇ ¿ÀºêÁ§Æ®´Â È®ÀÎ ¾È ÇÔ
+                if (hit.collider.gameObject.layer == 6) // íë¸Œ ë„ˆë¨¸ì˜ ì˜¤ë¸Œì íŠ¸ëŠ” í™•ì¸ ì•ˆ í•¨
                     break;
 
                 Object obj = hit.collider.gameObject.GetComponent<Object>();
-                // ¿©±â¼­ hit.collider.gameObject´Â Å¬¸¯µÈ °´Ã¼¸¦ ³ªÅ¸³À´Ï´Ù.
-                if (obj != null && mouseStartObject == hit.collider.gameObject) // ¿ÀºêÁ§Æ®¸¦ Å¬¸¯Çß´Ù¸é
+                // ì—¬ê¸°ì„œ hit.collider.gameObjectëŠ” í´ë¦­ëœ ê°ì²´ë¥¼ ë‚˜íƒ€ëƒ…ë‹ˆë‹¤.
+                if (obj != null && mouseStartObject == hit.collider.gameObject) // ì˜¤ë¸Œì íŠ¸ë¥¼ í´ë¦­í–ˆë‹¤ë©´
                 {
                     ClickObject(obj);
-                    mouseStartObject = null;
                     return;
                 }
             }
             foreach (RaycastHit hit in hits)
             {
                 Touch touchScript = hit.collider.gameObject.GetComponent<Touch>();
-                // ¿©±â¼­ hit.collider.gameObject´Â Å¬¸¯µÈ °´Ã¼¸¦ ³ªÅ¸³À´Ï´Ù.
-                if (touchScript != null)
+                // ì—¬ê¸°ì„œ hit.collider.gameObjectëŠ” í´ë¦­ëœ ê°ì²´ë¥¼ ë‚˜íƒ€ëƒ…ë‹ˆë‹¤.
+                if (touchScript != null && touchScript == mouseStartTouchCube)
                 {
-                    MouseEnd(touchScript);
-                    break;
+                    MouseEnd(touchScript); // ê°™ì€ ê³³ì„ í´ë¦­í•œ ê²½ìš°
+                    return;
                 }
+            }
+
+            // ê·¸ëƒ¥ í—ˆê³µì— ë§ˆìš°ìŠ¤ë¥¼ ë—€ ê²½ìš°
+            if (mouseStartTouchCube != null)
+            {
+                int index = mouseStartTouchCube.Direction(startPosition);
+                Turn(mouseStartTouchCube.TouchColors[index], mouseStartTouchCube.TouchInts[index], true);
             }
         }
     }
@@ -119,71 +151,46 @@ public class CubeManager : MonoBehaviour
             mouseStartTouchCube = null;
             return;
         }
+        startPosition = Input.mousePosition;
         mouseStartTouchCube = script;
     }
     public void MouseEnd(Touch script)
     {
-        if (mouseStartTouchCube == null) return;
-
-        if (mouseStartTouchCube == script) // °°Àº °÷À» Å¬¸¯ÇßÀ» ¶§
+        ObjectType type = script.ObjType;
+        if (type == ObjectType.NULL)
         {
-            ObjectType type = script.ObjType;
-            if (type == ObjectType.NULL)
+            if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
             {
-                if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
-                {
-                    if (StageManager.Instance.GetStageTextValue(StageText.MOVE) > 0 && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
-                        StageManager.Instance.SetStageTextValue(StageText.MOVE, -1);
-                    else
-                        ChangeToNormal();
-                }
-                if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
-                {
-                    StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID);
-                    playerTurnStatus = PlayerTurnStatus.NORMAL;
-                }
+                if (StageManager.Instance.GetStageTextValue(StageText.MOVE) > 0 && GetComponent<ColorCheckManager>().Move(script.Color, script.Index, true))
+                    StageManager.Instance.SetStageTextValue(StageText.MOVE, -1);
+                else
+                    ChangeToNormal();
             }
-            else
+            if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
             {
-                ClickObject(script.Obj);
-                mouseStartObject = null;
+                StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID);
+                playerTurnStatus = PlayerTurnStatus.NORMAL;
             }
-            return;
         }
-        else if (script.ObjType == ObjectType.NULL && playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
+        else
         {
-            ChangeToNormal();
-            return;
+            ClickObject(script.Obj);
         }
-        else if (playerTurnStatus != PlayerTurnStatus.NORMAL)
-            return;
-
-        Touch start = mouseStartTouchCube;
-        Touch end = script;
-
-        for (int i = 0; i < start.TouchColors.Length; i++)
-            for (int j = 0; j < end.TouchColors.Length; j++)
-                if (start.TouchColors[i] == end.TouchColors[j])
-                {
-                    int direction = end.TouchInts[j] - start.TouchInts[i];
-                    if (direction < 0) Turn(end.TouchColors[j], -1);
-                    else if (direction > 0) Turn(end.TouchColors[j], 1);
-                    return;
-                }
+        return;
     }
     public void ChangeToNormal()
     {
         gameObject.GetComponent<ColorCheckManager>().CharacterSelectCancel(null, true);
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
-    private void Turn(Colors color, int direction)
+    private void Turn(Colors color, int direction, bool isTime)
     {
         if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL
             || (StageManager.Instance.GetStageTextValue(StageText.ROTATE) <= 0 && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)) return;
 
         if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER) StageManager.Instance.SetStageTextValue(StageText.ROTATE, -1);
 
-        playerTurnStatus = PlayerTurnStatus.TURN;
+        if (isTime) playerTurnStatus = PlayerTurnStatus.TURN;
 
         GameObject turnPoint = turnPoints[color.ToInt()];
         GameObject[] array = StageCube.Instance.colorArray[color.ToInt()];
@@ -192,34 +199,29 @@ public class CubeManager : MonoBehaviour
         {
             case WHITE:
             case WY:
-                rotation.y += direction * 90;
-                break;
+                rotation.y += direction * 90; break;
             case RED:
             case RO:
-                rotation.x += direction * 90;
-                break;
+                rotation.x += direction * 90; break;
             case BLUE:
             case BG:
-                rotation.z += direction * 90;
-                break;
+                rotation.z += direction * 90; break;
             case GREEN:
-                rotation.z -= direction * 90;
-                break;
+                rotation.z -= direction * 90; break;
             case ORANGE:
-                rotation.x -= direction * 90;
-                break;
+                rotation.x -= direction * 90; break;
             case YELLOW:
-                rotation.y -= direction * 90;
-                break;
+                rotation.y -= direction * 90; break;
             default:
-                rotation = Vector3.zero;
-                break;
+                rotation = Vector3.zero; break;
         }
-        foreach (GameObject position in array) // Å¥ºêÀÇ ºÎ¸ğ¸¦ turnPoint·Î ¼³Á¤ÇÏ¿© ÇÔ²² È¸Àü½ÃÅ²´Ù
+        foreach (GameObject position in array) // íë¸Œì˜ ë¶€ëª¨ë¥¼ turnPointë¡œ ì„¤ì •í•˜ì—¬ í•¨ê»˜ íšŒì „ì‹œí‚¨ë‹¤
         {
+            position.GetComponent<CubePosition>().FindNewChild();
             position.transform.GetChild(0).parent = turnPoint.transform;
         }
-        StartCoroutine(TurnEffect(turnPoint, rotation, array));
+
+        if (isTime) StartCoroutine(TurnEffect(turnPoint, rotation, array));
     }
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
     {
@@ -234,30 +236,27 @@ public class CubeManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
-
-        // º¸Á¤À» À§ÇØ ÃÖÁ¾ È¸Àü °¢µµ·Î ¼³Á¤
+        
+        // ë³´ì •ì„ ìœ„í•´ ìµœì¢… íšŒì „ ê°ë„ë¡œ ì„¤ì •
         turnPoint.transform.localRotation = endRotation;
 
         yield return new WaitForFixedUpdate();
 
-        foreach (GameObject position in array)
-            position.GetComponent<CubePosition>().FindChild();
+        foreach (GameObject position in array) position.GetComponent<CubePosition>().FindNewChild();
 
-        yield return new WaitForFixedUpdate(); // ÀÌ°Ô ¾øÀ¸¸é check cubeÀÇ layer°¡ ¹Ù²î±â Àü¿¡ ºù°í Ã¼Å©ÇÔ
+        yield return new WaitForFixedUpdate(); // ì´ê²Œ ì—†ìœ¼ë©´ check cubeì˜ layerê°€ ë°”ë€Œê¸° ì „ì— ë¹™ê³  ì²´í¬í•¨
 
         gameObject.GetComponent<ColorCheckManager>().BingoTextChange(-1);
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
-
-
     public void StartRandomTurn(int randomCount)
     {
         StartCoroutine(RandomTurn(randomCount));
     }
     private IEnumerator RandomTurn(int randomCount)
     {
-        yield return new WaitForFixedUpdate(); // ¹İµå½Ã ÇÊ¿ä!
+        yield return new WaitForFixedUpdate(); // ë°˜ë“œì‹œ í•„ìš”!
 
         duration /= 2;
 
@@ -270,14 +269,14 @@ public class CubeManager : MonoBehaviour
             direction = direction == 1 ? 1 : -1;
             int value = Random.Range(0, 9);
 
-            Turn(value.ToColor(), direction);
+            Turn(value.ToColor(), direction, true);
         }
         while (playerTurnStatus == PlayerTurnStatus.TURN)
             yield return new WaitForFixedUpdate();
 
         duration *= 2;
 
-        // ½ºÅ×ÀÌÁö ½ÃÀÛ
+        // ìŠ¤í…Œì´ì§€ ì‹œì‘
         StartCoroutine(StageManager.Instance.StartStage());
     }
 

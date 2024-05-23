@@ -86,7 +86,7 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.MONSTER.ToInt()] = stageTextValues[StageText.MONSTER_INIT.ToInt()]
             = stageDatas[ENEMY_COUNT];
         stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()]
-            = stageDatas[ROTATE_COUNT] = 10;
+            = stageDatas[ROTATE_COUNT] = 100;
         stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()]
             = stageDatas[MOVE_COUNT] = 10;
         stageTextValues[StageText.WEAPON_CHANGE.ToInt()] = stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]
@@ -122,8 +122,6 @@ public class StageManager : MonoBehaviour
             stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()];
         }
         else stageTextValues[text.ToInt()] += addValue;
-
-        Debug.Log(stageTextValues[StageText.MONSTER.ToInt()]);
 
         stageTextValues[StageText.MONSTER.ToInt()] = 0;
         foreach (GameObject e in enemy)
