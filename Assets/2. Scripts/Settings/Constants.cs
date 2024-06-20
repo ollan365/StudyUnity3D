@@ -69,5 +69,5 @@ public static class Constants
         }
     }
     public enum BingoEffect { SILENCE, RECOVERY, ADD_REWEAPON, ADD_ROTATE, GOLD, ALL_KILL }
-    public enum BingoStatus { DEFAULT, ONE, ONE_1, ONE_2, ONE_3, ALL, ALL_1, ALL_2, ALL_3 }
+    public enum BingoStatus { NONE, ONE, ALL }
 }

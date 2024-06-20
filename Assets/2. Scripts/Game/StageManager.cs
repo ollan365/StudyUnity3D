@@ -201,7 +201,7 @@ public class StageManager : MonoBehaviour
         {
             Debug.Log("fight");
             StatusOfStage = StageStatus.FIGHT;
-            StartCoroutine(fightLogic.BingoReward());
+            StartCoroutine(fightLogic.Attack());
         }
         else if (StatusOfStage == StageStatus.FIGHT)
         {
@@ -219,7 +219,6 @@ public class StageManager : MonoBehaviour
 
             StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
 
-            colorCheckManager.BingoTextChange(-1);
             SetStageTextValue(StageText.ALL_INIT, 0);
             StatusOfStage = StageStatus.PLAYER;
             clickIgnorePanel.SetActive(false);

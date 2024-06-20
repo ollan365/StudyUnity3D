@@ -15,8 +15,7 @@ public class ColorCheckManager : MonoBehaviour
     private void Awake()
     {
         bingoStatus = new BingoStatus[6];
-        for (int i = 0; i < 6; i++)
-            bingoStatus[i] = BingoStatus.DEFAULT;
+        for (int i = 0; i < 6; i++) bingoStatus[i] = BingoStatus.NONE;
         movableCube = new bool[9];
     }
     public void CharacterSelect(GameObject character)
@@ -127,10 +126,6 @@ public class ColorCheckManager : MonoBehaviour
         Quaternion rot = Quaternion.LookRotation(originPos);
         selectedCharacter.transform.localRotation = rot;
         
-        
-
-
-
         while (travelTIme < 0.15f)
         {
             selectedCharacter.transform.localPosition = Vector3.Lerp(originPos, middlePos, travelTIme / 0.15f);
@@ -149,7 +144,9 @@ public class ColorCheckManager : MonoBehaviour
 
         MovableCubeSetting(index);
     }
-    public int BingoTextChange(int sideColor)
+
+
+    public int BingoCheck()
     {
         int[][] bingoNums = new int[6][];
         for (int i = 0; i < 6; i++)
@@ -178,89 +175,44 @@ public class ColorCheckManager : MonoBehaviour
 
             bingoNums[i] = bingoNum;
 
-
-            if(sideColor == i)
-            {
-                int oneBingoCnt = 0;
-
-                foreach(int num in bingoNum)
-                {
-                    if (num == 6) return 6;
-                    else if (num > 1) oneBingoCnt++;
-                }
-
-                return oneBingoCnt;
-            }
         }
 
         for (int j = 0; j < 6; j++) // 각각의 색
         {
-            int maxBingoNum = 0;
             for (int i = 0; i < 6; i++) // 각각의 면
             {
-                if (bingoNums[i][j] > maxBingoNum) maxBingoNum = bingoNums[i][j];
-            }
-
-            if (maxBingoNum == 6 && !IsAllCoolTime(bingoStatus[j]))
-            {
-                bingoTexts[j].text = "ALL";
-            }
-            else if (IsAllCoolTime(bingoStatus[j]) || IsOneCoolTime(bingoStatus[j]))
-                bingoTexts[j].text = "COOL TIME";
-            else if (maxBingoNum > 0)
-            {
-                bingoStatus[j] = BingoStatus.ONE;
-                bingoTexts[j].text = "ONE";
-            }
-            else
-            {
-                bingoStatus[j] = BingoStatus.DEFAULT;
-                bingoTexts[j].text = "NO";
+                if (bingoNums[i][j] == 6 && bingoStatus[j] != BingoStatus.ALL)
+                {
+                    bingoStatus[j] = BingoStatus.ALL;
+                    BingoReward(BingoStatus.ALL);
+                }
+                else if (bingoNums[i][j] > 0 & bingoStatus[j] == BingoStatus.NONE)
+                {
+                    bingoStatus[j] = BingoStatus.ONE;
+                    BingoReward(BingoStatus.ONE);
+                }
             }
         }
 
         return 0;
     }
-    public void ToNextBingo()
+
+    private void BingoReward(BingoStatus bingo)
     {
-        for (int i = 0; i < 6; i++)
+        int random = Random.Range(0, 5);
+
+        switch (random)
         {
-            if (bingoTexts[i].text == "ALL") bingoStatus[i] = BingoStatus.ALL;
-
-            switch (bingoStatus[i])
-            {
-                case BingoStatus.ONE: bingoStatus[i] =   BingoStatus.ONE_1; break;
-                case BingoStatus.ONE_1: bingoStatus[i] = BingoStatus.ONE_2; break;
-                case BingoStatus.ONE_2: bingoStatus[i] = BingoStatus.ONE_3; break;
-
-                case BingoStatus.ALL: bingoStatus[i] =   BingoStatus.ALL_1; break;
-                case BingoStatus.ALL_1: bingoStatus[i] = BingoStatus.ALL_2; break;
-                case BingoStatus.ALL_2: bingoStatus[i] = BingoStatus.ALL_3; break;
-
-                default: bingoStatus[i] = BingoStatus.DEFAULT; break;
-            }
-        }
-    }
-    private bool IsAllCoolTime(BingoStatus bingoStatus)
-    {
-        switch (bingoStatus)
-        {
-            case BingoStatus.ALL_1:
-            case BingoStatus.ALL_2:
-            case BingoStatus.ALL_3: return true;
-
-            default: return false;
-        }
-    }
-    private bool IsOneCoolTime(BingoStatus bingoStatus)
-    {
-        switch (bingoStatus)
-        {
-            case BingoStatus.ONE_1:
-            case BingoStatus.ONE_2:
-            case BingoStatus.ONE_3: return true;
-
-            default: return false;
+            case 0: // 최소 공격력 10 / 50% 증가 -> 츨레이어 or 동료
+                break;
+            case 1: // 최대 공격력 증가 10 / 50% 증가 -> 츨레이어 or 동료
+                break;
+            case 2: // 해당 턴에 큐브 회전 횟수 4 / 6를 회복
+                break;
+            case 3: // 유닛의 체력을 30 / 100 최대 체력의 회복 -> 츨레이어 or 동료
+                break;
+            case 4: // 몬스터 공격력 50 / 100 감소 -> 몬스터
+                break;
         }
     }
 }

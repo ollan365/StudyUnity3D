@@ -27,7 +27,7 @@ public class CubeManager : MonoBehaviour
     }
     private void Update()
     {
-        if(StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT)
+        if(StageManager.Instance.StatusOfStage == StageStatus.PLAYER && StageManager.Instance.StatusOfStage == StageStatus.END)
         {
             float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
             if(Camera.main.fieldOfView >= maxValue)
@@ -246,7 +246,7 @@ public class CubeManager : MonoBehaviour
 
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
-        gameObject.GetComponent<ColorCheckManager>().BingoTextChange(-1);
+        gameObject.GetComponent<ColorCheckManager>().BingoCheck();
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
