@@ -177,10 +177,17 @@ public class ColorCheckManager : MonoBehaviour
 
         }
 
+        bool[] playerTeam = new bool[6] { false, false, false, false, false, false };
+        playerTeam[StageManager.Instance.Player.Color.ToInt()] = true;
+        foreach (GameObject f in StageManager.Instance.FriendList)
+            playerTeam[f.GetComponent<Object>().Color.ToInt()] = true;
+
         for (int j = 0; j < 6; j++) // 각각의 색
         {
             for (int i = 0; i < 6; i++) // 각각의 면
             {
+                if (!playerTeam[i]) continue;
+
                 if (bingoNums[i][j] == 6 && bingoStatus[j] != BingoStatus.ALL)
                 {
                     bingoStatus[j] = BingoStatus.ALL;

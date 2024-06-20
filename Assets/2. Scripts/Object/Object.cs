@@ -19,6 +19,8 @@ public class Object : MonoBehaviour
     [SerializeField] private ObjectType type;
     [SerializeField] private WeaponType weaponType;
 
+    public EventEffect eventEffect;
+
     public Touch touchCube;
     
     public int ID { get => id; }

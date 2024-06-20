@@ -214,7 +214,7 @@ public class StageManager : MonoBehaviour
             {
                 turn++;
                 stageTexts[1].text = $"{turn} Turn";
-                colorCheckManager.ToNextBingo();
+                // colorCheckManager.ToNextBingo();
             }
 
             StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
