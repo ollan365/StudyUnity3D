@@ -51,7 +51,7 @@ public static class Constants
         }
     }
     public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
-    public enum StatusEffect { HP, SLIENCE, FATIGUE, SUNSHINE, STIGMA,  EVASION, NONVIOLENCE, BARRIER, ALL }
+    public enum StatusEffect { HP, HP_PERCENT, SLIENCE, INVINCIBILITY, FATIGUE, SUNSHINE, STIGMA, EVASION, ALL }
     public enum StageText { ALL_INIT, END,  MONSTER, MOVE, ROTATE, WEAPON_CHANGE, MONSTER_INIT, MOVE_INIT, ROTATE_INIT, WEAPON_CHANGE_INIT }
     public static int ToInt(this StageText text)
     {
@@ -68,6 +68,5 @@ public static class Constants
             default: return -1;
         }
     }
-    public enum BingoEffect { SILENCE, RECOVERY, ADD_REWEAPON, ADD_ROTATE, GOLD, ALL_KILL }
     public enum BingoStatus { NONE, ONE, ALL }
 }

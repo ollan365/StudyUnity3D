@@ -5,7 +5,6 @@ using static Constants;
 
 public class EnvLogic : MonoBehaviour
 {
-    [SerializeField] private ColorCheckManager colorCheckManager;
     public IEnumerator MoveEnemy()
     {
         foreach(GameObject e in StageManager.Instance.EnemyList)
@@ -13,7 +12,7 @@ public class EnvLogic : MonoBehaviour
             if (!e.activeSelf) continue;
 
             Object enemyObj = e.GetComponent<Object>();
-            colorCheckManager.CharacterSelect(e);
+            ColorCheckManager.Instance.CharacterSelect(e);
 
             if (enemyObj.Color != StageManager.Instance.Player.Color) // 플레이어와 다른 면일 때
             {
@@ -21,16 +20,16 @@ public class EnvLogic : MonoBehaviour
                 {
                     int random = Random.Range(0, 9);
 
-                    if (colorCheckManager.Move(enemyObj.Color, random, false))
+                    if (ColorCheckManager.Instance.Move(enemyObj.Color, random, false))
                     {
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
                         yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
 
-                        colorCheckManager.Move(enemyObj.Color, random, true); // 이동
+                        ColorCheckManager.Instance.Move(enemyObj.Color, random, true); // 이동
                         yield return new WaitForSeconds(2f); // Move에 걸리는 시간
 
                         if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].ObjType == ObjectType.TREASURE)
-                            StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].Obj.OnHit(9999);
+                            StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].Obj.OnHit(StatusEffect.HP_PERCENT, 100);
 
                         break;
                     }
@@ -44,21 +43,21 @@ public class EnvLogic : MonoBehaviour
                 {
                     if (enemyObj.Index == priority[i]) break; // 본인의 현재 위치보다 우선순위가 낮아지면 이동 안함
 
-                    if (colorCheckManager.Move(enemyObj.Color, priority[i], false))
+                    if (ColorCheckManager.Instance.Move(enemyObj.Color, priority[i], false))
                     {
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
                         yield return new WaitForSeconds(2f); // CubeRotate에 걸리는 시간
 
-                        colorCheckManager.Move(enemyObj.Color, priority[i], true);
+                        ColorCheckManager.Instance.Move(enemyObj.Color, priority[i], true);
                         yield return new WaitForSeconds(2f); // Move에 걸리는 시간
 
                         if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TREASURE)
-                            StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(9999);
+                            StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(StatusEffect.HP_PERCENT, 100);
                         break;
                     }
                 }
             }
-            colorCheckManager.CharacterSelectCancel(e, true);
+            ColorCheckManager.Instance.CharacterSelectCancel(e, true);
         }
         StageManager.Instance.ChangeStatus();
     }

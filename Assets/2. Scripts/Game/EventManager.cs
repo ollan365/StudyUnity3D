@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Constants;
 
 public class EventManager : MonoBehaviour
 {
@@ -19,67 +20,97 @@ public class EventManager : MonoBehaviour
         {
             // 상태 이상
             case 1:
-                // 플레이어 비폭력 n 부여
+                // 플레이어 침묵, 무적 n 부여
+                PlayerEventEffect.EffectAdd(StatusEffect.SLIENCE, 10);
+                PlayerEventEffect.EffectAdd(StatusEffect.INVINCIBILITY, 10);
                 break;
             case 2:
                 // 랜덤 유닛 n개에게 침묵 n 부여
+                Object[] random1 = RandomObejectOfALL(10);
+                foreach (Object o in random1) o.eventEffect.EffectAdd(StatusEffect.SLIENCE, 10);
                 break;
             case 3:
                 // 플레이어팀 랜덤 1명에게 회피 n 부여
+                RandomObejectOfPlayerTeam(true).eventEffect.EffectAdd(StatusEffect.EVASION, 10);
                 break;
             case 4:
-                // 랜덤 유닛 n개에게 낙인 영구 부여
+                // 랜덤 유닛 n개에게 취약 n 부여 (취약 = 낙인)
+                Object[] random2 = RandomObejectOfALL(10);
+                foreach (Object o in random2) o.eventEffect.EffectAdd(StatusEffect.STIGMA, 10);
                 break;
             case 5:
-                // 플레이어 피로 영구 부여
+                // 플레이어 약화 n 부여
+                PlayerEventEffect.EffectAdd(StatusEffect.FATIGUE, 10);
                 break;
             case 6:
-                // 플레이어 배리어 n 부여
+                // 플레이어 약화, 무적 n 부여
+                PlayerEventEffect.EffectAdd(StatusEffect.FATIGUE, 10);
+                PlayerEventEffect.EffectAdd(StatusEffect.INVINCIBILITY, 10);
                 break;
             case 7:
                 // 플팀 1명 적팀 1명에게 침묵 n 부여
+                RandomObejectOfPlayerTeam(true).eventEffect.EffectAdd(StatusEffect.SLIENCE, 10);
+                RandomObejectOfPEnemy().eventEffect.EffectAdd(StatusEffect.SLIENCE, 10);
                 break;
-
             case 18:
-                // 플레이어의 현재 체력을 최대 체력의 N%만큼 회복 -> 전투 턴에 받는 데미지 N% 증가
+                // 플레이어의 현재 체력을 최대 체력의 N%만큼 회복, 취약 부여
+                StageManager.Instance.Player.OnHit(StatusEffect.HP_PERCENT, -10);
+                PlayerEventEffect.EffectAdd(StatusEffect.STIGMA, 10);
                 break;
             case 19:
-                // 받는 데미지 주는 데미지 N%  N턴 동안 달라짐
+                // 플레이어에게 n의 취약, 강화 부여
+                PlayerEventEffect.EffectAdd(StatusEffect.STIGMA, 10);
+                PlayerEventEffect.EffectAdd(StatusEffect.SUNSHINE, 10);
                 break;
             case 20:
-                // 영구적으로 최대 체력이 N%만큼 감소 최대 데미지 N% 증가
+                // 영구적으로 최대 체력이 N%만큼 감소 최대 데미지 N% 증가 // (구현 미완료)
                 break;
             case 21:
-                // 500 골드 획득 랜덤 몬스터 1의 주는 데미지 N% 증가
+                // 500 골드 획득 랜덤 몬스터 하나에게 n의 강화
+                StaticManager.Instance.Gold += 500; 
+                RandomObejectOfPEnemy().eventEffect.EffectAdd(StatusEffect.SUNSHINE, 10);
                 break;
             case 22:
-                // 랜덤한 동료 1 제거, n턴 동안 주는 데미지 N% 증가
+                // 랜덤한 동료 1 제거, 플레이어가 n의 강화 획득
+                RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
+                PlayerEventEffect.EffectAdd(StatusEffect.SUNSHINE, 10);
                 break;
-
-                //용병도 상태 이상으로 처리할 수도...?
 
 
             // 체력 조정 (부활&제거 포함)
             case 11:
-                // 사망 유닛 중 하나 랜덤 블록에 부활
+                // 사망 유닛 중 하나 랜덤 블록에 부활 // (구현 미완료)
                 break;
             case 12:
                 // 동료 1명 적 1명 제거
+                RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
+                RandomObejectOfPEnemy().OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
             case 13:
                 // 모든 유닛의 현재 체력을 최대 체력의 N% 만큼 회복
+                foreach (Object o in AllObject) o.OnHit(StatusEffect.HP_PERCENT, -10);
                 break;
             case 14:
                 // 모든 유닛의 현재 체력을 최대 체력의 N% 만큼 감소
+                foreach (Object o in AllObject) o.OnHit(StatusEffect.HP_PERCENT, 10);
                 break;
             case 15:
                 // 몬스터 수만큼 모든 유닛의 현재 체력을 최대 체력의 N%만큼 감소
+                foreach (Object o in AllObject) o.OnHit(StatusEffect.HP_PERCENT, EnemyCount);
                 break;
             case 17:
                 // 색 선택 후 그 색의 위에 있는 모든 유닛의 현재 체력을 최대 체력의 N%만큼 회복
+                int randomColor = Random.Range(0, 6);
+                foreach(Object o in AllObject)
+                {
+                    if (o.touchCube.RelativeColor.ToInt() == randomColor)
+                        o.OnHit(StatusEffect.HP_PERCENT, -10);
+                }
                 break;
             case 23:
                 // 랜덤 동료 1 제거 플레이어의 현재 체력을 제거된 동료의 현재 체력의 N%만큼 회복
+                float friendHP = RandomObejectOfPlayerTeam(false).HP;
+                StageManager.Instance.Player.OnHit(StatusEffect.HP, -(int)friendHP * 10 / 100);
                 break;
 
 
@@ -94,10 +125,11 @@ public class EventManager : MonoBehaviour
                 // 괴뢰 소환
                 break;
             case 10:
-                // 정반대에 플레이어 생성
+                // 정반대에 플레이어(용병) 생성
                 break;
             case 16:
                 // 플레이어와 정반대의 오브젝트 변경(거울)
+                StartCoroutine(Event_16());
                 break;
             case 24:
                 // 플레이어와 같은 면에 있는 몬스터 1명을 N% 확률로 회유 -> 성공 시 몬스터가 용병 / 실패 시 현재 체력을 최대 체력의 N% 만큼 감소
@@ -105,7 +137,24 @@ public class EventManager : MonoBehaviour
         }
     }
 
+    private IEnumerator Event_16()
+    {
+        Touch inverseTouch = InverseCube(StageManager.Instance.Player.touchCube);
 
+        if (inverseTouch.Obj != null)
+        {
+            Touch objInverseTouch = StageManager.Instance.Player.touchCube;
+            ColorCheckManager.Instance.CharacterSelect(inverseTouch.Obj.gameObject);
+            StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(objInverseTouch.Color, objInverseTouch.Index));
+            yield return new WaitForSeconds(0.5f);
+            ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+        }
+
+        ColorCheckManager.Instance.CharacterSelect(StageManager.Instance.Player.gameObject);
+        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(inverseTouch.Color, inverseTouch.Index));
+        yield return new WaitForSeconds(0.5f);
+        ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+    }
 
     // ========== 편의를 위해 만든 함수 ========== //
     private EventEffect PlayerEventEffect
@@ -257,5 +306,23 @@ public class EventManager : MonoBehaviour
         }
 
         return output;
+    }
+
+    private Touch InverseCube(Touch cube)
+    {
+        int color = -1;
+        switch (cube.Color.ToInt())
+        {
+            case WHITE: color = YELLOW; break;
+            case RED: color = ORANGE; break;
+            case BLUE: color = GREEN; break;
+            case GREEN: color = BLUE; break;
+            case ORANGE: color = RED; break;
+            case YELLOW: color = WHITE; break;
+
+            default: color = -1; break;
+        }
+
+        return StageCube.Instance.touchArray[color][cube.Index];
     }
 }

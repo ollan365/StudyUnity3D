@@ -40,7 +40,7 @@ public class Object : MonoBehaviour
     public float HP
     {
         get => hp;
-        set
+        private set
         {
             hp = Mathf.Clamp(value, 0, maxHp);
 
@@ -78,24 +78,16 @@ public class Object : MonoBehaviour
         this.touchCube = touchCube;
         Debug.Log($"{this.touchCube} / {touchCube}");
     }
-    public void OnHit(int damage)
+    public void OnHit(StatusEffect effect, int damage)
     {
-        HP -= damage;
+        if (effect == StatusEffect.HP) HP -= damage;
+        else if (effect == StatusEffect.HP_PERCENT) HP -= MAX_HP * damage / 100;
+
         if (HP <= 0)
         {
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }
-    }
-
-    public void HP_Percent(int percent)
-    {
-        if(percent < 0)
-            HP -= maxHp * percent / 100;
-        else
-            HP += maxHp * percent / 100;
-
-        Debug.Log($"{HP}");
     }
 
     public void RotateCube()

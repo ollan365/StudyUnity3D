@@ -5,7 +5,6 @@ using static Constants;
 
 public class PlayLogic : MonoBehaviour
 {
-    [SerializeField] private ColorCheckManager colorCheckManager;
     public void OpenTreasureBox(GameObject obj)
     {
         int gold = obj.GetComponent<Object>().Damage;
@@ -16,7 +15,7 @@ public class PlayLogic : MonoBehaviour
     }
     private IEnumerator GoldText(int gold)
     {
-        GameObject goldTextObj = colorCheckManager.SelectedCharacter.GetComponent<Object>().GoldText;
+        GameObject goldTextObj = ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().GoldText;
         Text goldText = goldTextObj.GetComponent<Text>();
         goldText.text = $"+{gold}";
         RectTransform rectTransform = goldTextObj.GetComponent<RectTransform>();
@@ -52,8 +51,10 @@ public class PlayLogic : MonoBehaviour
         switch (portion.StatusEffectType)
         {
             case StatusEffect.HP:
-                p.GetComponent<Object>().HP += portion.Value;
-                p.GetComponent<Object>().HP_Percent(portion.HealRate);
+                p.GetComponent<Object>().OnHit(StatusEffect.HP, -portion.Value);
+                break;
+            case StatusEffect.HP_PERCENT:
+                p.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, portion.HealRate);
                 break;
         }
     }

@@ -5,6 +5,7 @@ using static Constants;
 
 public class ColorCheckManager : MonoBehaviour
 {
+    public static ColorCheckManager Instance { get; private set; }
     [SerializeField] private Text[] bingoTexts;
     private BingoStatus[] bingoStatus;
 
@@ -14,6 +15,9 @@ public class ColorCheckManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+        
         bingoStatus = new BingoStatus[6];
         for (int i = 0; i < 6; i++) bingoStatus[i] = BingoStatus.NONE;
         movableCube = new bool[9];
@@ -108,7 +112,7 @@ public class ColorCheckManager : MonoBehaviour
         if (wantMove) StartCoroutine(MoveCoroutine(color, index));
         return true;
     }
-    private IEnumerator MoveCoroutine(Colors color, int index)
+    public IEnumerator MoveCoroutine(Colors color, int index)
     {
         MovableCubeSetting(-1);
 
@@ -141,7 +145,7 @@ public class ColorCheckManager : MonoBehaviour
 
         yield return new WaitForFixedUpdate();
 
-
+ 
         MovableCubeSetting(index);
     }
 
@@ -180,7 +184,8 @@ public class ColorCheckManager : MonoBehaviour
         bool[] playerTeam = new bool[6] { false, false, false, false, false, false };
         playerTeam[StageManager.Instance.Player.Color.ToInt()] = true;
         foreach (GameObject f in StageManager.Instance.FriendList)
-            playerTeam[f.GetComponent<Object>().Color.ToInt()] = true;
+            if (f != null && f.activeSelf)
+                playerTeam[f.GetComponent<Object>().Color.ToInt()] = true;
 
         for (int j = 0; j < 6; j++) // 각각의 색
         {
