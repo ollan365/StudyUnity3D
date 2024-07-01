@@ -39,12 +39,12 @@ public class EventManager : MonoBehaviour
                 foreach (Object o in random2) o.eventEffect.EffectAdd(StatusEffect.STIGMA, 10);
                 break;
             case 5:
-                // 플레이어 약화 n 부여
+                // 플레이어 피로 부여
                 PlayerEventEffect.EffectAdd(StatusEffect.FATIGUE, 10);
                 break;
             case 6:
                 // 플레이어 약화, 무적 n 부여
-                PlayerEventEffect.EffectAdd(StatusEffect.FATIGUE, 10);
+                PlayerEventEffect.EffectAdd(StatusEffect.WEAKEN, 10);
                 PlayerEventEffect.EffectAdd(StatusEffect.INVINCIBILITY, 10);
                 break;
             case 7:
@@ -60,7 +60,7 @@ public class EventManager : MonoBehaviour
             case 19:
                 // 플레이어에게 n의 취약, 강화 부여
                 PlayerEventEffect.EffectAdd(StatusEffect.STIGMA, 10);
-                PlayerEventEffect.EffectAdd(StatusEffect.SUNSHINE, 10);
+                PlayerEventEffect.EffectAdd(StatusEffect.POWERFUL, 10);
                 break;
             case 20:
                 // 영구적으로 최대 체력이 N%만큼 감소 최대 데미지 N% 증가 // (구현 미완료)
@@ -73,13 +73,14 @@ public class EventManager : MonoBehaviour
             case 22:
                 // 랜덤한 동료 1 제거, 플레이어가 n의 강화 획득
                 RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
-                PlayerEventEffect.EffectAdd(StatusEffect.SUNSHINE, 10);
+                PlayerEventEffect.EffectAdd(StatusEffect.POWERFUL, 10);
                 break;
 
 
             // 체력 조정 (부활&제거 포함)
             case 11:
-                // 사망 유닛 중 하나 랜덤 블록에 부활 // (구현 미완료)
+                // 사망 유닛 중 하나 랜덤 블록에 부활
+                StartCoroutine(Event_11());
                 break;
             case 12:
                 // 동료 1명 적 1명 제거
@@ -137,6 +138,79 @@ public class EventManager : MonoBehaviour
         }
     }
 
+    private IEnumerator Event_11()
+    {
+        int deadFriendCount = 0;
+        foreach(GameObject obj in StageManager.Instance.FriendList)
+            if (obj != null && !obj.activeSelf) deadFriendCount++;
+
+        int deadEnemyCount = 0;
+        foreach (GameObject obj in StageManager.Instance.EnemyList)
+            if (!obj.activeSelf) deadEnemyCount++;
+
+        if (deadFriendCount == 0 && deadEnemyCount == 0) yield break;
+
+        bool reviveFriend = false;
+        if (deadFriendCount > 0 && deadEnemyCount > 0)
+        {
+            int random = Random.Range(0, 100);
+            if (random < 50) reviveFriend = true;
+        }
+        else if (deadFriendCount > 0) reviveFriend = true;
+
+        Object revive = null;
+
+        if (reviveFriend)
+        {
+            int random = Random.Range(0, deadFriendCount);
+
+            foreach (GameObject obj in StageManager.Instance.FriendList)
+            {
+                if (obj != null && !obj.activeSelf)
+                {
+                    if (random > 0) { random--; continue; }
+
+                    revive = obj.GetComponent<Object>(); break;
+                }
+            }
+        }
+        else
+        {
+            int random = Random.Range(0, deadEnemyCount);
+
+            foreach (GameObject obj in StageManager.Instance.EnemyList)
+            {
+                if (!obj.activeSelf)
+                {
+                    if (random > 0) { random--; continue; }
+
+                    revive = obj.GetComponent<Object>(); break;
+                }
+            }
+        }
+
+        Touch cube;
+        while (true)
+        {
+            cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+            if (cube.Obj == null)
+                break;
+        }
+
+        StageManager.Instance.CubeRotate(cube.Color);
+        yield return new WaitForSeconds(1f);
+
+        revive.gameObject.SetActive(true);
+
+        ColorCheckManager.Instance.CharacterSelect(revive.gameObject);
+        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(cube.Color, cube.Index));
+        ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+
+        revive.OnHit(StatusEffect.HP_PERCENT, -100);
+        revive.eventEffect.Init();
+
+        Debug.Log($"{revive} : {revive.HP} / Touch: {cube.Color} {cube.Index}");
+    }
     private IEnumerator Event_16()
     {
         Touch inverseTouch = InverseCube(StageManager.Instance.Player.touchCube);
@@ -146,14 +220,14 @@ public class EventManager : MonoBehaviour
             Touch objInverseTouch = StageManager.Instance.Player.touchCube;
             ColorCheckManager.Instance.CharacterSelect(inverseTouch.Obj.gameObject);
             StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(objInverseTouch.Color, objInverseTouch.Index));
-            yield return new WaitForSeconds(0.5f);
             ColorCheckManager.Instance.CharacterSelectCancel(null, true);
         }
 
         ColorCheckManager.Instance.CharacterSelect(StageManager.Instance.Player.gameObject);
         StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(inverseTouch.Color, inverseTouch.Index));
-        yield return new WaitForSeconds(0.5f);
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+
+        yield return null;
     }
 
     // ========== 편의를 위해 만든 함수 ========== //

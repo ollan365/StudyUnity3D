@@ -7,7 +7,7 @@ public class PlayLogic : MonoBehaviour
 {
     public void OpenTreasureBox(GameObject obj)
     {
-        int gold = obj.GetComponent<Object>().Damage;
+        int gold = (int)obj.GetComponent<Object>().Damage;
         StaticManager.Instance.Gold += gold;
         ObjectManager.Instance.ObjectDie(obj);
 

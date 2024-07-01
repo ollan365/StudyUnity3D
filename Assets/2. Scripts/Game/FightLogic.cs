@@ -28,20 +28,20 @@ public class FightLogic : MonoBehaviour
         }
 
         // 적과 동료의 공격 순서 결정을 위해 List 생성
-        List<KeyValuePair<int, int>> enemyAttackOrder = new List<KeyValuePair<int, int>>();
+        List<KeyValuePair<float, int>> enemyAttackOrder = new List<KeyValuePair<float, int>>();
         for (int i = 0; i < StageManager.Instance.StageData(ENEMY_COUNT); i++)
         {
             Object enemyObject = StageManager.Instance.EnemyList[i].GetComponent<Object>();
             if (enemyObject.gameObject.activeSelf)
-                enemyAttackOrder.Add(new KeyValuePair<int, int>(enemyObject.Damage, i));
+                enemyAttackOrder.Add(new KeyValuePair<float, int>(enemyObject.Damage, i));
         }
-        List<KeyValuePair<int, int>> friendAttackOrder = new List<KeyValuePair<int, int>>();
+        List<KeyValuePair<float, int>> friendAttackOrder = new List<KeyValuePair<float, int>>();
         for (int i = 0; i < 3; i++)
         {
             if (StageManager.Instance.FriendList[i] == null) continue;
             Object friendObject = StageManager.Instance.FriendList[i].GetComponent<Object>();
             if (friendObject.gameObject.activeSelf)
-                friendAttackOrder.Add(new KeyValuePair<int, int>(friendObject.Damage, i));
+                friendAttackOrder.Add(new KeyValuePair<float, int>(friendObject.Damage, i));
         }
         enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
         friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();

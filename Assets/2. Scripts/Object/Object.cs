@@ -31,7 +31,7 @@ public class Object : MonoBehaviour
         maxDamage = max;
         this.weaponType = weaponType;
     }
-    public int Damage { get => Random.Range(minDamage, maxDamage + 1); }
+    public float Damage { get => Random.Range(minDamage, maxDamage + 1) * eventEffect.Dealt(); }
     public ObjectType Type { get => type; }
     public WeaponType AttackType { get => weaponType; }
 
@@ -78,21 +78,16 @@ public class Object : MonoBehaviour
         this.touchCube = touchCube;
         Debug.Log($"{this.touchCube} / {touchCube}");
     }
-    public void OnHit(StatusEffect effect, int damage)
+    public void OnHit(StatusEffect effect, float damage)
     {
-        if (effect == StatusEffect.HP) HP -= damage;
-        else if (effect == StatusEffect.HP_PERCENT) HP -= MAX_HP * damage / 100;
+        if (effect == StatusEffect.HP) HP -= damage * eventEffect.Received();
+        else if (effect == StatusEffect.HP_PERCENT) HP -= maxHp * damage / 100 * eventEffect.Received();
 
         if (HP <= 0)
         {
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }
-    }
-
-    public void RotateCube()
-    {
-        StartCoroutine(StageManager.Instance.CubeRotate(Color));
     }
 
     private void OnTriggerEnter(Collider other)

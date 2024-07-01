@@ -114,13 +114,14 @@ public class ColorCheckManager : MonoBehaviour
     }
     public IEnumerator MoveCoroutine(Colors color, int index)
     {
+        GameObject obj = selectedCharacter;
         MovableCubeSetting(-1);
 
         Transform parent = StageCube.Instance.touchArray[color.ToInt()][index].ObjectPostion;
 
-        selectedCharacter.transform.parent = parent;
+        obj.transform.parent = parent;
 
-        Vector3 originPos = selectedCharacter.transform.localPosition;
+        Vector3 originPos = obj.transform.localPosition;
         Vector3 middlePos = Vector3.Lerp(originPos, Vector3.zero, 0.5f);
 
         float travelTIme = 0f;
@@ -128,24 +129,26 @@ public class ColorCheckManager : MonoBehaviour
         //localPosition의 0,0 으로 이동하는 것이기 때문에 originPos - vector3.zero 를 lookRotation 함수의 인자로
         //전달해줘야 하지만 어차피 0을 뺀 값을 자기자신과 같기 때문에 그냥 originPos를 넣으면 된다.
         Quaternion rot = Quaternion.LookRotation(originPos);
-        selectedCharacter.transform.localRotation = rot;
+        obj.transform.localRotation = rot;
         
         while (travelTIme < 0.15f)
         {
-            selectedCharacter.transform.localPosition = Vector3.Lerp(originPos, middlePos, travelTIme / 0.15f);
+            obj.transform.localPosition = Vector3.Lerp(originPos, middlePos, travelTIme / 0.15f);
             travelTIme += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
         while (travelTIme < 0.5f)
         {
-            selectedCharacter.transform.localPosition = Vector3.Lerp(middlePos, Vector3.zero, travelTIme / 0.5f);
+            obj.transform.localPosition = Vector3.Lerp(middlePos, Vector3.zero, travelTIme / 0.5f);
             travelTIme += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
 
         yield return new WaitForFixedUpdate();
 
- 
+        obj.transform.localPosition = Vector3.zero;
+        obj.GetComponent<Object>().touchCube = StageCube.Instance.touchArray[color.ToInt()][index];
+
         MovableCubeSetting(index);
     }
 
