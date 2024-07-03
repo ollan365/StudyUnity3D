@@ -59,11 +59,23 @@ public class FightLogic : MonoBehaviour
         {
             //플레이어가 적 공격
             LookAt(StageManager.Instance.Player.gameObject, enemy);
+
+            //activate indicator
+            StageManager.Instance.Player.transform.GetChild(2).gameObject.SetActive(true);
+            enemy.transform.GetChild(4).gameObject.SetActive(true);
+            yield return new WaitForSeconds(0.5f);
+
+
             enemy.GetComponent<Object>().OnHit(StageManager.Instance.Player.Damage);
             if (!enemy.activeSelf) {
                 StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
             }
             yield return new WaitForFixedUpdate();
+
+
+            //disable indicator
+            StageManager.Instance.Player.transform.GetChild(2).gameObject.SetActive(false);
+            enemy.transform.GetChild(4).gameObject.SetActive(false);
 
             yield return new WaitForSeconds(0.1f);
         }
@@ -114,11 +126,17 @@ public class FightLogic : MonoBehaviour
                     {
                         //동료가 적 공격
                         LookAt(friendObj.gameObject, enemy);
+                        friendObj.transform.GetChild(2).gameObject.SetActive(true);
+                        enemy.transform.GetChild(4).gameObject.SetActive(true);
+
                         enemy.GetComponent<Object>().OnHit(friendAttackOrder[i].Key);
                         if (!enemy.activeSelf)
                         {
                             StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
                         }
+
+                        friendObj.transform.GetChild(2).gameObject.SetActive(false);
+                        enemy.transform.GetChild(4).gameObject.SetActive(false);
 
                         yield return new WaitForSeconds(0.5f);
                     }
@@ -144,8 +162,15 @@ public class FightLogic : MonoBehaviour
                 {
                     //적이 플레이어 진영 공격
                     LookAt(enemyObj.gameObject, p);
+                    p.transform.GetChild(2).gameObject.SetActive(true);
+                    enemyObj.transform.GetChild(4).gameObject.SetActive(true);
+                    yield return new WaitForSeconds(0.5f);
+
                     p.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
-                   
+
+                    p.transform.GetChild(2).gameObject.SetActive(false);
+                    enemyObj.transform.GetChild(4).gameObject.SetActive(false);
+
                     yield return new WaitForSeconds(0.5f);
                 }
 

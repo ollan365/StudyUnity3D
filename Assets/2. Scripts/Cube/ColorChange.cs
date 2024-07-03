@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class ColorChange : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class ColorChange : MonoBehaviour
         stage = StaticManager.Instance.Stage;
         
         gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[stage % 6][color.ToInt()];
-    }
+    }  
 
     // Update is called once per frame
     void Update()
