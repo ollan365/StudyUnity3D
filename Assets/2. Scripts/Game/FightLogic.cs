@@ -16,18 +16,30 @@ public class FightLogic : MonoBehaviour
         List<GameObject> attackableEnemy = AttackableObject(StageManager.Instance.Player.AttackType, StageManager.Instance.Player.Color, StageManager.Instance.Player.Index, ObjectType.ENEMY);
         foreach (GameObject enemy in attackableEnemy)
         {
-            //ÇÃ·¹ÀÌ¾î°¡ Àû °ø°İ
+            //í”Œë ˆì´ì–´ê°€ ì  ê³µê²©
             LookAt(StageManager.Instance.Player.gameObject, enemy);
+
+            //activate indicator
+            StageManager.Instance.Player.transform.GetChild(2).gameObject.SetActive(true);
+            enemy.transform.GetChild(4).gameObject.SetActive(true);
+            yield return new WaitForSeconds(0.5f);
+
             enemy.GetComponent<Object>().OnHit(StatusEffect.HP, StageManager.Instance.Player.Damage);
+
             if (!enemy.activeSelf) {
                 StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
             }
             yield return new WaitForFixedUpdate();
 
+
+            //disable indicator
+            StageManager.Instance.Player.transform.GetChild(2).gameObject.SetActive(false);
+            enemy.transform.GetChild(4).gameObject.SetActive(false);
+
             yield return new WaitForSeconds(0.1f);
         }
 
-        // Àû°ú µ¿·áÀÇ °ø°İ ¼ø¼­ °áÁ¤À» À§ÇØ List »ı¼º
+        // ì ê³¼ ë™ë£Œì˜ ê³µê²© ìˆœì„œ ê²°ì •ì„ ìœ„í•´ List ìƒì„±
         List<KeyValuePair<float, int>> enemyAttackOrder = new List<KeyValuePair<float, int>>();
         for (int i = 0; i < StageManager.Instance.StageData(ENEMY_COUNT); i++)
         {
@@ -43,26 +55,26 @@ public class FightLogic : MonoBehaviour
             if (friendObject.gameObject.activeSelf)
                 friendAttackOrder.Add(new KeyValuePair<float, int>(friendObject.Damage, i));
         }
-        enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // °ø°İ·Â ¼øÀ¸·Î ³»¸²Â÷¼ø Á¤·Ä
+        enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // ê³µê²©ë ¥ ìˆœìœ¼ë¡œ ë‚´ë¦¼ì°¨ìˆœ ì •ë ¬
         friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
 
-        if (enemyAttackOrder.Count <= 0) // »ì¾ÆÀÖ´Â enemy°¡ ¾øÀ¸¸é
+        if (enemyAttackOrder.Count <= 0) // ì‚´ì•„ìˆëŠ” enemyê°€ ì—†ìœ¼ë©´
         {
             StageManager.Instance.ClearStage();
             yield break;
         }
 
-        // °ø°İ
+        // ê³µê²©
         int count = enemyAttackOrder.Count > friendAttackOrder.Count ? enemyAttackOrder.Count : friendAttackOrder.Count;
         for (int i = 0; i < count; i++)
         {
-            // µ¿·á ¼±°ø°İ
-            if (i < friendAttackOrder.Count && StageManager.Instance.FriendList[friendAttackOrder[i].Value].activeSelf) // µ¿·áµµ ÀÖ´Ù¸é
+            // ë™ë£Œ ì„ ê³µê²©
+            if (i < friendAttackOrder.Count && StageManager.Instance.FriendList[friendAttackOrder[i].Value].activeSelf) // ë™ë£Œë„ ìˆë‹¤ë©´
             {
                 Object friendObj = StageManager.Instance.FriendList[friendAttackOrder[i].Value].GetComponent<Object>();
                 attackableEnemy = AttackableObject(friendObj.AttackType, friendObj.Color, friendObj.Index, ObjectType.ENEMY);
 
-                // °ø°İÇÒ ÀûÀÌ ÀÖÀ» ¶§
+                // ê³µê²©í•  ì ì´ ìˆì„ ë•Œ
                 if (attackableEnemy.Count > 0)
                 {
                     StartCoroutine(StageManager.Instance.CubeRotate(friendObj.Color));
@@ -71,20 +83,28 @@ public class FightLogic : MonoBehaviour
 
                     foreach (GameObject enemy in attackableEnemy)
                     {
-                        //µ¿·á°¡ Àû °ø°İ
+                        //ë™ë£Œê°€ ì  ê³µê²©
                         LookAt(friendObj.gameObject, enemy);
+
+                        friendObj.transform.GetChild(2).gameObject.SetActive(true);
+                        enemy.transform.GetChild(4).gameObject.SetActive(true);
+
                         enemy.GetComponent<Object>().OnHit(StatusEffect.HP, friendAttackOrder[i].Key);
+
                         if (!enemy.activeSelf)
                         {
                             StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
                         }
+
+                        friendObj.transform.GetChild(2).gameObject.SetActive(false);
+                        enemy.transform.GetChild(4).gameObject.SetActive(false);
 
                         yield return new WaitForSeconds(0.5f);
                     }
                 }
             }
 
-            // Àû °ø°İ
+            // ì  ê³µê²©
             if (i < enemyAttackOrder.Count && StageManager.Instance.EnemyList[enemyAttackOrder[i].Value].activeSelf)
             {
                 Object enemyObj = StageManager.Instance.EnemyList[enemyAttackOrder[i].Value].GetComponent<Object>();
@@ -101,15 +121,23 @@ public class FightLogic : MonoBehaviour
 
                 foreach (GameObject p in attackablePlayerTeam)
                 {
-                    //ÀûÀÌ ÇÃ·¹ÀÌ¾î Áø¿µ °ø°İ
+                    //ì ì´ í”Œë ˆì´ì–´ ì§„ì˜ ê³µê²©
                     LookAt(enemyObj.gameObject, p);
+
+                    p.transform.GetChild(2).gameObject.SetActive(true);
+                    enemyObj.transform.GetChild(4).gameObject.SetActive(true);
+                    yield return new WaitForSeconds(0.5f);
+
                     p.GetComponent<Object>().OnHit(StatusEffect.HP, enemyAttackOrder[i].Key);
-                   
+
+                    p.transform.GetChild(2).gameObject.SetActive(false);
+                    enemyObj.transform.GetChild(4).gameObject.SetActive(false);
+
                     yield return new WaitForSeconds(0.5f);
                 }
 
 
-                if (!StageManager.Instance.Player.gameObject.activeSelf) // ÇÃ·¹ÀÌ¾î°¡ Á×À¸¸é °ÔÀÓ Á¾·á
+                if (!StageManager.Instance.Player.gameObject.activeSelf) // í”Œë ˆì´ì–´ê°€ ì£½ìœ¼ë©´ ê²Œì„ ì¢…ë£Œ
                 {
                     StageManager.Instance.GameOver();
                     yield break;
@@ -117,7 +145,7 @@ public class FightLogic : MonoBehaviour
             }
 
         }
-        // statge statue¸¦ ¹Ù²Û´Ù
+        // statge statueë¥¼ ë°”ê¾¼ë‹¤
         StageManager.Instance.ChangeStatus();
     }
 

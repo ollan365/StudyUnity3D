@@ -41,8 +41,8 @@ public class CubeManager : MonoBehaviour
                 Camera.main.fieldOfView = minValue;
                 scrollWheel = Mathf.Min(0, scrollWheel);
             }
-            Debug.Log(Camera.main);
-            Debug.Log(scrollWheel);
+            //Debug.Log(Camera.main);
+            //Debug.Log(scrollWheel);
             Camera.main.fieldOfView -= scrollWheel * Time.deltaTime * scrollSpeed;
         }
         if (Input.GetMouseButtonDown(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))

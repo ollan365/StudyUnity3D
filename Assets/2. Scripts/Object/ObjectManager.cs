@@ -56,6 +56,9 @@ public class ObjectManager : MonoBehaviour
                 string value = StaticManager.Instance.enemyDatas[objectID];
                 newObject.GetComponent<Object>().Init(objectType, value.Split(','), cube);
                 //newObject.transform.GetChild(objectID - 100000).gameObject.SetActive(true);
+
+                //disable default mesh and activate the mesh that matches the object ID.
+                newObject.transform.GetChild(1).gameObject.SetActive(false);
                 if (objectID == 100001)
                     newObject.transform.GetChild(1).gameObject.SetActive(true);
                 else if (objectID == 100002)
@@ -219,7 +222,7 @@ public class ObjectManager : MonoBehaviour
         }
         ChangePlayerInventory();
     }
-    public void ChangeShop() // 나중에 갈아엎자...
+    public void ChangeShop() // 나중에 갈아엎자... 
     {
         clickIgnorePanel.SetActive(true);
 
