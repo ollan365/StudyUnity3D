@@ -35,7 +35,7 @@ public class EnvLogic : MonoBehaviour
                         indicator.SetActive(true);
                         yield return new WaitForSeconds(1f);
 
-                        colorCheckManager.Move(enemyObj.Color, random, true); // 이동
+                        ColorCheckManager.Instance.Move(enemyObj.Color, random, true); // 이동
                         yield return new WaitForSeconds(1f); // Move에 걸리는 시간
                         indicator.SetActive(false);
                         yield return new WaitForSeconds(1f);
@@ -66,7 +66,7 @@ public class EnvLogic : MonoBehaviour
                         indicator.SetActive(true);
                         yield return new WaitForSeconds(1f);
 
-                        colorCheckManager.Move(enemyObj.Color, priority[i], true);
+                        ColorCheckManager.Instance.Move(enemyObj.Color, priority[i], true);
                         yield return new WaitForSeconds(1f); // Move에 걸리는 시간
                         indicator.SetActive(false);
                         yield return new WaitForSeconds(1f);
