@@ -7,48 +7,7 @@ using static Excel;
 
 public class FightLogic : MonoBehaviour
 {
-    [SerializeField] private ColorCheckManager colorCheckManager;
-    public IEnumerator BingoReward()
-    {
-        if (false) // 일단은 빙고 부분은 건너 뛴다
-        {
-            for (int i = 0; i < 6; i++) // 빙고 확인
-            {
-                int bingoCnt = colorCheckManager.BingoTextChange(i);
-
-                if (bingoCnt == 0) continue;
-
-                StartCoroutine(StageManager.Instance.CubeRotate(i.ToColor())); // 빙고 완성 시 그 면으로 회전
-                while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
-
-                // 빙고 보상 구현
-                yield return new WaitForSeconds(0.5f);
-            }
-        }
-
-        // if (bingoCnt == 6) return; // 올 빙고
-        // if (bingoCnt > 0) return; // 그 면의 서로 다른 색의 한줄 빙고 완성 개수
-        //if (random == 0)
-        //{
-        //    if (bingo == BingoStatus.ALL || StageManager.Instance.Player.Color.ToInt() == i)
-        //        StageManager.Instance.Player.HP_Percent(10);
-        //    foreach (GameObject f in StageManager.Instance.FriendList)
-        //    {
-        //        if (f == null || !f.activeSelf) continue;
-
-        //        if (bingo == BingoStatus.ALL || f.GetComponent<Object>().Color.ToInt() == i)
-        //            f.GetComponent<Object>().HP_Percent(10);
-        //    }
-        //}
-        //else
-        //{
-        //    // if (bingo == BingoStatus.ONE) additionalMoveCount++;
-        //    // else changeCount++;
-        //}
-
-        StartCoroutine(Attack());
-    }
-    private IEnumerator Attack()
+    public IEnumerator Attack()
     {
         StartCoroutine(StageManager.Instance.CubeRotate(StageManager.Instance.Player.Color));
         while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
@@ -59,7 +18,7 @@ public class FightLogic : MonoBehaviour
         {
             //플레이어가 적 공격
             LookAt(StageManager.Instance.Player.gameObject, enemy);
-            enemy.GetComponent<Object>().OnHit(StageManager.Instance.Player.Damage);
+            enemy.GetComponent<Object>().OnHit(StatusEffect.HP, StageManager.Instance.Player.Damage);
             if (!enemy.activeSelf) {
                 StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
             }
@@ -69,20 +28,20 @@ public class FightLogic : MonoBehaviour
         }
 
         // 적과 동료의 공격 순서 결정을 위해 List 생성
-        List<KeyValuePair<int, int>> enemyAttackOrder = new List<KeyValuePair<int, int>>();
+        List<KeyValuePair<float, int>> enemyAttackOrder = new List<KeyValuePair<float, int>>();
         for (int i = 0; i < StageManager.Instance.StageData(ENEMY_COUNT); i++)
         {
             Object enemyObject = StageManager.Instance.EnemyList[i].GetComponent<Object>();
             if (enemyObject.gameObject.activeSelf)
-                enemyAttackOrder.Add(new KeyValuePair<int, int>(enemyObject.Damage, i));
+                enemyAttackOrder.Add(new KeyValuePair<float, int>(enemyObject.Damage, i));
         }
-        List<KeyValuePair<int, int>> friendAttackOrder = new List<KeyValuePair<int, int>>();
+        List<KeyValuePair<float, int>> friendAttackOrder = new List<KeyValuePair<float, int>>();
         for (int i = 0; i < 3; i++)
         {
             if (StageManager.Instance.FriendList[i] == null) continue;
             Object friendObject = StageManager.Instance.FriendList[i].GetComponent<Object>();
             if (friendObject.gameObject.activeSelf)
-                friendAttackOrder.Add(new KeyValuePair<int, int>(friendObject.Damage, i));
+                friendAttackOrder.Add(new KeyValuePair<float, int>(friendObject.Damage, i));
         }
         enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
         friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
@@ -114,7 +73,7 @@ public class FightLogic : MonoBehaviour
                     {
                         //동료가 적 공격
                         LookAt(friendObj.gameObject, enemy);
-                        enemy.GetComponent<Object>().OnHit(friendAttackOrder[i].Key);
+                        enemy.GetComponent<Object>().OnHit(StatusEffect.HP, friendAttackOrder[i].Key);
                         if (!enemy.activeSelf)
                         {
                             StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
@@ -144,7 +103,7 @@ public class FightLogic : MonoBehaviour
                 {
                     //적이 플레이어 진영 공격
                     LookAt(enemyObj.gameObject, p);
-                    p.GetComponent<Object>().OnHit(enemyAttackOrder[i].Key);
+                    p.GetComponent<Object>().OnHit(StatusEffect.HP, enemyAttackOrder[i].Key);
                    
                     yield return new WaitForSeconds(0.5f);
                 }

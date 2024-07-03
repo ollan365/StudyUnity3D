@@ -17,7 +17,6 @@ public class StageManager : MonoBehaviour
 
     [Header("Manager")]
     [SerializeField] private CubeManager cubeManager;
-    [SerializeField] private ColorCheckManager colorCheckManager;
 
     [Header("Logic")]
     [SerializeField] private FightLogic fightLogic;
@@ -201,7 +200,7 @@ public class StageManager : MonoBehaviour
         {
             Debug.Log("fight");
             StatusOfStage = StageStatus.FIGHT;
-            StartCoroutine(fightLogic.BingoReward());
+            StartCoroutine(fightLogic.Attack());
         }
         else if (StatusOfStage == StageStatus.FIGHT)
         {
@@ -214,12 +213,11 @@ public class StageManager : MonoBehaviour
             {
                 turn++;
                 stageTexts[1].text = $"{turn} Turn";
-                colorCheckManager.ToNextBingo();
+                // colorCheckManager.ToNextBingo();
             }
 
             StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
 
-            colorCheckManager.BingoTextChange(-1);
             SetStageTextValue(StageText.ALL_INIT, 0);
             StatusOfStage = StageStatus.PLAYER;
             clickIgnorePanel.SetActive(false);
@@ -231,7 +229,7 @@ public class StageManager : MonoBehaviour
         clickIgnorePanel.SetActive(false);
 
         foreach (GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
-            t.GetComponent<Object>().OnHit(9999);
+            t.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
 
         // 상인과 포탈 소환
         ObjectType[] summonObjectArray = new ObjectType[2] { ObjectType.MERCHANT, ObjectType.PORTAL };
