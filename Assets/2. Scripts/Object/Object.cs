@@ -19,6 +19,8 @@ public class Object : MonoBehaviour
     [SerializeField] private ObjectType type;
     [SerializeField] private WeaponType weaponType;
 
+    public EventEffect eventEffect;
+
     public Touch touchCube;
     
     public int ID { get => id; }
@@ -29,7 +31,7 @@ public class Object : MonoBehaviour
         maxDamage = max;
         this.weaponType = weaponType;
     }
-    public int Damage { get => Random.Range(minDamage, maxDamage + 1); }
+    public float Damage { get => Random.Range(minDamage, maxDamage + 1) * eventEffect.Dealt(); }
     public ObjectType Type { get => type; }
     public WeaponType AttackType { get => weaponType; }
 
@@ -38,7 +40,7 @@ public class Object : MonoBehaviour
     public float HP
     {
         get => hp;
-        set
+        private set
         {
             hp = Mathf.Clamp(value, 0, maxHp);
 
@@ -76,29 +78,16 @@ public class Object : MonoBehaviour
         this.touchCube = touchCube;
         Debug.Log($"{this.touchCube} / {touchCube}");
     }
-    public void OnHit(int damage)
+    public void OnHit(StatusEffect effect, float damage)
     {
-        HP -= damage;
+        if (effect == StatusEffect.HP) HP -= damage * eventEffect.Received();
+        else if (effect == StatusEffect.HP_PERCENT) HP -= maxHp * damage / 100 * eventEffect.Received();
+
         if (HP <= 0)
         {
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }
-    }
-
-    public void HP_Percent(int percent)
-    {
-        if(percent < 0)
-            HP -= maxHp * percent / 100;
-        else
-            HP += maxHp * percent / 100;
-
-        Debug.Log($"{HP}");
-    }
-
-    public void RotateCube()
-    {
-        StartCoroutine(StageManager.Instance.CubeRotate(Color));
     }
 
     private void OnTriggerEnter(Collider other)

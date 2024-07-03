@@ -5,6 +5,7 @@ using static Constants;
 
 public class ColorCheckManager : MonoBehaviour
 {
+    public static ColorCheckManager Instance { get; private set; }
     [SerializeField] private Text[] bingoTexts;
     private BingoStatus[] bingoStatus;
 
@@ -14,9 +15,11 @@ public class ColorCheckManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+        
         bingoStatus = new BingoStatus[6];
-        for (int i = 0; i < 6; i++)
-            bingoStatus[i] = BingoStatus.DEFAULT;
+        for (int i = 0; i < 6; i++) bingoStatus[i] = BingoStatus.NONE;
         movableCube = new bool[9];
     }
     public void CharacterSelect(GameObject character)
@@ -109,15 +112,16 @@ public class ColorCheckManager : MonoBehaviour
         if (wantMove) StartCoroutine(MoveCoroutine(color, index));
         return true;
     }
-    private IEnumerator MoveCoroutine(Colors color, int index)
+    public IEnumerator MoveCoroutine(Colors color, int index)
     {
+        GameObject obj = selectedCharacter;
         MovableCubeSetting(-1);
 
         Transform parent = StageCube.Instance.touchArray[color.ToInt()][index].ObjectPostion;
 
-        selectedCharacter.transform.parent = parent;
+        obj.transform.parent = parent;
 
-        Vector3 originPos = selectedCharacter.transform.localPosition;
+        Vector3 originPos = obj.transform.localPosition;
         Vector3 middlePos = Vector3.Lerp(originPos, Vector3.zero, 0.5f);
 
         float travelTIme = 0f;
@@ -125,31 +129,31 @@ public class ColorCheckManager : MonoBehaviour
         //localPosition의 0,0 으로 이동하는 것이기 때문에 originPos - vector3.zero 를 lookRotation 함수의 인자로
         //전달해줘야 하지만 어차피 0을 뺀 값을 자기자신과 같기 때문에 그냥 originPos를 넣으면 된다.
         Quaternion rot = Quaternion.LookRotation(originPos);
-        selectedCharacter.transform.localRotation = rot;
+        obj.transform.localRotation = rot;
         
-        
-
-
-
         while (travelTIme < 0.15f)
         {
-            selectedCharacter.transform.localPosition = Vector3.Lerp(originPos, middlePos, travelTIme / 0.15f);
+            obj.transform.localPosition = Vector3.Lerp(originPos, middlePos, travelTIme / 0.15f);
             travelTIme += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
         while (travelTIme < 0.5f)
         {
-            selectedCharacter.transform.localPosition = Vector3.Lerp(middlePos, Vector3.zero, travelTIme / 0.5f);
+            obj.transform.localPosition = Vector3.Lerp(middlePos, Vector3.zero, travelTIme / 0.5f);
             travelTIme += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
 
         yield return new WaitForFixedUpdate();
 
+        obj.transform.localPosition = Vector3.zero;
+        obj.GetComponent<Object>().touchCube = StageCube.Instance.touchArray[color.ToInt()][index];
 
         MovableCubeSetting(index);
     }
-    public int BingoTextChange(int sideColor)
+
+
+    public int BingoCheck()
     {
         int[][] bingoNums = new int[6][];
         for (int i = 0; i < 6; i++)
@@ -178,89 +182,52 @@ public class ColorCheckManager : MonoBehaviour
 
             bingoNums[i] = bingoNum;
 
-
-            if(sideColor == i)
-            {
-                int oneBingoCnt = 0;
-
-                foreach(int num in bingoNum)
-                {
-                    if (num == 6) return 6;
-                    else if (num > 1) oneBingoCnt++;
-                }
-
-                return oneBingoCnt;
-            }
         }
+
+        bool[] playerTeam = new bool[6] { false, false, false, false, false, false };
+        playerTeam[StageManager.Instance.Player.Color.ToInt()] = true;
+        foreach (GameObject f in StageManager.Instance.FriendList)
+            if (f != null && f.activeSelf)
+                playerTeam[f.GetComponent<Object>().Color.ToInt()] = true;
 
         for (int j = 0; j < 6; j++) // 각각의 색
         {
-            int maxBingoNum = 0;
             for (int i = 0; i < 6; i++) // 각각의 면
             {
-                if (bingoNums[i][j] > maxBingoNum) maxBingoNum = bingoNums[i][j];
-            }
+                if (!playerTeam[i]) continue;
 
-            if (maxBingoNum == 6 && !IsAllCoolTime(bingoStatus[j]))
-            {
-                bingoTexts[j].text = "ALL";
-            }
-            else if (IsAllCoolTime(bingoStatus[j]) || IsOneCoolTime(bingoStatus[j]))
-                bingoTexts[j].text = "COOL TIME";
-            else if (maxBingoNum > 0)
-            {
-                bingoStatus[j] = BingoStatus.ONE;
-                bingoTexts[j].text = "ONE";
-            }
-            else
-            {
-                bingoStatus[j] = BingoStatus.DEFAULT;
-                bingoTexts[j].text = "NO";
+                if (bingoNums[i][j] == 6 && bingoStatus[j] != BingoStatus.ALL)
+                {
+                    bingoStatus[j] = BingoStatus.ALL;
+                    BingoReward(BingoStatus.ALL);
+                }
+                else if (bingoNums[i][j] > 0 & bingoStatus[j] == BingoStatus.NONE)
+                {
+                    bingoStatus[j] = BingoStatus.ONE;
+                    BingoReward(BingoStatus.ONE);
+                }
             }
         }
 
         return 0;
     }
-    public void ToNextBingo()
+
+    private void BingoReward(BingoStatus bingo)
     {
-        for (int i = 0; i < 6; i++)
+        int random = Random.Range(0, 5);
+
+        switch (random)
         {
-            if (bingoTexts[i].text == "ALL") bingoStatus[i] = BingoStatus.ALL;
-
-            switch (bingoStatus[i])
-            {
-                case BingoStatus.ONE: bingoStatus[i] =   BingoStatus.ONE_1; break;
-                case BingoStatus.ONE_1: bingoStatus[i] = BingoStatus.ONE_2; break;
-                case BingoStatus.ONE_2: bingoStatus[i] = BingoStatus.ONE_3; break;
-
-                case BingoStatus.ALL: bingoStatus[i] =   BingoStatus.ALL_1; break;
-                case BingoStatus.ALL_1: bingoStatus[i] = BingoStatus.ALL_2; break;
-                case BingoStatus.ALL_2: bingoStatus[i] = BingoStatus.ALL_3; break;
-
-                default: bingoStatus[i] = BingoStatus.DEFAULT; break;
-            }
-        }
-    }
-    private bool IsAllCoolTime(BingoStatus bingoStatus)
-    {
-        switch (bingoStatus)
-        {
-            case BingoStatus.ALL_1:
-            case BingoStatus.ALL_2:
-            case BingoStatus.ALL_3: return true;
-
-            default: return false;
-        }
-    }
-    private bool IsOneCoolTime(BingoStatus bingoStatus)
-    {
-        switch (bingoStatus)
-        {
-            case BingoStatus.ONE_1:
-            case BingoStatus.ONE_2:
-            case BingoStatus.ONE_3: return true;
-
-            default: return false;
+            case 0: // 최소 공격력 10 / 50% 증가 -> 츨레이어 or 동료
+                break;
+            case 1: // 최대 공격력 증가 10 / 50% 증가 -> 츨레이어 or 동료
+                break;
+            case 2: // 해당 턴에 큐브 회전 횟수 4 / 6를 회복
+                break;
+            case 3: // 유닛의 체력을 30 / 100 최대 체력의 회복 -> 츨레이어 or 동료
+                break;
+            case 4: // 몬스터 공격력 50 / 100 감소 -> 몬스터
+                break;
         }
     }
 }

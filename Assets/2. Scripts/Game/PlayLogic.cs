@@ -16,7 +16,7 @@ public class PlayLogic : MonoBehaviour
 
     public void OpenTreasureBox(GameObject obj)
     {
-        int gold = obj.GetComponent<Object>().Damage;
+        int gold = (int)obj.GetComponent<Object>().Damage;
         StaticManager.Instance.Gold += gold;
         ObjectManager.Instance.ObjectDie(obj);
 
@@ -24,11 +24,11 @@ public class PlayLogic : MonoBehaviour
     }
     private IEnumerator GoldText(int gold)
     {
-        GameObject goldTextObj = colorCheckManager.SelectedCharacter.GetComponent<Object>().GoldText;
+        GameObject goldTextObj = ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().GoldText;
         Text goldText = goldTextObj.GetComponent<Text>();
         goldText.text = $"+{gold}";
 
-        //°ñµå ÅØ½ºÆ® ¶ç¿ì´Â ºÎºÐ
+        //ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½
 
         RectTransform rectTransform = goldTextObj.GetComponent<RectTransform>();
         //goldText.color = new Color(1, 1, 0, 1);
@@ -49,9 +49,9 @@ public class PlayLogic : MonoBehaviour
         //goldText.color = new Color(1, 1, 0, 0);
         //rectTransform.position = originPosition;
 
-        //DOTweenÀ¸·Î º¯°æÇÑ ºÎºÐ
-        //ÀÏ´Ü ´ëÃæÀº µÇ´Âµ¥ Á¤È®ÇÏ°Ô ÀÇµµÇÑ ´ë·Î´Â ¾ÈµÊ
-        //³»ÀÏ ÇÏ¸é¼­ ÁÖ±â³ª, À§Ä¡ ¼¼ºÎÀûÀ¸·Î Á¶Á¤ÇÏ±â.
+        //DOTweenï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½
+        //ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´Âµï¿½ ï¿½ï¿½È®ï¿½Ï°ï¿½ ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½Î´ï¿½ ï¿½Èµï¿½
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½Ï¸é¼­ ï¿½Ö±â³ª, ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½.
         Vector3 textPos = rectTransform.position;
         Color goldColor = goldText.color;
 
@@ -82,8 +82,10 @@ public class PlayLogic : MonoBehaviour
         switch (portion.StatusEffectType)
         {
             case StatusEffect.HP:
-                p.GetComponent<Object>().HP += portion.Value;
-                p.GetComponent<Object>().HP_Percent(portion.HealRate);
+                p.GetComponent<Object>().OnHit(StatusEffect.HP, -portion.Value);
+                break;
+            case StatusEffect.HP_PERCENT:
+                p.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, portion.HealRate);
                 break;
         }
     }
