@@ -54,22 +54,25 @@ public class Object : MonoBehaviour
     {
         type = objType;
 
-        if (objType == ObjectType.PLAYER)
+        switch (objType)
         {
-            maxHp = int.Parse(datas[0]);
-        }
-        else if (objType == ObjectType.ENEMY)
-        {
-            id = int.Parse(datas[ENEMY_ID]);
-            name = datas[ENEMY_NAME];
-            maxHp = int.Parse(datas[ENEMY_HP]);
-            SetWeapon(int.Parse(datas[ENEMY_MIN]), int.Parse(datas[ENEMY_MAX]), datas[ENEMY_WEAPON_TYPE].ToEnum());
-        }
-        else if (objType == ObjectType.FRIEND)
-        {
-            id = int.Parse(datas[FRIEND_ID]);
-            maxHp = int.Parse(datas[FRIEND_HP]);
-            SetWeapon(int.Parse(datas[FRIEND_MIN]), int.Parse(datas[FRIEND_MAX]), datas[FRIEND_WEAPON_TYPE].ToEnum());
+            case ObjectType.PLAYER:
+                maxHp = int.Parse(datas[0]);
+                break;
+            case ObjectType.ENEMY:
+                id = int.Parse(datas[ENEMY_ID]);
+                name = datas[ENEMY_NAME];
+                maxHp = int.Parse(datas[ENEMY_HP]);
+                SetWeapon(int.Parse(datas[ENEMY_MIN]), int.Parse(datas[ENEMY_MAX]), datas[ENEMY_WEAPON_TYPE].ToEnum());
+                break;
+            case ObjectType.FRIEND:
+                id = int.Parse(datas[FRIEND_ID]);
+                maxHp = int.Parse(datas[FRIEND_HP]);
+                SetWeapon(int.Parse(datas[FRIEND_MIN]), int.Parse(datas[FRIEND_MAX]), datas[FRIEND_WEAPON_TYPE].ToEnum());
+                break;
+            case ObjectType.TRIGGER:
+                name = datas[0];
+                break;
         }
 
         hp = maxHp;

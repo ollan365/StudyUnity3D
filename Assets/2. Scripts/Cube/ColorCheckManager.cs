@@ -38,52 +38,18 @@ public class ColorCheckManager : MonoBehaviour
 
     private void MovableCubeSetting(int index)
     {
-        for (int i = 0; i < 9; i++)
-            movableCube[i] = false;
-
         switch (index)
         {
             case 0:
-                movableCube[1] = true;
-                movableCube[3] = true;
-                break;
             case 1:
-                movableCube[0] = true;
-                movableCube[2] = true;
-                movableCube[4] = true;
-                break;
             case 2:
-                movableCube[1] = true;
-                movableCube[5] = true;
-                break;
             case 3:
-                movableCube[0] = true;
-                movableCube[4] = true;
-                movableCube[6] = true;
-                break;
             case 4:
-                movableCube[1] = true;
-                movableCube[3] = true;
-                movableCube[5] = true;
-                movableCube[7] = true;
-                break;
             case 5:
-                movableCube[2] = true;
-                movableCube[4] = true;
-                movableCube[8] = true;
-                break;
             case 6:
-                movableCube[3] = true;
-                movableCube[7] = true;
-                break;
             case 7:
-                movableCube[4] = true;
-                movableCube[6] = true;
-                movableCube[8] = true;
-                break;
             case 8:
-                movableCube[5] = true;
-                movableCube[7] = true;
+                movableCube = StageCube.Instance.Cross(index);
                 break;
 
             default:
@@ -99,7 +65,7 @@ public class ColorCheckManager : MonoBehaviour
             StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(false);
 
             ObjectType obj = StageCube.Instance.touchArray[selectedCharacterColor][i].ObjType;
-            if (obj != ObjectType.NULL && obj != ObjectType.PORTAL && obj != ObjectType.TREASURE && obj != ObjectType.MERCHANT)
+            if (obj != ObjectType.NULL && obj != ObjectType.PORTAL && obj != ObjectType.TRIGGER && obj != ObjectType.MERCHANT)
                 movableCube[i] = false;
 
             if (selectedCharacter.GetComponent<Object>().Type != ObjectType.ENEMY)

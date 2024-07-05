@@ -12,7 +12,11 @@ public class EventManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
-
+    public void StageEnd()
+    {
+        // 선악과 괴뢰 소멸
+        // 상태 이상 초기화
+    }
     // 이벤트 발생 시, 이 함수만 호출하면 알아서 다 처리되도록
     public void EventAdd(int eventIndex)
     {
@@ -121,9 +125,11 @@ public class EventManager : MonoBehaviour
                 break;
             case 8:
                 // 선악과 소환
+                ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 1);
                 break;
             case 9:
                 // 괴뢰 소환
+                ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 2);
                 break;
             case 10:
                 // 정반대에 플레이어(용병) 생성
@@ -231,6 +237,41 @@ public class EventManager : MonoBehaviour
     }
 
     // ========== 편의를 위해 만든 함수 ========== //
+    private List<Object> ObjectList(Colors color)
+    {
+        List<Object> output = new();
+
+        if (StageManager.Instance.Player.touchCube.RelativeColor == color)
+            output.Add(StageManager.Instance.Player);
+
+        foreach(GameObject f in StageManager.Instance.FriendList)
+        {
+            if (f == null || !f.activeSelf) continue;
+
+            Object friendObject = f.GetComponent<Object>();
+            if (friendObject.touchCube.RelativeColor == color) output.Add(friendObject);
+        }
+
+        foreach (GameObject e in StageManager.Instance.EnemyList)
+        {
+            if (e == null || !e.activeSelf) continue;
+
+            Object enemyObject = e.GetComponent<Object>();
+            if (enemyObject.touchCube.RelativeColor == color) output.Add(enemyObject);
+        }
+
+        return output;
+    }
+    public List<EventEffect> EventEffectList(List<Object> objectList)
+    {
+        List<EventEffect> output = new();
+        foreach (Object obj in objectList) output.Add(obj.eventEffect);
+        return output;
+    }
+
+
+
+    // 옛날 버전...
     private EventEffect PlayerEventEffect
     {
         get => StageManager.Instance.Player.eventEffect;

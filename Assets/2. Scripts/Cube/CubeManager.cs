@@ -321,9 +321,9 @@ public class CubeManager : MonoBehaviour
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, false))
                             ObjectManager.Instance.ChangeShop();
                         break;
-                    case ObjectType.TREASURE:
+                    case ObjectType.TRIGGER:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, true))
-                            StageManager.Instance.StagePlayLogic.OpenTreasureBox(obj.gameObject);
+                            StageManager.Instance.StagePlayLogic.Trigger(obj.gameObject);
                         break;
                     case ObjectType.PORTAL:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, true))

@@ -11,8 +11,6 @@ public class EnvLogic : MonoBehaviour
         {
             if (!e.activeSelf) continue;
 
-
-
             Object enemyObj = e.GetComponent<Object>();
             ColorCheckManager.Instance.CharacterSelect(e);
 
@@ -24,8 +22,6 @@ public class EnvLogic : MonoBehaviour
 
                     if (ColorCheckManager.Instance.Move(enemyObj.Color, random, false))
                     {
-                        
-
                         Debug.Log("이동하는 놈 " + e);
 
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
@@ -40,10 +36,8 @@ public class EnvLogic : MonoBehaviour
                         indicator.SetActive(false);
                         yield return new WaitForSeconds(1f);
 
-                        if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].ObjType == ObjectType.TREASURE)
+                        if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].ObjType == ObjectType.TRIGGER)
                             StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].Obj.OnHit(StatusEffect.HP_PERCENT, 100);
-
-                        
 
                         break;
                     }
@@ -71,7 +65,7 @@ public class EnvLogic : MonoBehaviour
                         indicator.SetActive(false);
                         yield return new WaitForSeconds(1f);
 
-                        if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TREASURE)
+                        if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TRIGGER)
                             StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(StatusEffect.HP_PERCENT, 100);
                         break;
                     }

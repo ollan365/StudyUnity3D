@@ -230,53 +230,7 @@ public class FightLogic : MonoBehaviour
 
         if (weaponType == WeaponType.CAD)
         {
-            switch (index)
-            {
-                case 0:
-                    attackable[1] = true;
-                    attackable[3] = true;
-                    break;
-                case 1:
-                    attackable[0] = true;
-                    attackable[2] = true;
-                    attackable[4] = true;
-                    break;
-                case 2:
-                    attackable[1] = true;
-                    attackable[5] = true;
-                    break;
-                case 3:
-                    attackable[0] = true;
-                    attackable[4] = true;
-                    attackable[6] = true;
-                    break;
-                case 4:
-                    attackable[1] = true;
-                    attackable[3] = true;
-                    attackable[5] = true;
-                    attackable[7] = true;
-                    break;
-                case 5:
-                    attackable[2] = true;
-                    attackable[4] = true;
-                    attackable[8] = true;
-                    break;
-                case 6:
-                    attackable[3] = true;
-                    attackable[7] = true;
-                    break;
-                case 7:
-                    attackable[4] = true;
-                    attackable[6] = true;
-                    attackable[8] = true;
-                    break;
-                case 8:
-                    attackable[5] = true;
-                    attackable[7] = true;
-                    break;
-                default:
-                    break;
-            }
+            attackable = StageCube.Instance.Cross(index);
         }
         else if (weaponType == WeaponType.LAD)
         {

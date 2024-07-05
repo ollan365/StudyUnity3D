@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 789826866052668765}
   - component: {fileID: 9915054925414412}
   m_Layer: 9
-  m_Name: Treasure
+  m_Name: ForbiddenFruit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3a0139cc364562448ba6b451cb9ec358, type: 2}
+  - {fileID: 2100000, guid: 75c693a426766d64580362b9516c4389, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -122,8 +122,8 @@ MonoBehaviour:
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 0}
   goldText: {fileID: 0}
-  id: 0
-  objName: 
+  id: 1
+  objName: ForbiddenFruit
   minDamage: 0
   maxDamage: 0
   type: 3
