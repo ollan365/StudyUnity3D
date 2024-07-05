@@ -26,9 +26,6 @@ public class FightLogic : MonoBehaviour
 
             enemy.GetComponent<Object>().OnHit(StatusEffect.HP, StageManager.Instance.Player.Damage);
 
-            if (!enemy.activeSelf) {
-                StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
-            }
             yield return new WaitForFixedUpdate();
 
 
@@ -90,11 +87,6 @@ public class FightLogic : MonoBehaviour
                         enemy.transform.GetChild(4).gameObject.SetActive(true);
 
                         enemy.GetComponent<Object>().OnHit(StatusEffect.HP, friendAttackOrder[i].Key);
-
-                        if (!enemy.activeSelf)
-                        {
-                            StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
-                        }
 
                         friendObj.transform.GetChild(2).gameObject.SetActive(false);
                         enemy.transform.GetChild(4).gameObject.SetActive(false);

@@ -51,7 +51,7 @@ public static class Constants
         }
     }
     public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
-    public enum StatusEffect { HP, HP_PERCENT, SLIENCE, POWERFUL, WEAKEN, INVINCIBILITY, STIGMA, BARRIER, EVASION, FATIGUE, SUNSHINE, ALL }
+    public enum StatusEffect { HP, HP_PERCENT, SLIENCE, POWERFUL, INVINCIBILITY, WEAKEN, BLESS, CURSE, ALL }
     public enum StageText { ALL_INIT, END,  MONSTER, MOVE, ROTATE, WEAPON_CHANGE, MONSTER_INIT, MOVE_INIT, ROTATE_INIT, WEAPON_CHANGE_INIT }
     public static int ToInt(this StageText text)
     {

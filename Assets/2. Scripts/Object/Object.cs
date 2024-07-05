@@ -19,8 +19,6 @@ public class Object : MonoBehaviour
     [SerializeField] private ObjectType type;
     [SerializeField] private WeaponType weaponType;
 
-    public EventEffect eventEffect;
-
     public Touch touchCube;
     
     public int ID { get => id; }
@@ -31,7 +29,7 @@ public class Object : MonoBehaviour
         maxDamage = max;
         this.weaponType = weaponType;
     }
-    public float Damage { get => Random.Range(minDamage, maxDamage + 1) * eventEffect.Dealt(); }
+    public float Damage { get => Random.Range(minDamage, maxDamage + 1) * EventManager.Instance.Effect.Dealt(this); }
     public ObjectType Type { get => type; }
     public WeaponType AttackType { get => weaponType; }
 
@@ -83,11 +81,13 @@ public class Object : MonoBehaviour
     }
     public void OnHit(StatusEffect effect, float damage)
     {
-        if (effect == StatusEffect.HP) HP -= damage * eventEffect.Received();
-        else if (effect == StatusEffect.HP_PERCENT) HP -= maxHp * damage / 100 * eventEffect.Received();
+        if (effect == StatusEffect.HP) HP -= damage * EventManager.Instance.Effect.Received(this);
+        else if (effect == StatusEffect.HP_PERCENT) HP -= maxHp * damage / 100 * EventManager.Instance.Effect.Received(this);
 
         if (HP <= 0)
         {
+            if (type == ObjectType.ENEMY) StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
+
             objectManager.ObjectDie(gameObject);
             gameObject.SetActive(false);
         }

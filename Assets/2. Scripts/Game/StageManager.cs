@@ -129,10 +129,9 @@ public class StageManager : MonoBehaviour
                 stageTextValues[StageText.MONSTER.ToInt()]++;
         }
             
-
         stageTexts[2].text = $"{stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
         stageTexts[3].text = $"{stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
-        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
+        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()]}";
         stageTexts[5].text = $"{stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
     }
     public IEnumerator StartStage()
@@ -198,7 +197,7 @@ public class StageManager : MonoBehaviour
             {
                 turn++;
                 stageTexts[1].text = $"{turn} Turn";
-                // colorCheckManager.ToNextBingo();
+                EventManager.Instance.Effect.Effect(); // 축복이나 저주 발동
             }
 
             StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
