@@ -25,8 +25,8 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private GameObject portalPrefab;
 
     [Header("UI")]
-    [SerializeField] private GameObject clickIgnorePanel;
     [SerializeField] private Slider[] friendHpSlider;
+    [SerializeField] private GameObject clickIgnorePanel;
     [SerializeField] private GameObject shopPopup;
     [SerializeField] private GameObject inventoryPopup;
     [SerializeField] private Slot[] inventorySlot;
@@ -34,9 +34,22 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private Slot[] shopSlot;
     [SerializeField] private ItemObject[] shopItemArray;
     private ItemSlot[] shopItemSlotArray;
-
     // 변수
     public bool isShopChanged = false;
+
+    [Header("Object Info UI")]
+    [SerializeField] private GameObject ObjectInfoPanel;
+    [SerializeField] private Image Info_Image;
+    [SerializeField] private Sprite[] Info_images;
+    [SerializeField] private Text Info_Name;
+    [SerializeField] private Slider Info_HPslider;
+    [SerializeField] private Text Info_HPText;
+    [SerializeField] private Text Info_AttackType;
+    [SerializeField] private Text Info_BasicAttack;
+    [SerializeField] private Text Info_Desc;
+
+
+
 
     private void Awake()
     {
@@ -363,4 +376,56 @@ public class ObjectManager : MonoBehaviour
         ChangePlayerInventory();
         return;
     }
+
+    public void ObjectInfo(Object obj)
+    {
+        Object clickedObj = obj;
+        //이미지 설정
+        int idx = clickedObj.ID - 100000; //ID 값을 받아 배열의 인덱스로 변환
+        if (idx + 1 > Info_images.Length)
+            Info_Image.sprite = Info_images[0];
+        else
+            Info_Image.sprite = Info_images[idx];
+
+        //텍스트 설정
+        //  이름
+        Info_Name.text = clickedObj.name;
+        
+        //  Hpbar
+        Info_HPslider.value = clickedObj.HP / clickedObj.MaxHp;
+        Info_HPText.text = $"{Mathf.CeilToInt(clickedObj.HP)} / {Mathf.CeilToInt(clickedObj.MaxHp)}";
+
+        //  Attack Type
+        string type = "타입";
+        switch (clickedObj.GetComponent<Object>().AttackType)
+        {
+            case WeaponType.CAD:
+                type = "근거리";
+                break;
+            case WeaponType.LAD:
+                type = "원거리";
+                break;
+            case WeaponType.AP:
+                type = "마법";
+                break;
+            case WeaponType.NULL:
+                type = "NULL";
+                break;
+            default:
+                Debug.Log("공격타입 없음");
+                break;
+        }
+        Info_AttackType.text = type;
+
+        //  Basic Attack
+        string basicAttackText = $"{clickedObj.MinDamage} ~ {clickedObj.MaxDamage}";
+        Info_BasicAttack.text = basicAttackText;
+
+        //  Description
+        Info_Desc.text = "일단 준비중입니다.";
+
+        //Set Active = true
+        ObjectInfoPanel.SetActive(true);
+    }
+
 }

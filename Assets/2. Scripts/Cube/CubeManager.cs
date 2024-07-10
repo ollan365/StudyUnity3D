@@ -335,6 +335,7 @@ public class CubeManager : MonoBehaviour
                             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
                         break;
                     case ObjectType.ENEMY:
+                        
                         ChangeToNormal();
                         break;
                 }
@@ -348,6 +349,12 @@ public class CubeManager : MonoBehaviour
                         ColorCheckManager.Instance.CharacterSelect(obj.gameObject);
                     }
                 }
+                if (obj.Type == ObjectType.ENEMY)
+                {
+                    ObjectManager.Instance.ObjectInfo(obj);
+                }
+                    
+
                 break;
             case PlayerTurnStatus.PORTION_SELECTED:
                 if (obj.Type == ObjectType.PLAYER || obj.Type == ObjectType.FRIEND)

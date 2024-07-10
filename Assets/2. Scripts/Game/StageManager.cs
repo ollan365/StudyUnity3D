@@ -152,6 +152,7 @@ public class StageManager : MonoBehaviour
             {
                 enemy[index] = ObjectManager.Instance.Summons(null, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
                 Debug.Log(enemy[index]);
+                
                 index++;
                 yield return new WaitForFixedUpdate();
             }
@@ -182,7 +183,7 @@ public class StageManager : MonoBehaviour
 
         if (StatusOfStage == StageStatus.PLAYER)
         {
-            Debug.Log("fight");
+            //Debug.Log("fight");
             StatusOfStage = StageStatus.FIGHT;
             StartCoroutine(fightLogic.Attack());
         }
