@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3276707902505665102}
   - component: {fileID: 3576239282452624806}
   m_Layer: 9
-  m_Name: Add Gold Text
+  m_Name: Pop Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
