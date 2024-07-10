@@ -208,14 +208,19 @@ public class StageManager : MonoBehaviour
             clickIgnorePanel.SetActive(false);
         }
     }
-    public void ClearStage()
+    public void CheckStageClear()
     {
+        if (stageTextValues[StageText.MONSTER.ToInt()] > 0) return;
+
+        // 스테이지를 클리어한 경우
+        fightLogic.StopAllCoroutines();
+
         StatusOfStage = StageStatus.END;
         clickIgnorePanel.SetActive(false);
 
         // 스테이지 종료 시 동료, 트리거 소멸
         foreach (GameObject f in friend)
-            f.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
+            if (f != null && f.activeSelf) f.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
         foreach (GameObject t in treasure)
             t.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
         EventManager.Instance.StageEnd();

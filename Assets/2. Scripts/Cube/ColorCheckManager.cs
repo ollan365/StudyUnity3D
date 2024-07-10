@@ -113,5 +113,7 @@ public class ColorCheckManager : MonoBehaviour
         obj.GetComponent<Object>().touchCube = StageCube.Instance.touchArray[color.ToInt()][index];
 
         MovableCubeSetting(index);
+
+        if (obj.GetComponent<Object>().Type == ObjectType.PLAYER) EventManager.Instance.BingoCheck();
     }
 }
