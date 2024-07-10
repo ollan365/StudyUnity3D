@@ -9,7 +9,7 @@ public class EnvLogic : MonoBehaviour
     {
         foreach(GameObject e in StageManager.Instance.EnemyList)
         {
-            if (!e.activeSelf) continue;
+            if (e.GetComponent<Object>().HP <= 0) continue;
 
             Object enemyObj = e.GetComponent<Object>();
             ColorCheckManager.Instance.CharacterSelect(e);
