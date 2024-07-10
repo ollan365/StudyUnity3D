@@ -123,14 +123,14 @@ MonoBehaviour:
   objectManager: {fileID: 0}
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 2069102978150480274}
-  goldText: {fileID: 5072520664204014246}
+  popTextObj: {fileID: 5072520664204014246}
   id: 0
   objName: 
   minDamage: 0
   maxDamage: 0
   type: 1
   weaponType: 0
-  eventEffect: {fileID: 11400000, guid: 82381b06fb6dc0f46a768b2ca4b4454a, type: 2}
+  indicator: {fileID: 7920125139360843035}
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0

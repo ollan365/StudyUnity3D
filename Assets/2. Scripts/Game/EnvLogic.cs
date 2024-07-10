@@ -25,13 +25,12 @@ public class EnvLogic : MonoBehaviour
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
                         yield return new WaitForSeconds(1f); // CubeRotate에 걸리는 시간
 
-                        GameObject indicator = e.transform.GetChild(4).gameObject;
-                        indicator.SetActive(true);
+                        enemyObj.Indicator.SetActive(true);
                         yield return new WaitForSeconds(1f);
 
                         ColorCheckManager.Instance.Move(enemyObj.Color, random, true); // 이동
                         yield return new WaitForSeconds(1f); // Move에 걸리는 시간
-                        indicator.SetActive(false);
+                        enemyObj.Indicator.SetActive(false);
                         yield return new WaitForSeconds(1f);
 
                         if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].ObjType == ObjectType.TRIGGER)
@@ -54,13 +53,12 @@ public class EnvLogic : MonoBehaviour
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
                         yield return new WaitForSeconds(1f); // CubeRotate에 걸리는 시간
 
-                        GameObject indicator = e.transform.GetChild(4).gameObject;
-                        indicator.SetActive(true);
+                        enemyObj.Indicator.SetActive(true);
                         yield return new WaitForSeconds(1f);
 
                         ColorCheckManager.Instance.Move(enemyObj.Color, priority[i], true);
                         yield return new WaitForSeconds(1f); // Move에 걸리는 시간
-                        indicator.SetActive(false);
+                        enemyObj.Indicator.SetActive(false);
                         yield return new WaitForSeconds(1f);
 
                         if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TRIGGER)
