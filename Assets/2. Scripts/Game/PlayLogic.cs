@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using DG.Tweening;
 using static Constants;
 
 public class PlayLogic : MonoBehaviour
@@ -30,6 +31,7 @@ public class PlayLogic : MonoBehaviour
         ObjectManager.Instance.ObjectDie(obj.gameObject);
 
         StartCoroutine(ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().PoppingText($"+{gold}", Color.red));
+        yield break;
     }
     private IEnumerator EatForbiddenFruit(Object obj)
     {
