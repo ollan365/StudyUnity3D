@@ -30,7 +30,7 @@ public class PlayLogic : MonoBehaviour
         StaticManager.Instance.Gold += gold;
         ObjectManager.Instance.ObjectDie(obj.gameObject);
 
-        StartCoroutine(ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().PoppingText($"+{gold}", Color.red));
+        ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().PoppingText($"+{gold}", Color.red);
         yield break;
     }
     private IEnumerator EatForbiddenFruit(Object obj)

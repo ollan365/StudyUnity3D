@@ -133,7 +133,7 @@ MonoBehaviour:
   maxDamage: 0
   type: 2
   weaponType: 0
-  eventEffect: {fileID: 11400000, guid: 82381b06fb6dc0f46a768b2ca4b4454a, type: 2}
+  indicator: {fileID: 1450857302552564418}
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0

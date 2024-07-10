@@ -20,8 +20,8 @@ public class FightLogic : MonoBehaviour
             LookAt(StageManager.Instance.Player.gameObject, enemy);
 
             //activate indicator
-            StageManager.Instance.Player.transform.GetChild(2).gameObject.SetActive(true);
-            enemy.transform.GetChild(4).gameObject.SetActive(true);
+            StageManager.Instance.Player.GetComponent<Object>().Indicator.SetActive(true);
+            enemy.GetComponent<Object>().Indicator.SetActive(true);
             yield return new WaitForSeconds(0.5f);
 
             enemy.GetComponent<Object>().OnHit(StatusEffect.HP, StageManager.Instance.Player.Damage);
@@ -30,8 +30,8 @@ public class FightLogic : MonoBehaviour
 
 
             //disable indicator
-            StageManager.Instance.Player.transform.GetChild(2).gameObject.SetActive(false);
-            enemy.transform.GetChild(4).gameObject.SetActive(false);
+            StageManager.Instance.Player.GetComponent<Object>().Indicator.SetActive(false);
+            enemy.GetComponent<Object>().Indicator.SetActive(false);
 
             yield return new WaitForSeconds(0.1f);
         }
@@ -41,7 +41,7 @@ public class FightLogic : MonoBehaviour
         for (int i = 0; i < StageManager.Instance.StageData(ENEMY_COUNT); i++)
         {
             Object enemyObject = StageManager.Instance.EnemyList[i].GetComponent<Object>();
-            if (enemyObject.gameObject.activeSelf)
+            if (enemyObject.gameObject.activeSelf && enemyObject.HP > 0)
                 enemyAttackOrder.Add(new KeyValuePair<float, int>(enemyObject.Damage, i));
         }
         List<KeyValuePair<float, int>> friendAttackOrder = new List<KeyValuePair<float, int>>();
@@ -49,7 +49,7 @@ public class FightLogic : MonoBehaviour
         {
             if (StageManager.Instance.FriendList[i] == null) continue;
             Object friendObject = StageManager.Instance.FriendList[i].GetComponent<Object>();
-            if (friendObject.gameObject.activeSelf)
+            if (friendObject.gameObject.activeSelf && friendObject.HP > 0)
                 friendAttackOrder.Add(new KeyValuePair<float, int>(friendObject.Damage, i));
         }
         enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
@@ -83,13 +83,13 @@ public class FightLogic : MonoBehaviour
                         //동료가 적 공격
                         LookAt(friendObj.gameObject, enemy);
 
-                        friendObj.transform.GetChild(2).gameObject.SetActive(true);
-                        enemy.transform.GetChild(4).gameObject.SetActive(true);
+                        friendObj.Indicator.SetActive(true);
+                        enemy.GetComponent<Object>().Indicator.SetActive(true);
 
                         enemy.GetComponent<Object>().OnHit(StatusEffect.HP, friendAttackOrder[i].Key);
 
-                        friendObj.transform.GetChild(2).gameObject.SetActive(false);
-                        enemy.transform.GetChild(4).gameObject.SetActive(false);
+                        friendObj.Indicator.SetActive(false);
+                        enemy.GetComponent<Object>().Indicator.SetActive(false);
 
                         yield return new WaitForSeconds(0.5f);
                     }
@@ -116,14 +116,14 @@ public class FightLogic : MonoBehaviour
                     //적이 플레이어 진영 공격
                     LookAt(enemyObj.gameObject, p);
 
-                    p.transform.GetChild(2).gameObject.SetActive(true);
-                    enemyObj.transform.GetChild(4).gameObject.SetActive(true);
+                    p.GetComponent<Object>().Indicator.SetActive(true);
+                    enemyObj.Indicator.SetActive(true);
                     yield return new WaitForSeconds(0.5f);
 
                     p.GetComponent<Object>().OnHit(StatusEffect.HP, enemyAttackOrder[i].Key);
 
-                    p.transform.GetChild(2).gameObject.SetActive(false);
-                    enemyObj.transform.GetChild(4).gameObject.SetActive(false);
+                    p.GetComponent<Object>().Indicator.SetActive(false);
+                    enemyObj.Indicator.SetActive(false);
 
                     yield return new WaitForSeconds(0.5f);
                 }

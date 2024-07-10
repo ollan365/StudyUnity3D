@@ -796,7 +796,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c98dd558d420440b51ae7434f8cbbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stage: 6
+  stage: 2
   inventory:
   - item: {fileID: 11400000, guid: 1ccebde6cac3eb444a0f774c8cc2b48e, type: 2}
     count: 1

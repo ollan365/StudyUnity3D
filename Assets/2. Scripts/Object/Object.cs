@@ -21,9 +21,9 @@ public class Object : MonoBehaviour
     [SerializeField] private int maxDamage;
     [SerializeField] private ObjectType type;
     [SerializeField] private WeaponType weaponType;
+    [SerializeField] private GameObject indicator;
 
     public Touch touchCube;
-
     private Sequence sequence;
 
 
@@ -33,6 +33,7 @@ public class Object : MonoBehaviour
     public int MaxDamage { get => maxDamage; }
     public ObjectType Type { get => type; }
     public WeaponType AttackType { get => weaponType; }
+    public GameObject Indicator { get => indicator; }
 
     public void SetWeapon(int min, int max, WeaponType weaponType)
     {
@@ -94,6 +95,7 @@ public class Object : MonoBehaviour
     private void Start()
     {
         sequence = DOTween.Sequence();
+
     }
 
     public void OnHit(StatusEffect effect, float damage)
@@ -108,25 +110,26 @@ public class Object : MonoBehaviour
 
         //데미지 깎기
         HP -= dmg;
+        if (HP <= 0)
+            StartCoroutine(Death(HP, gameObject));
 
         //플레이어, 적, 동료 이고, 살아있다면 데미지 출력
         if (popTextObj != null && gameObject.activeSelf)
-            StartCoroutine(PoppingText($"-{dmg}", new Color(0, 0, 1, 1)));
+            PoppingText($"-{dmg}", new Color(0, 0, 1, 1));
 
-        if(HP <= 0)
-            StartCoroutine(Death(HP, gameObject));
     }
 
     //death 기능을 코루틴으로 설정하고, 1초 딜레이 시켜, 데미지 이펙트가 모두 나오고 오브젝트 비활성화
     public IEnumerator Death(float HP, GameObject gameObject)
     {
-        if (type == ObjectType.ENEMY) StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
         yield return new WaitForSeconds(1.0f);
         objectManager.ObjectDie(gameObject);
         gameObject.SetActive(false);
+        if (type == ObjectType.ENEMY) 
+            StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
     }
 
-    public IEnumerator PoppingText(string text, Color color)
+    public void PoppingText(string text, Color color)
     {
         //set value
         popText = popTextObj.GetComponent<Text>();
@@ -136,17 +139,15 @@ public class Object : MonoBehaviour
         RectTransform rectTransform = popTextObj.GetComponent<RectTransform>();
         rectTransform.localPosition = Vector3.zero;
 
+        sequence = DOTween.Sequence();
         textColor.a = 1;
         sequence.Append(rectTransform.DOLocalMoveY(0.5f, 1.0f)).SetEase(Ease.OutCubic)
                 .Join(popText.DOColor(textColor, 1.0f));
-
-        yield return new WaitForSeconds(1.0f);
-
+        
         textColor.a = 0;
         sequence.Append(rectTransform.DOLocalMoveY(1f, 1.0f)).SetEase(Ease.Linear)
                 .Join(popText.DOColor(textColor, 1.0f));
 
-        yield return new WaitForFixedUpdate();
     }
 
     private void OnTriggerEnter(Collider other)
