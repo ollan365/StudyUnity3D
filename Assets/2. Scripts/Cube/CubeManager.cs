@@ -338,7 +338,7 @@ public class CubeManager : MonoBehaviour
                 }
                 if (obj.Type == ObjectType.ENEMY)
                 {
-                    ObjectManager.Instance.ObjectInfo(obj);
+                    ObjectManager.Instance.SetObjectInfo(obj);
                 }
                     
 
