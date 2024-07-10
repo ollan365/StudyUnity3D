@@ -20,7 +20,7 @@ public class ObjectManager : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject friendPrefab;
-    [SerializeField] private GameObject treasurePrefab;
+    [SerializeField] private GameObject[] triggerPrefabs;
     [SerializeField] private GameObject merchantPrefab;
     [SerializeField] private GameObject portalPrefab;
 
@@ -61,6 +61,16 @@ public class ObjectManager : MonoBehaviour
     
     public GameObject Summons(Touch cube, ObjectType objectType, int objectID)
     {
+        if (cube == null)
+        {
+            while (true)
+            {
+                cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+                if (cube.Obj == null)
+                    break;
+            }
+        }
+
         GameObject newObject;
 
         switch (objectType) {
@@ -94,9 +104,14 @@ public class ObjectManager : MonoBehaviour
                 newObject.GetComponent<Object>().Init(objectType, value.Split(','), cube);
                 ChangePlayerInventory();
                 break;
-            case ObjectType.TREASURE:
-                newObject = Instantiate(treasurePrefab);
-                newObject.GetComponent<Object>().Init(objectType, null, cube);
+            case ObjectType.TRIGGER:
+                string[] name = new string[1];
+                if (objectID == 0) name[0] = "Treasure";
+                else if (objectID == 1) name[0] = "ForbiddenFruit";
+                else if (objectID == 2) name[0] = "Thunder";
+
+                newObject = Instantiate(triggerPrefabs[objectID]);
+                newObject.GetComponent<Object>().Init(objectType, name, cube);
                 break;
             case ObjectType.MERCHANT:
                 newObject = Instantiate(merchantPrefab);

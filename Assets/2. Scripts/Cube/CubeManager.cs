@@ -247,7 +247,7 @@ public class CubeManager : MonoBehaviour
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
 
         if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
-            ColorCheckManager.Instance.BingoCheck();
+            EventManager.Instance.BingoCheck();
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
@@ -321,9 +321,9 @@ public class CubeManager : MonoBehaviour
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, false))
                             ObjectManager.Instance.ChangeShop();
                         break;
-                    case ObjectType.TREASURE:
+                    case ObjectType.TRIGGER:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, true))
-                            StageManager.Instance.StagePlayLogic.OpenTreasureBox(obj.gameObject);
+                            StageManager.Instance.StagePlayLogic.Trigger(obj.gameObject);
                         break;
                     case ObjectType.PORTAL:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, true))

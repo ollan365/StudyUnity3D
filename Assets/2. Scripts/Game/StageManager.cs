@@ -129,10 +129,9 @@ public class StageManager : MonoBehaviour
                 stageTextValues[StageText.MONSTER.ToInt()]++;
         }
             
-
         stageTexts[2].text = $"{stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
         stageTexts[3].text = $"{stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
-        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()]} / {stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]}";
+        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()]}";
         stageTexts[5].text = $"{stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
     }
     public IEnumerator StartStage()
@@ -149,18 +148,11 @@ public class StageManager : MonoBehaviour
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
         {
-            Touch cube;
-
             for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
             {
-                while (true)
-                {
-                    cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-                    if (cube.Obj == null)
-                        break;
-                }
-                enemy[index] = ObjectManager.Instance.Summons(cube, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
-                //Debug.Log(enemy[index]);
+                enemy[index] = ObjectManager.Instance.Summons(null, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
+                Debug.Log(enemy[index]);
+                
                 index++;
                 yield return new WaitForFixedUpdate();
             }
@@ -168,14 +160,7 @@ public class StageManager : MonoBehaviour
         
         for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
         {
-            Touch cube;
-            while (true)
-            {
-                cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-                if (cube.Obj == null)
-                    break;
-            }
-            treasure[i] = ObjectManager.Instance.Summons(cube, ObjectType.TREASURE, 0);
+            treasure[i] = ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 0);
             treasure[i].GetComponent<Object>().SetWeapon(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX], WeaponType.NULL);
             yield return new WaitForFixedUpdate();
         }
@@ -213,7 +198,7 @@ public class StageManager : MonoBehaviour
             {
                 turn++;
                 stageTexts[1].text = $"{turn} Turn";
-                // colorCheckManager.ToNextBingo();
+                EventManager.Instance.Effect.Effect(); // 축복이나 저주 발동
             }
 
             StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
@@ -228,22 +213,18 @@ public class StageManager : MonoBehaviour
         StatusOfStage = StageStatus.END;
         clickIgnorePanel.SetActive(false);
 
-        foreach (GameObject t in treasure) // 스테이지 종료 시 보물상자 소멸
+        // 스테이지 종료 시 동료, 트리거 소멸
+        foreach (GameObject f in friend)
+            f.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
+        foreach (GameObject t in treasure)
             t.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
+        EventManager.Instance.StageEnd();
 
         // 상인과 포탈 소환
         ObjectType[] summonObjectArray = new ObjectType[2] { ObjectType.MERCHANT, ObjectType.PORTAL };
         foreach (ObjectType type in summonObjectArray)
         {
-            while (true)
-            {
-                Touch cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-                if (cube.Obj == null)
-                {
-                    ObjectManager.Instance.Summons(cube, type, 0);
-                    break;
-                }
-            }
+            ObjectManager.Instance.Summons(null, type, 0);
         }
 
         SetStageTextValue(StageText.END, 0);

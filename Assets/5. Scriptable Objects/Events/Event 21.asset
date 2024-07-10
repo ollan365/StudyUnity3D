@@ -9,7 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bb5207b790f3384280a5875961ddc48, type: 3}
-  m_Name: EventEffect
+  m_Script: {fileID: 11500000, guid: ad68614e8e6f0bb4fb8521c29619c356, type: 3}
+  m_Name: Event 21
   m_EditorClassIdentifier: 
-  effectTurn: 000000000000000000000000000000000000000000000000000000000000000000000000
+  eventColors: 05000000
+  eventName: "\uC774\uB984\uBBF8\uC815_4"
+  eventDescription: 

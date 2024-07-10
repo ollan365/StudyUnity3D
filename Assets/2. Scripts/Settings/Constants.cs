@@ -37,7 +37,7 @@ public static class Constants
         }
     }
 
-    public enum ObjectType { PLAYER, FRIEND, ENEMY, TREASURE, MERCHANT, PORTAL, SOLDIER, NULL }
+    public enum ObjectType { PLAYER, FRIEND, ENEMY, TRIGGER, MERCHANT, PORTAL, SOLDIER, NULL }
     public enum StageStatus { INIT, PLAYER, ENV, FIGHT, END }
     public enum WeaponType { CAD, LAD, AP, NULL }
     public static WeaponType ToEnum(this string weaponType)
@@ -51,7 +51,7 @@ public static class Constants
         }
     }
     public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
-    public enum StatusEffect { HP, HP_PERCENT, SLIENCE, POWERFUL, WEAKEN, INVINCIBILITY, STIGMA, BARRIER, EVASION, FATIGUE, SUNSHINE, ALL }
+    public enum StatusEffect { HP, HP_PERCENT, SLIENCE, POWERFUL, INVINCIBILITY, WEAKEN, BLESS, CURSE, ALL }
     public enum StageText { ALL_INIT, END,  MONSTER, MOVE, ROTATE, WEAPON_CHANGE, MONSTER_INIT, MOVE_INIT, ROTATE_INIT, WEAPON_CHANGE_INIT }
     public static int ToInt(this StageText text)
     {

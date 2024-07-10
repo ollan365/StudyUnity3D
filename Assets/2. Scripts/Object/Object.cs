@@ -22,8 +22,6 @@ public class Object : MonoBehaviour
     [SerializeField] private ObjectType type;
     [SerializeField] private WeaponType weaponType;
 
-    public EventEffect eventEffect;
-
     public Touch touchCube;
 
     private Sequence sequence;
@@ -42,8 +40,7 @@ public class Object : MonoBehaviour
         maxDamage = max;
         this.weaponType = weaponType;
     }
-    public float Damage { get => Random.Range(minDamage, maxDamage + 1) * eventEffect.Dealt(); }
-
+    public float Damage { get => Random.Range(minDamage, maxDamage + 1) * EventManager.Instance.Effect.Dealt(this); }
 
     [SerializeField] private float maxHp;
     [SerializeField] private float hp;
@@ -66,22 +63,25 @@ public class Object : MonoBehaviour
     {
         type = objType;
 
-        if (objType == ObjectType.PLAYER)
+        switch (objType)
         {
-            maxHp = int.Parse(datas[0]);
-        }
-        else if (objType == ObjectType.ENEMY)
-        {
-            id = int.Parse(datas[ENEMY_ID]);
-            name = datas[ENEMY_NAME];
-            maxHp = int.Parse(datas[ENEMY_HP]);
-            SetWeapon(int.Parse(datas[ENEMY_MIN]), int.Parse(datas[ENEMY_MAX]), datas[ENEMY_WEAPON_TYPE].ToEnum());
-        }
-        else if (objType == ObjectType.FRIEND)
-        {
-            id = int.Parse(datas[FRIEND_ID]);
-            maxHp = int.Parse(datas[FRIEND_HP]);
-            SetWeapon(int.Parse(datas[FRIEND_MIN]), int.Parse(datas[FRIEND_MAX]), datas[FRIEND_WEAPON_TYPE].ToEnum());
+            case ObjectType.PLAYER:
+                maxHp = int.Parse(datas[0]);
+                break;
+            case ObjectType.ENEMY:
+                id = int.Parse(datas[ENEMY_ID]);
+                name = datas[ENEMY_NAME];
+                maxHp = int.Parse(datas[ENEMY_HP]);
+                SetWeapon(int.Parse(datas[ENEMY_MIN]), int.Parse(datas[ENEMY_MAX]), datas[ENEMY_WEAPON_TYPE].ToEnum());
+                break;
+            case ObjectType.FRIEND:
+                id = int.Parse(datas[FRIEND_ID]);
+                maxHp = int.Parse(datas[FRIEND_HP]);
+                SetWeapon(int.Parse(datas[FRIEND_MIN]), int.Parse(datas[FRIEND_MAX]), datas[FRIEND_WEAPON_TYPE].ToEnum());
+                break;
+            case ObjectType.TRIGGER:
+                name = datas[0];
+                break;
         }
 
         hp = maxHp;
@@ -98,18 +98,18 @@ public class Object : MonoBehaviour
 
     public void OnHit(StatusEffect effect, float damage)
     {
-        float dmg = 0f; //µ¥¹ÌÁö¸¦ ÅØ½ºÆ®·Î Ãâ·ÂÇÏ±â À§ÇØ ÇÊ¿äÇÑ º¯¼ö
+        float dmg = 0f; //ë°ë¯¸ì§€ë¥¼ í…ìŠ¤íŠ¸ë¡œ ì¶œë ¥í•˜ê¸° ìœ„í•´ í•„ìš”í•œ ë³€ìˆ˜
 
-        //È¿°ú º° µ¥¹ÌÁö ¼³Á¤
+        //íš¨ê³¼ ë³„ ë°ë¯¸ì§€ ì„¤ì •
         if (effect == StatusEffect.HP)
-            dmg = damage * eventEffect.Received();
+            dmg = damage * EventManager.Instance.Effect.Received(this);
         else if (effect == StatusEffect.HP_PERCENT)
-            dmg = maxHp * damage / 100 * eventEffect.Received();
+            dmg = maxHp * damage / 100 * EventManager.Instance.Effect.Received(this);
 
-        //µ¥¹ÌÁö ±ğ±â
+        //ë°ë¯¸ì§€ ê¹ê¸°
         HP -= dmg;
 
-        //ÇÃ·¹ÀÌ¾î, Àû, µ¿·á ÀÌ°í, »ì¾ÆÀÖ´Ù¸é µ¥¹ÌÁö Ãâ·Â
+        //í”Œë ˆì´ì–´, ì , ë™ë£Œ ì´ê³ , ì‚´ì•„ìˆë‹¤ë©´ ë°ë¯¸ì§€ ì¶œë ¥
         if (popTextObj != null && gameObject.activeSelf)
             StartCoroutine(PoppingText($"-{dmg}", new Color(0, 0, 1, 1)));
 
@@ -117,9 +117,10 @@ public class Object : MonoBehaviour
             StartCoroutine(Death(HP, gameObject));
     }
 
-    //death ±â´ÉÀ» ÄÚ·çÆ¾À¸·Î ¼³Á¤ÇÏ°í, 1ÃÊ µô·¹ÀÌ ½ÃÄÑ, µ¥¹ÌÁö ÀÌÆåÆ®°¡ ¸ğµÎ ³ª¿À°í ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­
+    //death ê¸°ëŠ¥ì„ ì½”ë£¨í‹´ìœ¼ë¡œ ì„¤ì •í•˜ê³ , 1ì´ˆ ë”œë ˆì´ ì‹œì¼œ, ë°ë¯¸ì§€ ì´í™íŠ¸ê°€ ëª¨ë‘ ë‚˜ì˜¤ê³  ì˜¤ë¸Œì íŠ¸ ë¹„í™œì„±í™”
     public IEnumerator Death(float HP, GameObject gameObject)
     {
+        if (type == ObjectType.ENEMY) StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
         yield return new WaitForSeconds(1.0f);
         objectManager.ObjectDie(gameObject);
         gameObject.SetActive(false);

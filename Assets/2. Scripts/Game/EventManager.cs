@@ -1,194 +1,275 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static Constants;
 
 public class EventManager : MonoBehaviour
 {
     public static EventManager Instance { get; private set; }
-    
+    [SerializeField] private GameObject eventPanel;
+    [SerializeField] private Button[] eventButtons;
+    [SerializeField] private EventCard[] eventCards;
+    private BingoStatus[] bingoStatus;
+    [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
+    public ColorEffect Effect { get => colorEffect; }
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        bingoStatus = new BingoStatus[6];
+        for (int i = 0; i < 6; i++) bingoStatus[i] = BingoStatus.NONE;
+    }
+    public int BingoCheck()
+    {
+        // 플레이어나 동료가 있는 면만 확인
+        bool[] playerTeam = new bool[6] { false, false, false, false, false, false };
+        playerTeam[StageManager.Instance.Player.Color.ToInt()] = true;
+        foreach (GameObject f in StageManager.Instance.FriendList)
+            if (f != null && f.activeSelf)
+                playerTeam[f.GetComponent<Object>().Color.ToInt()] = true;
+
+        int[][] bingoNums = new int[6][];
+        for (int i = 0; i < 6; i++)
+        {
+            if (!playerTeam[i]) continue; // 플레이어팀이 있는 면만 확인
+
+            int[] colorOfSide = new int[9];
+            int[] bingoNum = new int[6];
+
+            for (int j = 0; j < 9; j++)
+            {
+                colorOfSide[j] = StageCube.Instance.touchArray[i][j].RelativeColor.ToInt();
+                bingoNum[j % 6] = 0; // %는 그냥 배열 크기가 6이라 에러 안 나도록 해둔거
+            }
+
+            if (colorOfSide[0] == colorOfSide[1] && colorOfSide[1] == colorOfSide[2])
+                bingoNum[colorOfSide[0]]++;
+            if (colorOfSide[3] == colorOfSide[4] && colorOfSide[4] == colorOfSide[5])
+                bingoNum[colorOfSide[3]]++;
+            if (colorOfSide[6] == colorOfSide[7] && colorOfSide[7] == colorOfSide[8])
+                bingoNum[colorOfSide[6]]++;
+            if (colorOfSide[0] == colorOfSide[3] && colorOfSide[3] == colorOfSide[6])
+                bingoNum[colorOfSide[0]]++;
+            if (colorOfSide[1] == colorOfSide[4] && colorOfSide[4] == colorOfSide[7])
+                bingoNum[colorOfSide[1]]++;
+            if (colorOfSide[2] == colorOfSide[5] && colorOfSide[5] == colorOfSide[8])
+                bingoNum[colorOfSide[2]]++;
+
+            bingoNums[i] = bingoNum;
+        }
+
+        for (int j = 0; j < 6; j++) // 각각의 색
+        {
+            for (int i = 0; i < 6; i++) // 각각의 면
+            {
+                if (!playerTeam[i]) continue;
+
+                if (bingoNums[i][j] == 6 && bingoStatus[j] != BingoStatus.ALL)
+                {
+                    bingoStatus[j] = BingoStatus.ALL;
+                    Bingo(j, BingoStatus.ALL);
+                }
+                else if (bingoNums[i][j] > 0 & bingoStatus[j] == BingoStatus.NONE)
+                {
+                    bingoStatus[j] = BingoStatus.ONE;
+                    Bingo(j, BingoStatus.ONE);
+                }
+            }
+        }
+
+        return 0;
     }
 
-    // 이벤트 발생 시, 이 함수만 호출하면 알아서 다 처리되도록
-    public void EventAdd(int eventIndex)
+    public void Bingo(int color, BingoStatus bingo)
     {
-        switch (eventIndex)
+        eventPanel.SetActive(true);
+        colorEffect = new ColorEffect(color.ToColor());
+        EventAdd();
+    }
+    public void StageEnd()
+    {
+        // 선악과 괴뢰 소멸
+        // 상태 이상 초기화
+    }
+    private void EventAdd()
+    {
+        foreach (Button b in eventButtons) b.onClick.RemoveAllListeners();
+
+        List<EventCard> eventList = new();
+
+        foreach(EventCard card in eventCards)
         {
-            // 상태 이상
-            case 1:
-                // 플레이어 침묵, 무적 n 부여
-                PlayerEventEffect.EffectAdd(StatusEffect.SLIENCE, 10);
-                PlayerEventEffect.EffectAdd(StatusEffect.INVINCIBILITY, 10);
-                break;
-            case 2:
-                // 랜덤 유닛 n개에게 침묵 n 부여
-                Object[] random1 = RandomObejectOfALL(10);
-                foreach (Object o in random1) o.eventEffect.EffectAdd(StatusEffect.SLIENCE, 10);
-                break;
-            case 3:
-                // 플레이어팀 랜덤 1명에게 회피 n 부여
-                RandomObejectOfPlayerTeam(true).eventEffect.EffectAdd(StatusEffect.EVASION, 10);
-                break;
-            case 4:
-                // 랜덤 유닛 n개에게 취약 n 부여 (취약 = 낙인)
-                Object[] random2 = RandomObejectOfALL(10);
-                foreach (Object o in random2) o.eventEffect.EffectAdd(StatusEffect.STIGMA, 10);
-                break;
-            case 5:
-                // 플레이어 피로 부여
-                PlayerEventEffect.EffectAdd(StatusEffect.FATIGUE, 10);
-                break;
-            case 6:
-                // 플레이어 약화, 무적 n 부여
-                PlayerEventEffect.EffectAdd(StatusEffect.WEAKEN, 10);
-                PlayerEventEffect.EffectAdd(StatusEffect.INVINCIBILITY, 10);
-                break;
-            case 7:
-                // 플팀 1명 적팀 1명에게 침묵 n 부여
-                RandomObejectOfPlayerTeam(true).eventEffect.EffectAdd(StatusEffect.SLIENCE, 10);
-                RandomObejectOfPEnemy().eventEffect.EffectAdd(StatusEffect.SLIENCE, 10);
-                break;
-            case 18:
-                // 플레이어의 현재 체력을 최대 체력의 N%만큼 회복, 취약 부여
-                StageManager.Instance.Player.OnHit(StatusEffect.HP_PERCENT, -10);
-                PlayerEventEffect.EffectAdd(StatusEffect.STIGMA, 10);
-                break;
-            case 19:
-                // 플레이어에게 n의 취약, 강화 부여
-                PlayerEventEffect.EffectAdd(StatusEffect.STIGMA, 10);
-                PlayerEventEffect.EffectAdd(StatusEffect.POWERFUL, 10);
-                break;
-            case 20:
-                // 영구적으로 최대 체력이 N%만큼 감소 최대 데미지 N% 증가 // (구현 미완료)
-                break;
-            case 21:
-                // 500 골드 획득 랜덤 몬스터 하나에게 n의 강화
-                StaticManager.Instance.Gold += 500; 
-                RandomObejectOfPEnemy().eventEffect.EffectAdd(StatusEffect.SUNSHINE, 10);
-                break;
-            case 22:
-                // 랜덤한 동료 1 제거, 플레이어가 n의 강화 획득
-                RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
-                PlayerEventEffect.EffectAdd(StatusEffect.POWERFUL, 10);
+            foreach(Colors c in card.eventColors)
+            {
+                if (c == colorEffect.color && CheckEvent(card.eventName)) eventList.Add(card);
+            }
+        }
+
+        int random_1 = Random.Range(0, eventList.Count);
+        int random_2 = random_1;
+        while (eventList.Count > 1 && random_1 == random_2) random_2 = Random.Range(0, eventList.Count);
+
+        eventButtons[0].onClick.AddListener(() => Event(eventList[random_1].eventName));
+        eventButtons[1].onClick.AddListener(() => Event(eventList[random_2].eventName));
+        foreach (Button b in eventButtons) b.onClick.AddListener(() => eventPanel.SetActive(false));
+
+        eventButtons[0].GetComponentInChildren<Text>().text = eventList[random_1].eventName;
+        eventButtons[1].GetComponentInChildren<Text>().text = eventList[random_2].eventName;
+    }
+    private bool CheckEvent(string name)
+    {
+        switch (name)
+        {
+            case "악마의 교활함":
+            case "잔혹한 계약":
+            case "등가교환":
+            case "뒤통수":
+                if (FriendCount > 0) return true;
+                else return false;
+
+            case "최후의 저항":
+                if (RandomDeadObject() != null) return true;
+                else return false;
+
+            case "이름미정_1":
+            case "이름미정_3":
+            case "복권 구매":
+                if (StaticManager.Instance.Gold > 100) return true;
+                else return false;
+
+            case "이름미정_2":
+                if (StaticManager.Instance.Gold > 100 && RandomDeadFriend() != null) return true;
+                else return false;
+
+            default: return true;
+        }
+    }
+    private void Event(string name)
+    {
+        switch (name)
+        {
+            case "거울":
+                StartCoroutine(Event_16());
                 break;
 
-
-            // 체력 조정 (부활&제거 포함)
-            case 11:
-                // 사망 유닛 중 하나 랜덤 블록에 부활
-                StartCoroutine(Event_11());
+            case "최후의 저항":
+                StartCoroutine(Revive(RandomDeadObject()));
                 break;
-            case 12:
-                // 동료 1명 적 1명 제거
+
+            case "등가교환":
                 RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
                 RandomObejectOfPEnemy().OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
-            case 13:
-                // 모든 유닛의 현재 체력을 최대 체력의 N% 만큼 회복
-                foreach (Object o in AllObject) o.OnHit(StatusEffect.HP_PERCENT, -10);
-                break;
-            case 14:
-                // 모든 유닛의 현재 체력을 최대 체력의 N% 만큼 감소
-                foreach (Object o in AllObject) o.OnHit(StatusEffect.HP_PERCENT, 10);
-                break;
-            case 15:
-                // 몬스터 수만큼 모든 유닛의 현재 체력을 최대 체력의 N%만큼 감소
-                foreach (Object o in AllObject) o.OnHit(StatusEffect.HP_PERCENT, EnemyCount);
-                break;
-            case 17:
-                // 색 선택 후 그 색의 위에 있는 모든 유닛의 현재 체력을 최대 체력의 N%만큼 회복
-                int randomColor = Random.Range(0, 6);
-                foreach(Object o in AllObject)
-                {
-                    if (o.touchCube.RelativeColor.ToInt() == randomColor)
-                        o.OnHit(StatusEffect.HP_PERCENT, -10);
-                }
-                break;
-            case 23:
-                // 랜덤 동료 1 제거 플레이어의 현재 체력을 제거된 동료의 현재 체력의 N%만큼 회복
-                float friendHP = RandomObejectOfPlayerTeam(false).HP;
-                StageManager.Instance.Player.OnHit(StatusEffect.HP, -(int)friendHP * 10 / 100);
+
+            case "잔혹한 계약":
+                Object friendObj = RandomObejectOfPlayerTeam(false);
+                StageManager.Instance.Player.OnHit(StatusEffect.HP, friendObj.HP * 50 / 100);
+                friendObj.OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
 
+            case "선악과":
+                ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 1);
+                break;
 
-            // 예외
-            case 0:
-                // 큐브 n번 회전
+            case "괴뢰":
+                ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 2);
                 break;
-            case 8:
-                // 선악과 소환
+
+            case "너 죽고 나 죽자":
+                foreach(Object obj in ObjectList(Colors.RED))
+                    obj.OnHit(StatusEffect.HP_PERCENT, 50);
                 break;
-            case 9:
-                // 괴뢰 소환
+
+            case "축복의 땅":
+                foreach (Object obj in ObjectList(Colors.RED))
+                    obj.OnHit(StatusEffect.HP_PERCENT, -50);
                 break;
-            case 10:
-                // 정반대에 플레이어(용병) 생성
+
+            case "피의 각성":
+                colorEffect.Add(StatusEffect.POWERFUL);
+                colorEffect.Add(StatusEffect.CURSE);
                 break;
-            case 16:
-                // 플레이어와 정반대의 오브젝트 변경(거울)
-                StartCoroutine(Event_16());
+
+            case "비폭력주의":
+                colorEffect.Add(StatusEffect.SLIENCE);
                 break;
-            case 24:
-                // 플레이어와 같은 면에 있는 몬스터 1명을 N% 확률로 회유 -> 성공 시 몬스터가 용병 / 실패 시 현재 체력을 최대 체력의 N% 만큼 감소
+
+            case "공격태세":
+                colorEffect.Add(StatusEffect.POWERFUL);
                 break;
+
+            case "낙인":
+                colorEffect.Add(StatusEffect.WEAKEN);
+                break;
+
+            case "회피의 달인":
+                colorEffect.Add(StatusEffect.INVINCIBILITY);
+                break;
+
+            case "땅 파면 오백원 나오나?":
+                StaticManager.Instance.Gold += 500;
+                break;
+
+            case "이름미정_1":
+                StaticManager.Instance.Gold -= 100;
+                RandomObejectOfPEnemy().OnHit(StatusEffect.HP_PERCENT, 100);
+                break;
+
+            case "이름미정_2":
+                StaticManager.Instance.Gold -= 100;
+                StartCoroutine(Revive(RandomDeadFriend()));
+                break;
+
+            case "복권 구매":
+                StaticManager.Instance.Gold -= 100;
+                StaticManager.Instance.Gold += Random.Range(50, 200);
+                break;
+
+            case "이름미정_4":
+                StaticManager.Instance.Gold += 100;
+                StartCoroutine(Revive(RandomDeadEnemy()));
+                break;
+
+            case "뒤통수":
+                StaticManager.Instance.Gold += 100;
+                RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
+                break;
+
+            case "이름미정_5":
+                StageManager.Instance.SetStageTextValue(StageText.ROTATE, 5);
+                break;
+
+            case "이름미정_6":
+                StageManager.Instance.SetStageTextValue(StageText.ROTATE_INIT, 5);
+                break;
+
+            case "이름미정_7":
+                StageManager.Instance.SetStageTextValue(StageText.WEAPON_CHANGE, 5);
+                break;
+
+            case "이름미정_8":
+                StageManager.Instance.SetStageTextValue(StageText.MOVE, 5);
+                break;
+
+            case "이름미정_9":
+                StageManager.Instance.SetStageTextValue(StageText.MOVE_INIT, 5);
+                break;
+
+            case "이름미정_10":
+                foreach (GameObject obj in StageManager.Instance.TreasureList)
+                    if (obj.GetComponent<Object>().touchCube.RelativeColor == Effect.color)
+                        StageManager.Instance.StagePlayLogic.Trigger(obj);
+                break;
+
+            default: Debug.Log(name); break;
         }
     }
 
-    private IEnumerator Event_11()
+    private IEnumerator Revive(Object obj)
     {
-        int deadFriendCount = 0;
-        foreach(GameObject obj in StageManager.Instance.FriendList)
-            if (obj != null && !obj.activeSelf) deadFriendCount++;
-
-        int deadEnemyCount = 0;
-        foreach (GameObject obj in StageManager.Instance.EnemyList)
-            if (!obj.activeSelf) deadEnemyCount++;
-
-        if (deadFriendCount == 0 && deadEnemyCount == 0) yield break;
-
-        bool reviveFriend = false;
-        if (deadFriendCount > 0 && deadEnemyCount > 0)
-        {
-            int random = Random.Range(0, 100);
-            if (random < 50) reviveFriend = true;
-        }
-        else if (deadFriendCount > 0) reviveFriend = true;
-
-        Object revive = null;
-
-        if (reviveFriend)
-        {
-            int random = Random.Range(0, deadFriendCount);
-
-            foreach (GameObject obj in StageManager.Instance.FriendList)
-            {
-                if (obj != null && !obj.activeSelf)
-                {
-                    if (random > 0) { random--; continue; }
-
-                    revive = obj.GetComponent<Object>(); break;
-                }
-            }
-        }
-        else
-        {
-            int random = Random.Range(0, deadEnemyCount);
-
-            foreach (GameObject obj in StageManager.Instance.EnemyList)
-            {
-                if (!obj.activeSelf)
-                {
-                    if (random > 0) { random--; continue; }
-
-                    revive = obj.GetComponent<Object>(); break;
-                }
-            }
-        }
-
         Touch cube;
         while (true)
         {
@@ -200,16 +281,15 @@ public class EventManager : MonoBehaviour
         StageManager.Instance.CubeRotate(cube.Color);
         yield return new WaitForSeconds(1f);
 
-        revive.gameObject.SetActive(true);
+        obj.gameObject.SetActive(true);
 
-        ColorCheckManager.Instance.CharacterSelect(revive.gameObject);
+        ColorCheckManager.Instance.CharacterSelect(obj.gameObject);
         StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(cube.Color, cube.Index));
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
 
-        revive.OnHit(StatusEffect.HP_PERCENT, -100);
-        revive.eventEffect.Init();
+        obj.OnHit(StatusEffect.HP_PERCENT, -100);
 
-        Debug.Log($"{revive} : {revive.HP} / Touch: {cube.Color} {cube.Index}");
+        Debug.Log($"{obj} : {obj.HP} / Touch: {cube.Color} {cube.Index}");
     }
     private IEnumerator Event_16()
     {
@@ -231,11 +311,83 @@ public class EventManager : MonoBehaviour
     }
 
     // ========== 편의를 위해 만든 함수 ========== //
-    private EventEffect PlayerEventEffect
+    public List<Object> ObjectList(Colors color)
     {
-        get => StageManager.Instance.Player.eventEffect;
+        List<Object> output = new();
+
+        if (StageManager.Instance.Player.touchCube.RelativeColor == color)
+            output.Add(StageManager.Instance.Player);
+
+        foreach(GameObject f in StageManager.Instance.FriendList)
+        {
+            if (f == null || !f.activeSelf) continue;
+
+            Object friendObject = f.GetComponent<Object>();
+            if (friendObject.touchCube.RelativeColor == color) output.Add(friendObject);
+        }
+
+        foreach (GameObject e in StageManager.Instance.EnemyList)
+        {
+            if (e == null || !e.activeSelf) continue;
+
+            Object enemyObject = e.GetComponent<Object>();
+            if (enemyObject.touchCube.RelativeColor == color) output.Add(enemyObject);
+        }
+
+        return output;
     }
-    private int FreindCount
+    private Object RandomDeadObject()
+    {
+        if (RandomDeadFriend() == null && RandomDeadEnemy() == null) return null;
+        else if (RandomDeadFriend() == null) return RandomDeadEnemy();
+        else if (RandomDeadEnemy() == null) return RandomDeadFriend();
+
+        int random = Random.Range(0, 100);
+
+        if (random < 50) return RandomDeadFriend();
+        else return RandomDeadEnemy();
+    }
+    private Object RandomDeadFriend()
+    {
+        int deadFriendCount = 0;
+        foreach (GameObject obj in StageManager.Instance.FriendList)
+            if (obj != null && !obj.activeSelf) deadFriendCount++;
+
+        if (deadFriendCount == 0) return null;
+
+        int random = Random.Range(0, deadFriendCount);
+        foreach (GameObject obj in StageManager.Instance.FriendList)
+        {
+            if (obj != null && !obj.activeSelf)
+            {
+                if (random > 0) { random--; continue; }
+
+                return obj.GetComponent<Object>();
+            }
+        }
+        return null;
+    }
+    private Object RandomDeadEnemy()
+    {
+        int deadEnemyCount = 0;
+        foreach (GameObject obj in StageManager.Instance.EnemyList)
+            if (!obj.activeSelf) deadEnemyCount++;
+
+        if (deadEnemyCount == 0) return null;
+
+        int random = Random.Range(0, deadEnemyCount);
+        foreach (GameObject obj in StageManager.Instance.EnemyList)
+        {
+            if (obj != null && !obj.activeSelf)
+            {
+                if (random > 0) { random--; continue; }
+
+                return obj.GetComponent<Object>();
+            }
+        }
+        return null;
+    }
+    private int FriendCount
     {
         get
         {
@@ -262,19 +414,11 @@ public class EventManager : MonoBehaviour
             return count;
         }
     }
-    private EventEffect GetFriendEventEffect(int index)
-    {
-        return StageManager.Instance.FriendList[index].GetComponent<Object>().eventEffect;
-    }
-    private EventEffect GetEnemyEventEffect(int index)
-    {
-        return StageManager.Instance.EnemyList[index].GetComponent<Object>().eventEffect;
-    }
     private Object RandomObejectOfPlayerTeam(bool includePlayer)
     {
-        if (FreindCount == 0 && !includePlayer) return null;
+        if (FriendCount == 0 && !includePlayer) return null;
 
-        int count = FreindCount;
+        int count = FriendCount;
         if (includePlayer) count++;
 
         int random = Random.Range(0, count);
@@ -318,12 +462,11 @@ public class EventManager : MonoBehaviour
 
         return null;
     }
-    
     private Object[] AllObject
     {
         get
         {
-            Object[] allObject = new Object[1 + FreindCount + EnemyCount];
+            Object[] allObject = new Object[1 + FriendCount + EnemyCount];
 
             int index = 0;
 
@@ -381,10 +524,9 @@ public class EventManager : MonoBehaviour
 
         return output;
     }
-
     private Touch InverseCube(Touch cube)
     {
-        int color = -1;
+        int color;
         switch (cube.Color.ToInt())
         {
             case WHITE: color = YELLOW; break;
@@ -398,5 +540,67 @@ public class EventManager : MonoBehaviour
         }
 
         return StageCube.Instance.touchArray[color][cube.Index];
+    }
+}
+
+[System.Serializable]
+public class ColorEffect
+{
+    public Colors color;
+    private bool[] statusEffects = new bool[6] { false, false, false, false, false, false};
+
+    public ColorEffect(Colors color)
+    {
+        this.color = color;
+    }
+    public void Add(StatusEffect effect)
+    {
+        statusEffects[Int(effect)] = true;
+    }
+    public int Dealt(Object obj)
+    {
+        if (obj.touchCube.RelativeColor != color) return 1;
+
+        if (statusEffects[Int(StatusEffect.SLIENCE)]) return 0;
+        else if (statusEffects[Int(StatusEffect.POWERFUL)]) return 2;
+        else return 1;
+    }
+
+    public float Received(Object obj)
+    {
+        if (obj.touchCube.RelativeColor != color) return 1;
+
+        if (statusEffects[Int(StatusEffect.INVINCIBILITY)]) return 0;
+        else if (statusEffects[Int(StatusEffect.WEAKEN)]) return 2;
+        else return 1;
+    }
+
+    public void Effect()
+    {
+        if (statusEffects[Int(StatusEffect.BLESS)])
+        {
+            foreach (Object obj in EventManager.Instance.ObjectList(color))
+                obj.OnHit(StatusEffect.HP_PERCENT, -10);
+        }
+        else if (statusEffects[Int(StatusEffect.CURSE)])
+        {
+            foreach (Object obj in EventManager.Instance.ObjectList(color))
+                obj.OnHit(StatusEffect.HP_PERCENT, 10);
+        }
+    }
+
+    public int Int(StatusEffect effect)
+    {
+        switch (effect)
+        {
+            case StatusEffect.SLIENCE: return 0; // 침묵
+            case StatusEffect.POWERFUL: return 1; // 강화
+            case StatusEffect.INVINCIBILITY: return 2; // 무적
+            case StatusEffect.WEAKEN: return 3; // 취약
+            case StatusEffect.BLESS: return 4; // 축복
+            case StatusEffect.CURSE: return 5; // 저주
+
+            default: return -1; // ALL
+        }
     }
 }

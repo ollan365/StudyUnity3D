@@ -48,4 +48,59 @@ public class StageCube : MonoBehaviour
             Destroy(gameObject);
     }
 
+    public bool[] Cross(int index)
+    {
+        bool[] array = new bool[9];
+
+        for (int i = 0; i < array.Length; i++)
+            array[i] = false;
+
+        switch (index)
+        {
+            case 0:
+                array[1] = true;
+                array[3] = true;
+                break;
+            case 1:
+                array[0] = true;
+                array[2] = true;
+                array[4] = true;
+                break;
+            case 2:
+                array[1] = true;
+                array[5] = true;
+                break;
+            case 3:
+                array[0] = true;
+                array[4] = true;
+                array[6] = true;
+                break;
+            case 4:
+                array[1] = true;
+                array[3] = true;
+                array[5] = true;
+                array[7] = true;
+                break;
+            case 5:
+                array[2] = true;
+                array[4] = true;
+                array[8] = true;
+                break;
+            case 6:
+                array[3] = true;
+                array[7] = true;
+                break;
+            case 7:
+                array[4] = true;
+                array[6] = true;
+                array[8] = true;
+                break;
+            case 8:
+                array[5] = true;
+                array[7] = true;
+                break;
+        }
+
+        return array;
+    }
 }
