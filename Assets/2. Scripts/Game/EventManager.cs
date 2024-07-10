@@ -321,11 +321,13 @@ public class EventManager : MonoBehaviour
             ColorCheckManager.Instance.CharacterSelect(inverseTouch.Obj.gameObject);
             StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(objInverseTouch.Color, objInverseTouch.Index));
             ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+            inverseTouch.Obj.transform.eulerAngles = Vector3.zero;
         }
 
         ColorCheckManager.Instance.CharacterSelect(StageManager.Instance.Player.gameObject);
         StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(inverseTouch.Color, inverseTouch.Index));
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+        StageManager.Instance.Player.transform.eulerAngles = Vector3.zero;
 
         yield return null;
     }
