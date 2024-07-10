@@ -124,7 +124,7 @@ public class FightLogic : MonoBehaviour
             }
 
         }
-
+        StageManager.Instance.CheckStageClear();
         //딜교가 종료되면, 일정시간 기다렸다가 ENV 턴으로 넘어간다.
         yield return new WaitForSeconds(2.0f);
         // statge statue를 바꾼다

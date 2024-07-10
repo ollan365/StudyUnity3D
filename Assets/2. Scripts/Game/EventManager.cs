@@ -10,7 +10,7 @@ public class EventManager : MonoBehaviour
     [SerializeField] private GameObject eventPanel;
     [SerializeField] private Button[] eventButtons;
     [SerializeField] private EventCard[] eventCards;
-    private BingoStatus[] bingoStatus;
+    [SerializeField] private BingoStatus[] bingoStatus;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
     public ColorEffect Effect { get => colorEffect; }
     private Colors[][] bingoCheck;
@@ -50,15 +50,19 @@ public class EventManager : MonoBehaviour
     private void BingoMark()
     {
         // ºù°í Á¶°Ç
-        List<int>[] list = new List<int>[7]
+        for (int i = 0; i < 6; i++)
+        {
+            for (int j = 0; j < 9; j++) bingoCheck[i][j] = Colors.NULL;
+        }
+
+        List<int>[] list = new List<int>[6]
         {
                 new () {0,1,2 },
                 new () {3,4,5 },
                 new () {6,7,8 },
                 new () {0,3,6 },
                 new () {1,4,7 },
-                new () {2,5,8 },
-                new () {0,1,2,3,4,5,6,7,8 }
+                new () {2,5,8 }
         };
 
         for (int i = 0; i < 6; i++)
@@ -71,8 +75,7 @@ public class EventManager : MonoBehaviour
                 colorOfSide[j] = StageCube.Instance.touchArray[i][j].RelativeColor.ToInt();
             }
 
-
-            for(int j = 0; j < 7; j++)
+            for(int j = 0; j < 6; j++)
             {
                 int color = colorOfSide[list[j][0]];
                 bool bingo = true;
@@ -82,11 +85,11 @@ public class EventManager : MonoBehaviour
                 }
                 if (bingo)
                 {
-                    Debug.Log($"¸é: {i.ToColor()} / ºù°í»ö: {color.ToColor()}");
-
                     bingoNum[color]++;
 
                     if (bingoStatus[color] != BingoStatus.NONE) continue;
+
+                    Debug.Log($"¸é: {i.ToColor()} / ºù°í»ö: {color.ToColor()}");
 
                     for (int k = 0; k < list[j].Count; k++)
                     {
@@ -318,11 +321,13 @@ public class EventManager : MonoBehaviour
             ColorCheckManager.Instance.CharacterSelect(inverseTouch.Obj.gameObject);
             StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(objInverseTouch.Color, objInverseTouch.Index));
             ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+            inverseTouch.Obj.transform.eulerAngles = Vector3.zero;
         }
 
         ColorCheckManager.Instance.CharacterSelect(StageManager.Instance.Player.gameObject);
         StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(inverseTouch.Color, inverseTouch.Index));
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+        StageManager.Instance.Player.transform.eulerAngles = Vector3.zero;
 
         yield return null;
     }
