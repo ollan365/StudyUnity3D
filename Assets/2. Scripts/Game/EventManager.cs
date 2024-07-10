@@ -7,10 +7,11 @@ using static Constants;
 public class EventManager : MonoBehaviour
 {
     public static EventManager Instance { get; private set; }
+    [SerializeField] private GameObject eventPanel;
     [SerializeField] private Button[] eventButtons;
     [SerializeField] private EventCard[] eventCards;
     private BingoStatus[] bingoStatus;
-    private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
+    [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
     public ColorEffect Effect { get => colorEffect; }
 
     private void Awake()
@@ -23,9 +24,18 @@ public class EventManager : MonoBehaviour
     }
     public int BingoCheck()
     {
+        // 플레이어나 동료가 있는 면만 확인
+        bool[] playerTeam = new bool[6] { false, false, false, false, false, false };
+        playerTeam[StageManager.Instance.Player.Color.ToInt()] = true;
+        foreach (GameObject f in StageManager.Instance.FriendList)
+            if (f != null && f.activeSelf)
+                playerTeam[f.GetComponent<Object>().Color.ToInt()] = true;
+
         int[][] bingoNums = new int[6][];
         for (int i = 0; i < 6; i++)
         {
+            if (!playerTeam[i]) continue; // 플레이어팀이 있는 면만 확인
+
             int[] colorOfSide = new int[9];
             int[] bingoNum = new int[6];
 
@@ -49,14 +59,7 @@ public class EventManager : MonoBehaviour
                 bingoNum[colorOfSide[2]]++;
 
             bingoNums[i] = bingoNum;
-
         }
-
-        bool[] playerTeam = new bool[6] { false, false, false, false, false, false };
-        playerTeam[StageManager.Instance.Player.Color.ToInt()] = true;
-        foreach (GameObject f in StageManager.Instance.FriendList)
-            if (f != null && f.activeSelf)
-                playerTeam[f.GetComponent<Object>().Color.ToInt()] = true;
 
         for (int j = 0; j < 6; j++) // 각각의 색
         {
@@ -67,12 +70,12 @@ public class EventManager : MonoBehaviour
                 if (bingoNums[i][j] == 6 && bingoStatus[j] != BingoStatus.ALL)
                 {
                     bingoStatus[j] = BingoStatus.ALL;
-                    Bingo(i, BingoStatus.ALL);
+                    Bingo(j, BingoStatus.ALL);
                 }
                 else if (bingoNums[i][j] > 0 & bingoStatus[j] == BingoStatus.NONE)
                 {
                     bingoStatus[j] = BingoStatus.ONE;
-                    Bingo(i, BingoStatus.ONE);
+                    Bingo(j, BingoStatus.ONE);
                 }
             }
         }
@@ -82,17 +85,16 @@ public class EventManager : MonoBehaviour
 
     public void Bingo(int color, BingoStatus bingo)
     {
-        // 이벤트 창 띄우기 필요
-
+        eventPanel.SetActive(true);
         colorEffect = new ColorEffect(color.ToColor());
-        EventAdd(color);
+        EventAdd();
     }
     public void StageEnd()
     {
         // 선악과 괴뢰 소멸
         // 상태 이상 초기화
     }
-    private void EventAdd(int color)
+    private void EventAdd()
     {
         foreach (Button b in eventButtons) b.onClick.RemoveAllListeners();
 
@@ -100,18 +102,22 @@ public class EventManager : MonoBehaviour
 
         foreach(EventCard card in eventCards)
         {
-            foreach(Colors c in card.colors)
+            foreach(Colors c in card.eventColors)
             {
-                if (c == color.ToColor() && CheckEvent(card.name)) eventList.Add(card);
+                if (c == colorEffect.color && CheckEvent(card.eventName)) eventList.Add(card);
             }
         }
 
         int random_1 = Random.Range(0, eventList.Count);
         int random_2 = random_1;
-        while (random_1 == random_2) random_2 = Random.Range(0, eventList.Count);
+        while (eventList.Count > 1 && random_1 == random_2) random_2 = Random.Range(0, eventList.Count);
 
-        eventButtons[0].onClick.AddListener(() => Event(eventList[random_1].name));
-        eventButtons[1].onClick.AddListener(() => Event(eventList[random_2].name));
+        eventButtons[0].onClick.AddListener(() => Event(eventList[random_1].eventName));
+        eventButtons[1].onClick.AddListener(() => Event(eventList[random_2].eventName));
+        foreach (Button b in eventButtons) b.onClick.AddListener(() => eventPanel.SetActive(false));
+
+        eventButtons[0].GetComponentInChildren<Text>().text = eventList[random_1].eventName;
+        eventButtons[1].GetComponentInChildren<Text>().text = eventList[random_2].eventName;
     }
     private bool CheckEvent(string name)
     {
@@ -251,6 +257,14 @@ public class EventManager : MonoBehaviour
             case "이름미정_9":
                 StageManager.Instance.SetStageTextValue(StageText.MOVE_INIT, 5);
                 break;
+
+            case "이름미정_10":
+                foreach (GameObject obj in StageManager.Instance.TreasureList)
+                    if (obj.GetComponent<Object>().touchCube.RelativeColor == Effect.color)
+                        StageManager.Instance.StagePlayLogic.Trigger(obj);
+                break;
+
+            default: Debug.Log(name); break;
         }
     }
 
@@ -512,7 +526,7 @@ public class EventManager : MonoBehaviour
     }
     private Touch InverseCube(Touch cube)
     {
-        int color = -1;
+        int color;
         switch (cube.Color.ToInt())
         {
             case WHITE: color = YELLOW; break;
@@ -529,9 +543,10 @@ public class EventManager : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public class ColorEffect
 {
-    private Colors color;
+    public Colors color;
     private bool[] statusEffects = new bool[6] { false, false, false, false, false, false};
 
     public ColorEffect(Colors color)
