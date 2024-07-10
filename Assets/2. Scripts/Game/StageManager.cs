@@ -125,8 +125,8 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.MONSTER.ToInt()] = 0;
         foreach (GameObject e in enemy)
         {
-            if(e.activeSelf)
-                stageTextValues[StageText.MONSTER.ToInt()]++;
+            if (e.GetComponent<Object>().HP > 0) continue;
+            stageTextValues[StageText.MONSTER.ToInt()]++;
         }
             
         stageTexts[2].text = $"{stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
@@ -211,6 +211,8 @@ public class StageManager : MonoBehaviour
     public void CheckStageClear()
     {
         if (stageTextValues[StageText.MONSTER.ToInt()] > 0) return;
+
+        Debug.Log("clear");
 
         // 스테이지를 클리어한 경우
         fightLogic.StopAllCoroutines();
