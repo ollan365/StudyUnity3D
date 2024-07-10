@@ -70,16 +70,6 @@ public class Touch : MonoBehaviour
 
         return -1;
     }
-    public void DrawRay() // ªË¡¶ «ÿµµ µ 
-    {
-        Vector3[] direction = new Vector3[4] { transform.forward, -transform.forward, transform.right, -transform.right };
-        Color[] color = new Color[4] { UnityEngine.Color.red, UnityEngine.Color.yellow, UnityEngine.Color.green, UnityEngine.Color.blue };
-        for (int i = 0; i < 4; i++)
-        {
-            Ray ray = new Ray(transform.position, direction[i]);
-            Debug.DrawRay(ray.origin, ray.direction, color[i], 5f);
-        }
-    }
 
     private void OnTriggerEnter(Collider other)
     {

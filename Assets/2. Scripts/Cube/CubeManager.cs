@@ -86,24 +86,11 @@ public class CubeManager : MonoBehaviour
                 Touch script = hit.collider.gameObject.GetComponent<Touch>();
                 if (script != null) // 클릭된 객체들 중 Touch 컴포넌트를 가진 객체가 있으면
                 {
-                    script.DrawRay();
                     MouseStart(script);
                     break;
                 }
             }
         }
-
-        // 추가 중
-        //if (Input.GetMouseButton(0) && StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END)
-        //{
-        //    if (mouseStartTouchCube != null)
-        //    {
-        //        value = Vector3.Distance(Input.mousePosition, startPosition) / 2000;
-        //        Debug.Log($"{value}");
-        //        int index = mouseStartTouchCube.Direction(startPosition);
-        //        Turn(mouseStartTouchCube.TouchColors[index], mouseStartTouchCube.TouchInts[index], false);
-        //    }
-        //}
 
         if (Input.GetMouseButtonUp(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
         {

@@ -13,6 +13,7 @@ public class EventManager : MonoBehaviour
     private BingoStatus[] bingoStatus;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
     public ColorEffect Effect { get => colorEffect; }
+    private Colors[][] bingoCheck;
 
     private void Awake()
     {
@@ -21,74 +22,90 @@ public class EventManager : MonoBehaviour
 
         bingoStatus = new BingoStatus[6];
         for (int i = 0; i < 6; i++) bingoStatus[i] = BingoStatus.NONE;
-    }
-    public int BingoCheck()
-    {
-        // 플레이어나 동료가 있는 면만 확인
-        bool[] playerTeam = new bool[6] { false, false, false, false, false, false };
-        playerTeam[StageManager.Instance.Player.Color.ToInt()] = true;
-        foreach (GameObject f in StageManager.Instance.FriendList)
-            if (f != null && f.activeSelf)
-                playerTeam[f.GetComponent<Object>().Color.ToInt()] = true;
 
-        int[][] bingoNums = new int[6][];
+        bingoCheck = new Colors[6][];
         for (int i = 0; i < 6; i++)
         {
-            if (!playerTeam[i]) continue; // 플레이어팀이 있는 면만 확인
+            bingoCheck[i] = new Colors[9];
+            for (int j = 0; j < 9; j++) bingoCheck[i][j] = Colors.NULL;
+        }
+    }
 
+    public void BingoCheck()
+    {
+        BingoMark();
+
+        Touch cube = StageManager.Instance.Player.touchCube;
+        Colors color = bingoCheck[cube.Color.ToInt()][cube.Index];
+
+        if (color == Colors.NULL) return;
+
+        if (color == Colors.WY) bingoStatus[cube.RelativeColor.ToInt()] = BingoStatus.ALL;
+        else if (color != Colors.WY) bingoStatus[color.ToInt()] = BingoStatus.ONE;
+
+        eventPanel.SetActive(true);
+        colorEffect = new ColorEffect(color);
+        EventAdd();
+    }
+    private void BingoMark()
+    {
+        // 빙고 조건
+        List<int>[] list = new List<int>[7]
+        {
+                new () {0,1,2 },
+                new () {3,4,5 },
+                new () {6,7,8 },
+                new () {0,3,6 },
+                new () {1,4,7 },
+                new () {2,5,8 },
+                new () {0,1,2,3,4,5,6,7,8 }
+        };
+
+        for (int i = 0; i < 6; i++)
+        {
+            int[] bingoNum = new int[6] { 0, 0, 0, 0, 0, 0 };
             int[] colorOfSide = new int[9];
-            int[] bingoNum = new int[6];
 
             for (int j = 0; j < 9; j++)
             {
                 colorOfSide[j] = StageCube.Instance.touchArray[i][j].RelativeColor.ToInt();
-                bingoNum[j % 6] = 0; // %는 그냥 배열 크기가 6이라 에러 안 나도록 해둔거
             }
 
-            if (colorOfSide[0] == colorOfSide[1] && colorOfSide[1] == colorOfSide[2])
-                bingoNum[colorOfSide[0]]++;
-            if (colorOfSide[3] == colorOfSide[4] && colorOfSide[4] == colorOfSide[5])
-                bingoNum[colorOfSide[3]]++;
-            if (colorOfSide[6] == colorOfSide[7] && colorOfSide[7] == colorOfSide[8])
-                bingoNum[colorOfSide[6]]++;
-            if (colorOfSide[0] == colorOfSide[3] && colorOfSide[3] == colorOfSide[6])
-                bingoNum[colorOfSide[0]]++;
-            if (colorOfSide[1] == colorOfSide[4] && colorOfSide[4] == colorOfSide[7])
-                bingoNum[colorOfSide[1]]++;
-            if (colorOfSide[2] == colorOfSide[5] && colorOfSide[5] == colorOfSide[8])
-                bingoNum[colorOfSide[2]]++;
 
-            bingoNums[i] = bingoNum;
-        }
-
-        for (int j = 0; j < 6; j++) // 각각의 색
-        {
-            for (int i = 0; i < 6; i++) // 각각의 면
+            for(int j = 0; j < 7; j++)
             {
-                if (!playerTeam[i]) continue;
-
-                if (bingoNums[i][j] == 6 && bingoStatus[j] != BingoStatus.ALL)
+                int color = colorOfSide[list[j][0]];
+                bool bingo = true;
+                for(int k= 0; k < list[j].Count; k++)
                 {
-                    bingoStatus[j] = BingoStatus.ALL;
-                    Bingo(j, BingoStatus.ALL);
+                    if (color != colorOfSide[list[j][k]]) bingo = false;
                 }
-                else if (bingoNums[i][j] > 0 & bingoStatus[j] == BingoStatus.NONE)
+                if (bingo)
                 {
-                    bingoStatus[j] = BingoStatus.ONE;
-                    Bingo(j, BingoStatus.ONE);
+                    Debug.Log($"면: {i.ToColor()} / 빙고색: {color.ToColor()}");
+
+                    bingoNum[color]++;
+
+                    if (bingoStatus[color] != BingoStatus.NONE) continue;
+
+                    for (int k = 0; k < list[j].Count; k++)
+                    {
+                        bingoCheck[i][list[j][k]] = color.ToColor();
+                    }
+                }
+            }
+
+            // 한면 빙고가 있는지 확인
+            for (int j = 0; j < 6; j++)
+            {
+                if (bingoNum[j] == 6 && bingoStatus[j] != BingoStatus.ALL)
+                {
+                    for (int k = 0; k < 9; k++) bingoCheck[i][k] = Colors.WY;
                 }
             }
         }
-
-        return 0;
     }
 
-    public void Bingo(int color, BingoStatus bingo)
-    {
-        eventPanel.SetActive(true);
-        colorEffect = new ColorEffect(color.ToColor());
-        EventAdd();
-    }
     public void StageEnd()
     {
         // 선악과 괴뢰 소멸
