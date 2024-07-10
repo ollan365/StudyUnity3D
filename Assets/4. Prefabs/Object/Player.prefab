@@ -124,7 +124,7 @@ MonoBehaviour:
   objectManager: {fileID: 0}
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 87716061585014867}
-  goldText: {fileID: 6621551295297145703}
+  popTextObj: {fileID: 6621551295297145703}
   id: 0
   objName: 
   minDamage: 0
@@ -341,6 +341,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8227914666799126371}
     m_Modifications:
+    - target: {fileID: 3576239282452624806, guid: bbc2d5598ba482e459088253fec41676, type: 3}
+      propertyPath: m_FontData.m_AlignByGeometry
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4470351780793839470, guid: bbc2d5598ba482e459088253fec41676, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5572723562541749126, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0

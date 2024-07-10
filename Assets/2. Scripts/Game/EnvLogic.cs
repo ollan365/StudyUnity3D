@@ -26,7 +26,7 @@ public class EnvLogic : MonoBehaviour
                     {
                         
 
-                        Debug.Log("이동하는 놈 " + e);
+                        //Debug.Log("이동하는 놈 " + e);
 
                         StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
                         yield return new WaitForSeconds(1f); // CubeRotate에 걸리는 시간

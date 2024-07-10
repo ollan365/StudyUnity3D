@@ -145,6 +145,9 @@ public class FightLogic : MonoBehaviour
             }
 
         }
+
+        //딜교가 종료되면, 일정시간 기다렸다가 ENV 턴으로 넘어간다.
+        yield return new WaitForSeconds(2.0f);
         // statge statue를 바꾼다
         StageManager.Instance.ChangeStatus();
     }
@@ -152,12 +155,12 @@ public class FightLogic : MonoBehaviour
     private void LookAt(GameObject src, GameObject dst)
     {
         Vector3 direc = src.transform.position - dst.transform.position;
-        Debug.Log("src: " + src + " " + src.transform.position);
-        Debug.Log("dst: " + dst + " " + dst.transform.position);
-        Debug.Log(direc.normalized);
+        //Debug.Log("src: " + src + " " + src.transform.position);
+        //Debug.Log("dst: " + dst + " " + dst.transform.position);
+        //Debug.Log(direc.normalized);
         
         Quaternion rot = Quaternion.LookRotation(direc);
-        Debug.Log(rot.eulerAngles);
+        //Debug.Log(rot.eulerAngles);
         
         src.transform.rotation = rot;
     }
