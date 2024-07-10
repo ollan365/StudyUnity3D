@@ -38,15 +38,27 @@ public class ObjectManager : MonoBehaviour
     public bool isShopChanged = false;
 
     [Header("Enemy Info UI")]
+    [SerializeField] private GameObject enemyInfoPanel;
+    [SerializeField] private Image enemyInfoImage;
+    [SerializeField] private Sprite[] enemyInfoImages;
+    [SerializeField] private Text enemyInfoName;
+    [SerializeField] private Slider enemyInfoHPslider;
+    [SerializeField] private Text enemyInfoHPText;
+    [SerializeField] private Text enemyInfoAttackType;
+    [SerializeField] private Text enemyInfoBasicAttack;
+    public GameObject EnemyInfoPanel { get => enemyInfoPanel; }
+
+    [Header("Object Info UI")]
     [SerializeField] private GameObject objectInfoPanel;
-    [SerializeField] private Image info_Image;
-    [SerializeField] private Sprite[] info_images;
-    [SerializeField] private Text info_Name;
-    [SerializeField] private Slider info_HPslider;
-    [SerializeField] private Text info_HPText;
-    [SerializeField] private Text info_AttackType;
-    [SerializeField] private Text info_BasicAttack;
+    [SerializeField] private Image objectInfoImage;
+    [SerializeField] private Sprite[] objectInfoImages;
+    [SerializeField] private Text objectInfoName;
+    [SerializeField] private Slider objectInfoHPslider;
+    [SerializeField] private Text objectInfoHPText;
+    [SerializeField] private Text objectInfoAttackType;
+    [SerializeField] private Text objectInfoBasicAttack;
     public GameObject ObjectInfoPanel { get => objectInfoPanel; }
+
 
     private void Awake()
     {
@@ -78,6 +90,7 @@ public class ObjectManager : MonoBehaviour
                 //newObject.transform.GetChild(objectID - 100000).gameObject.SetActive(true);
 
                 //disable default mesh and activate the mesh that matches the object ID.
+                //
                 newObject.transform.GetChild(1).gameObject.SetActive(false);
                 if (objectID == 100001)
                     newObject.transform.GetChild(1).gameObject.SetActive(true);
@@ -91,10 +104,14 @@ public class ObjectManager : MonoBehaviour
                 value = values[StaticManager.Instance.Stage];
                 if (value == null) return null;
                 newObject = Instantiate(friendPrefab);
+                
+
                 for (int i = 0; i < 3; i++)
                     if (!friendObjectStatus[i].activeSelf)
                     {
                         newObject.GetComponent<Object>().bottomHP = friendHpSlider[i];
+                        friendHpSlider[i].transform.parent.GetComponent<ShowStatus>().targetObject = newObject;
+                        friendHpSlider[i].transform.parent.GetComponent<ShowStatus>().index = i + 1;
                         friendObjectStatus[i].SetActive(true);
                         break;
                     }
@@ -374,51 +391,93 @@ public class ObjectManager : MonoBehaviour
         return;
     }
 
-    public void ObjectInfo(Object obj)
+    public void SetObjectInfo(Object obj, int index = 0)
     {
-        Object clickedObj = obj;
+        Object targetObj = obj;
         //이미지 설정
-        
-        int idx = clickedObj.ID - 100000; //ID 값을 받아 배열의 인덱스로 변환
-        if (idx + 1 > info_images.Length)
-            info_Image.sprite = info_images[0];
-        else
-            info_Image.sprite = info_images[idx];
 
-
-        //텍스트 설정
-        //  이름
-        info_Name.text = clickedObj.name;
-        
-        //  Hpbar
-        info_HPslider.value = clickedObj.HP / clickedObj.MaxHp;
-        info_HPText.text = $"{Mathf.CeilToInt(clickedObj.HP)} / {Mathf.CeilToInt(clickedObj.MaxHp)}";
-
-        //  Attack Type
-        string type = "타입";
-        switch (clickedObj.GetComponent<Object>().AttackType)
+        if (targetObj.Type == ObjectType.PLAYER || targetObj.Type == ObjectType.FRIEND) //플레이어 버튼 가져다대서 호출되는 부분
         {
-            case WeaponType.CAD:
-                type = "근거리";
-                break;
-            case WeaponType.LAD:
-                type = "원거리";
-                break;
-            case WeaponType.NULL:
-                type = "NULL";
-                break;
-            default:
-                Debug.Log("공격타입 없음");
-                break;
+            //int idx = clickedObj.ID - 100000; //ID 값을 받아 배열의 인덱스로 변환
+            //if (idx + 1 > enemyInfoImages.Length)
+            //    enemyInfoImage.sprite = enemyInfoImages[0];
+            //else
+            //    enemyInfoImage.sprite = enemyInfoImages[idx];
+
+            //  이름
+            objectInfoName.text = targetObj.name;
+
+            //  Hpbar
+            objectInfoHPslider.value = targetObj.HP / targetObj.MaxHp;
+            objectInfoHPText.text = $"{Mathf.CeilToInt(targetObj.HP)} / {Mathf.CeilToInt(targetObj.MaxHp)}";
+
+            //  Attack Type
+            string type = "타입";
+            switch (targetObj.GetComponent<Object>().AttackType)
+            {
+                case WeaponType.CAD:
+                    type = "근거리";
+                    break;
+                case WeaponType.LAD:
+                    type = "원거리";
+                    break;
+                case WeaponType.NULL:
+                    type = "NULL";
+                    break;
+                default:
+                    Debug.Log("공격타입 없음");
+                    break;
+            }
+            objectInfoAttackType.text = type;
+
+            //  Basic Attack
+            string basicAttackText = $"{targetObj.MinDamage} ~ {targetObj.MaxDamage}";
+            objectInfoBasicAttack.text = basicAttackText;
+            RectTransform panelTransform = ObjectInfoPanel.GetComponent<RectTransform>();
+            panelTransform.position = new Vector3(index * 155 , 200, 0);
+            Debug.Log("위치");
         }
-        info_AttackType.text = type;
+        else if (targetObj.Type == ObjectType.ENEMY) //적 클릭해서 호출되는 경우
+        {
+            int idx = targetObj.ID - 100000; //ID 값을 받아 배열의 인덱스로 변환
+            if (idx + 1 > enemyInfoImages.Length)
+                enemyInfoImage.sprite = enemyInfoImages[0];
+            else
+                enemyInfoImage.sprite = enemyInfoImages[idx];
 
-        //  Basic Attack
-        string basicAttackText = $"{clickedObj.MinDamage} ~ {clickedObj.MaxDamage}";
-        info_BasicAttack.text = basicAttackText;
+            //  이름
+            enemyInfoName.text = targetObj.name;
 
-        //Set Active = true
-        ObjectInfoPanel.SetActive(true);
+            //  Hpbar
+            enemyInfoHPslider.value = targetObj.HP / targetObj.MaxHp;
+            enemyInfoHPText.text = $"{Mathf.CeilToInt(targetObj.HP)} / {Mathf.CeilToInt(targetObj.MaxHp)}";
+
+            //  Attack Type
+            string type = "타입";
+            switch (targetObj.GetComponent<Object>().AttackType)
+            {
+                case WeaponType.CAD:
+                    type = "근거리";
+                    break;
+                case WeaponType.LAD:
+                    type = "원거리";
+                    break;
+                case WeaponType.NULL:
+                    type = "NULL";
+                    break;
+                default:
+                    Debug.Log("공격타입 없음");
+                    break;
+            }
+            enemyInfoAttackType.text = type;
+
+            //  Basic Attack
+            string basicAttackText = $"{targetObj.MinDamage} ~ {targetObj.MaxDamage}";
+            enemyInfoBasicAttack.text = basicAttackText;
+
+            //Set Active = true
+            EnemyInfoPanel.SetActive(true);
+        }
     }
 
 }
