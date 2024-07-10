@@ -37,19 +37,16 @@ public class ObjectManager : MonoBehaviour
     // 변수
     public bool isShopChanged = false;
 
-    [Header("Object Info UI")]
-    [SerializeField] private GameObject ObjectInfoPanel;
-    [SerializeField] private Image Info_Image;
-    [SerializeField] private Sprite[] Info_images;
-    [SerializeField] private Text Info_Name;
-    [SerializeField] private Slider Info_HPslider;
-    [SerializeField] private Text Info_HPText;
-    [SerializeField] private Text Info_AttackType;
-    [SerializeField] private Text Info_BasicAttack;
-    [SerializeField] private Text Info_Desc;
-
-
-
+    [Header("Enemy Info UI")]
+    [SerializeField] private GameObject objectInfoPanel;
+    [SerializeField] private Image info_Image;
+    [SerializeField] private Sprite[] info_images;
+    [SerializeField] private Text info_Name;
+    [SerializeField] private Slider info_HPslider;
+    [SerializeField] private Text info_HPText;
+    [SerializeField] private Text info_AttackType;
+    [SerializeField] private Text info_BasicAttack;
+    public GameObject ObjectInfoPanel { get => objectInfoPanel; }
 
     private void Awake()
     {
@@ -58,7 +55,7 @@ public class ObjectManager : MonoBehaviour
 
         shopItemSlotArray = new ItemSlot[9];
     }
-    
+
     public GameObject Summons(Touch cube, ObjectType objectType, int objectID)
     {
         if (cube == null)
@@ -381,19 +378,21 @@ public class ObjectManager : MonoBehaviour
     {
         Object clickedObj = obj;
         //이미지 설정
+        
         int idx = clickedObj.ID - 100000; //ID 값을 받아 배열의 인덱스로 변환
-        if (idx + 1 > Info_images.Length)
-            Info_Image.sprite = Info_images[0];
+        if (idx + 1 > info_images.Length)
+            info_Image.sprite = info_images[0];
         else
-            Info_Image.sprite = Info_images[idx];
+            info_Image.sprite = info_images[idx];
+
 
         //텍스트 설정
         //  이름
-        Info_Name.text = clickedObj.name;
+        info_Name.text = clickedObj.name;
         
         //  Hpbar
-        Info_HPslider.value = clickedObj.HP / clickedObj.MaxHp;
-        Info_HPText.text = $"{Mathf.CeilToInt(clickedObj.HP)} / {Mathf.CeilToInt(clickedObj.MaxHp)}";
+        info_HPslider.value = clickedObj.HP / clickedObj.MaxHp;
+        info_HPText.text = $"{Mathf.CeilToInt(clickedObj.HP)} / {Mathf.CeilToInt(clickedObj.MaxHp)}";
 
         //  Attack Type
         string type = "타입";
@@ -405,9 +404,6 @@ public class ObjectManager : MonoBehaviour
             case WeaponType.LAD:
                 type = "원거리";
                 break;
-            case WeaponType.AP:
-                type = "마법";
-                break;
             case WeaponType.NULL:
                 type = "NULL";
                 break;
@@ -415,14 +411,11 @@ public class ObjectManager : MonoBehaviour
                 Debug.Log("공격타입 없음");
                 break;
         }
-        Info_AttackType.text = type;
+        info_AttackType.text = type;
 
         //  Basic Attack
         string basicAttackText = $"{clickedObj.MinDamage} ~ {clickedObj.MaxDamage}";
-        Info_BasicAttack.text = basicAttackText;
-
-        //  Description
-        Info_Desc.text = "일단 준비중입니다.";
+        info_BasicAttack.text = basicAttackText;
 
         //Set Active = true
         ObjectInfoPanel.SetActive(true);
