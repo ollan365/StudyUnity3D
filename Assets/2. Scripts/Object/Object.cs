@@ -120,7 +120,13 @@ public class Object : MonoBehaviour
     //death 기능을 코루틴으로 설정하고, 1초 딜레이 시켜, 데미지 이펙트가 모두 나오고 오브젝트 비활성화
     public IEnumerator Death(float HP, GameObject gameObject)
     {
-        if (type == ObjectType.ENEMY) StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
+        if (type == ObjectType.PLAYER) StageManager.Instance.GameOver();
+        if (type == ObjectType.ENEMY)
+        {
+            StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
+            StageManager.Instance.CheckStageClear();
+        }
+
         yield return new WaitForSeconds(1.0f);
         objectManager.ObjectDie(gameObject);
         gameObject.SetActive(false);

@@ -55,12 +55,6 @@ public class FightLogic : MonoBehaviour
         enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
         friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
 
-        if (enemyAttackOrder.Count <= 0) // 살아있는 enemy가 없으면
-        {
-            StageManager.Instance.ClearStage();
-            yield break;
-        }
-
         // 공격
         int count = enemyAttackOrder.Count > friendAttackOrder.Count ? enemyAttackOrder.Count : friendAttackOrder.Count;
         for (int i = 0; i < count; i++)
@@ -126,13 +120,6 @@ public class FightLogic : MonoBehaviour
                     enemyObj.transform.GetChild(4).gameObject.SetActive(false);
 
                     yield return new WaitForSeconds(0.5f);
-                }
-
-
-                if (!StageManager.Instance.Player.gameObject.activeSelf) // 플레이어가 죽으면 게임 종료
-                {
-                    StageManager.Instance.GameOver();
-                    yield break;
                 }
             }
 

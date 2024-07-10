@@ -457,16 +457,6 @@ public class EventManager : MonoBehaviour
     }
     private Object RandomObejectOfPEnemy()
     {
-        // 게임 오버를 언제 체크할지 고민해보고 변경 후 지우기
-        bool gameOver = true;
-        foreach (GameObject e in StageManager.Instance.EnemyList)
-            if (e.activeSelf) gameOver = false;
-        if (gameOver)
-        {
-            StageManager.Instance.GameOver();
-            return null;
-        }
-
         int random = Random.Range(0, EnemyCount);
         for (int i = 0; i < StageManager.Instance.EnemyList.Length; i++)
         {
