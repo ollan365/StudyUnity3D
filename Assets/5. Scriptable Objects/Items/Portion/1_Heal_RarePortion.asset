@@ -21,6 +21,6 @@ MonoBehaviour:
   spawnMaxStage: 23
   icon: {r: 1, g: 0, b: 0, a: 1}
   description: 
-  statusEffect: 0
+  statusEffect: 1
   value: 0
   healRate: 50

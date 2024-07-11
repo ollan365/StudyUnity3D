@@ -145,6 +145,12 @@ public class StageManager : MonoBehaviour
         int index = 0;
         
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
+        
+        for (int ind = 0; ind < stageEnemy.Count; ind++)
+        {
+            Debug.Log(stageEnemy[ind]);
+        }
+
         for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
         {
             for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
@@ -184,12 +190,13 @@ public class StageManager : MonoBehaviour
         {
             //Debug.Log("fight");
             StatusOfStage = StageStatus.FIGHT;
+            Camera.main.fieldOfView = 60f;
             StartCoroutine(fightLogic.Attack());
         }
         else if (StatusOfStage == StageStatus.FIGHT)
         {
-            StartCoroutine(envLogic.MoveEnemy());
             StatusOfStage = StageStatus.ENV;
+            StartCoroutine(envLogic.MoveEnemy());
         }
         else if (StatusOfStage == StageStatus.ENV || StatusOfStage == StageStatus.INIT)
         {

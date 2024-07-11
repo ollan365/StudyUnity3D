@@ -4,10 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ShowStatus : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ShowStatus : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public GameObject targetObject;
     public int index;
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        StartCoroutine(StageManager.Instance.CubeRotate(targetObject.GetComponent<Object>().Color));
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         //위치 설정하고, 정보 넣고, 활성화 위치 150씩

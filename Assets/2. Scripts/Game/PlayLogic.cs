@@ -86,7 +86,7 @@ public class PlayLogic : MonoBehaviour
                 p.GetComponent<Object>().OnHit(StatusEffect.HP, -portion.Value);
                 break;
             case StatusEffect.HP_PERCENT:
-                p.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, portion.HealRate);
+                p.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, -portion.HealRate);
                 break;
         }
     }

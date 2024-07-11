@@ -27,7 +27,12 @@ public class CubeManager : MonoBehaviour
     }
     private void Update()
     {
-        if(StageManager.Instance.StatusOfStage == StageStatus.PLAYER && StageManager.Instance.StatusOfStage == StageStatus.END)
+        if (Input.GetMouseButtonDown(1))
+        {
+            ObjectManager.Instance.EnemyInfoPanel.SetActive(false);
+        }
+
+        if(StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END)
         {
             float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
             if(Camera.main.fieldOfView >= maxValue)
@@ -45,6 +50,7 @@ public class CubeManager : MonoBehaviour
             //Debug.Log(scrollWheel);
             Camera.main.fieldOfView -= scrollWheel * Time.deltaTime * scrollSpeed;
         }
+
         if (Input.GetMouseButtonDown(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
         {
             currentRotateSpeed = 0;
