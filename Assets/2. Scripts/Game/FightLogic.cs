@@ -7,34 +7,15 @@ using static Excel;
 
 public class FightLogic : MonoBehaviour
 {
-    public IEnumerator Attack()
+    private bool attacking = false;
+    public IEnumerator FightLogicStart()
     {
-        StartCoroutine(StageManager.Instance.CubeRotate(StageManager.Instance.Player.Color));
-        while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
-        yield return new WaitForSeconds(1f);
+        Object player = StageManager.Instance.Player;
+        List<GameObject> attackableEnemy = AttackableObject(player.AttackType, player.Color, player.Index, ObjectType.ENEMY);
 
-        List<GameObject> attackableEnemy = AttackableObject(StageManager.Instance.Player.AttackType, StageManager.Instance.Player.Color, StageManager.Instance.Player.Index, ObjectType.ENEMY);
-        foreach (GameObject enemy in attackableEnemy)
-        {
-            //플레이어가 적 공격
-            LookAt(StageManager.Instance.Player.gameObject, enemy);
-
-            //activate indicator
-            StageManager.Instance.Player.GetComponent<Object>().Indicator.SetActive(true);
-            enemy.GetComponent<Object>().Indicator.SetActive(true);
-            yield return new WaitForSeconds(0.5f);
-
-            enemy.GetComponent<Object>().OnHit(StatusEffect.HP, StageManager.Instance.Player.Damage);
-
-            yield return new WaitForFixedUpdate();
-
-
-            //disable indicator
-            StageManager.Instance.Player.GetComponent<Object>().Indicator.SetActive(false);
-            enemy.GetComponent<Object>().Indicator.SetActive(false);
-
-            yield return new WaitForSeconds(0.1f);
-        }
+        attacking = true;
+        StartCoroutine(Attack(player, attackableEnemy));
+        while (attacking) yield return new WaitForFixedUpdate();
 
         // 적과 동료의 공격 순서 결정을 위해 List 생성
         List<KeyValuePair<float, int>> enemyAttackOrder = new List<KeyValuePair<float, int>>();
@@ -65,29 +46,9 @@ public class FightLogic : MonoBehaviour
                 Object friendObj = StageManager.Instance.FriendList[friendAttackOrder[i].Value].GetComponent<Object>();
                 attackableEnemy = AttackableObject(friendObj.AttackType, friendObj.Color, friendObj.Index, ObjectType.ENEMY);
 
-                // 공격할 적이 있을 때
-                if (attackableEnemy.Count > 0)
-                {
-                    StartCoroutine(StageManager.Instance.CubeRotate(friendObj.Color));
-                    while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
-                    yield return new WaitForSeconds(1f);
-
-                    foreach (GameObject enemy in attackableEnemy)
-                    {
-                        //동료가 적 공격
-                        LookAt(friendObj.gameObject, enemy);
-
-                        friendObj.Indicator.SetActive(true);
-                        enemy.GetComponent<Object>().Indicator.SetActive(true);
-
-                        enemy.GetComponent<Object>().OnHit(StatusEffect.HP, friendAttackOrder[i].Key);
-
-                        friendObj.Indicator.SetActive(false);
-                        enemy.GetComponent<Object>().Indicator.SetActive(false);
-
-                        yield return new WaitForSeconds(0.5f);
-                    }
-                }
+                attacking = true;
+                StartCoroutine(Attack(friendObj, attackableEnemy));
+                while (attacking) yield return new WaitForFixedUpdate();
             }
 
             // 적 공격
@@ -99,51 +60,55 @@ public class FightLogic : MonoBehaviour
                 attackablePlayerTeam = AttackableObject(enemyObj.AttackType, enemyObj.Color, enemyObj.Index, ObjectType.PLAYER);
                 attackablePlayerTeam.AddRange(AttackableObject(enemyObj.AttackType, enemyObj.Color, enemyObj.Index, ObjectType.FRIEND));
 
-                if (attackablePlayerTeam.Count == 0) continue;
-
-                StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
-                while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
-                yield return new WaitForSeconds(1f);
-
-                foreach (GameObject p in attackablePlayerTeam)
-                {
-                    //적이 플레이어 진영 공격
-                    LookAt(enemyObj.gameObject, p);
-
-                    p.GetComponent<Object>().Indicator.SetActive(true);
-                    enemyObj.Indicator.SetActive(true);
-                    yield return new WaitForSeconds(0.5f);
-
-                    p.GetComponent<Object>().OnHit(StatusEffect.HP, enemyAttackOrder[i].Key);
-
-                    p.GetComponent<Object>().Indicator.SetActive(false);
-                    enemyObj.Indicator.SetActive(false);
-
-                    yield return new WaitForSeconds(0.5f);
-                }
+                attacking = true;
+                StartCoroutine(Attack(enemyObj, attackablePlayerTeam));
+                while (attacking) yield return new WaitForFixedUpdate();
             }
 
         }
-        StageManager.Instance.CheckStageClear();
+        
         //딜교가 종료되면, 일정시간 기다렸다가 ENV 턴으로 넘어간다.
         yield return new WaitForSeconds(2.0f);
         // statge statue를 바꾼다
-        StageManager.Instance.ChangeStatus();
+        StageManager.Instance.ChangeStatus(StageStatus.ENV);
     }
 
     private void LookAt(GameObject src, GameObject dst)
     {
         Vector3 direc = src.transform.position - dst.transform.position;
-        //Debug.Log("src: " + src + " " + src.transform.position);
-        //Debug.Log("dst: " + dst + " " + dst.transform.position);
-        //Debug.Log(direc.normalized);
-        
         Quaternion rot = Quaternion.LookRotation(direc);
-        //Debug.Log(rot.eulerAngles);
-        
         src.transform.rotation = rot;
     }
 
+    private IEnumerator Attack(Object attacker, List<GameObject> attacked)
+    {
+        if (attacked.Count == 0)
+        { attacking = false; yield break; }
+
+        StartCoroutine(StageManager.Instance.CubeRotate(attacker.Color));
+        while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
+        yield return new WaitForSeconds(1f);
+
+        for(int i = 0; i < attacked.Count; i++)
+        {
+            LookAt(attacker.gameObject, attacked[i]);
+
+            //activate indicator
+            attacker.Indicator.SetActive(true);
+            attacked[i].GetComponent<Object>().Indicator.SetActive(true);
+            yield return new WaitForSeconds(0.5f);
+
+            attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);
+            yield return new WaitForFixedUpdate();
+
+            //disable indicator
+            attacker.Indicator.SetActive(false);
+            attacked[i].GetComponent<Object>().Indicator.SetActive(false);
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        attacking = false;
+    }
     private List<GameObject> AttackableObject(WeaponType weaponType, Colors color, int index, ObjectType objType)
     {
         List<GameObject> attackable = new();

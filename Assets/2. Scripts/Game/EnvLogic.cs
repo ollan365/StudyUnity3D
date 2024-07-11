@@ -5,71 +5,56 @@ using static Constants;
 
 public class EnvLogic : MonoBehaviour
 {
-    public IEnumerator MoveEnemy()
+    private bool isMoving = false;
+    public IEnumerator EnvLogicStart()
     {
-        foreach(GameObject e in StageManager.Instance.EnemyList)
+        foreach (GameObject e in StageManager.Instance.EnemyList)
         {
             if (e.GetComponent<Object>().HP <= 0) continue;
 
             Object enemyObj = e.GetComponent<Object>();
             ColorCheckManager.Instance.CharacterSelect(e);
 
-            if (enemyObj.Color != StageManager.Instance.Player.Color) // 플레이어와 다른 면일 때
+            List<int> priority = GetPriorityMoveCube(enemyObj.AttackType);
+            if (enemyObj.Color != StageManager.Instance.Player.Color)
+                priority = new() { Random.Range(0, 9), Random.Range(0, 9), Random.Range(0, 9) };
+
+            for (int i = 0; i < priority.Count; i++)
             {
-                for (int i = 0; i < 3; i++) // 이동을 세번 정도 시도
+                if (enemyObj.Index == priority[i]) break; // 본인의 현재 위치보다 우선순위가 낮아지면 이동 안함
+
+                if (ColorCheckManager.Instance.Move(enemyObj.Color, priority[i], false))
                 {
-                    int random = Random.Range(0, 9);
-
-                    if (ColorCheckManager.Instance.Move(enemyObj.Color, random, false))
-                    {
-                        StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
-                        yield return new WaitForSeconds(1f); // CubeRotate에 걸리는 시간
-
-                        enemyObj.Indicator.SetActive(true);
-                        yield return new WaitForSeconds(1f);
-
-                        ColorCheckManager.Instance.Move(enemyObj.Color, random, true); // 이동
-                        yield return new WaitForSeconds(1f); // Move에 걸리는 시간
-                        enemyObj.Indicator.SetActive(false);
-                        yield return new WaitForSeconds(1f);
-
-                        if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].ObjType == ObjectType.TRIGGER)
-                            StageCube.Instance.touchArray[enemyObj.Color.ToInt()][random].Obj.OnHit(StatusEffect.HP_PERCENT, 100);
-
-                        break;
-                    }
+                    isMoving = true;
+                    StartCoroutine(MoveEnemy(enemyObj, priority[i]));
+                    break;
                 }
             }
-            else // 플레이어와 같은 면일 때
-            {
-                List<int> priority = GetPriorityMoveCube(enemyObj.AttackType);
 
-                for (int i = 0; i < priority.Count; i++)
-                {
-                    if (enemyObj.Index == priority[i]) break; // 본인의 현재 위치보다 우선순위가 낮아지면 이동 안함
+            while (isMoving) yield return new WaitForFixedUpdate();
 
-                    if (ColorCheckManager.Instance.Move(enemyObj.Color, priority[i], false))
-                    {
-                        StartCoroutine(StageManager.Instance.CubeRotate(enemyObj.Color));
-                        yield return new WaitForSeconds(1f); // CubeRotate에 걸리는 시간
-
-                        enemyObj.Indicator.SetActive(true);
-                        yield return new WaitForSeconds(1f);
-
-                        ColorCheckManager.Instance.Move(enemyObj.Color, priority[i], true);
-                        yield return new WaitForSeconds(1f); // Move에 걸리는 시간
-                        enemyObj.Indicator.SetActive(false);
-                        yield return new WaitForSeconds(1f);
-
-                        if (StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].ObjType == ObjectType.TRIGGER)
-                            StageCube.Instance.touchArray[enemyObj.Color.ToInt()][i].Obj.OnHit(StatusEffect.HP_PERCENT, 100);
-                        break;
-                    }
-                }
-            }
             ColorCheckManager.Instance.CharacterSelectCancel(e, true);
         }
-        StageManager.Instance.ChangeStatus();
+        yield return new WaitForFixedUpdate();
+        StageManager.Instance.ChangeStatus(StageStatus.PLAYER);
+    }
+    private IEnumerator MoveEnemy(Object enemy, int index)
+    {
+        StartCoroutine(StageManager.Instance.CubeRotate(enemy.Color));
+        yield return new WaitForSeconds(1f); // CubeRotate에 걸리는 시간
+
+        enemy.Indicator.SetActive(true);
+        yield return new WaitForSeconds(1f);
+
+        ColorCheckManager.Instance.Move(enemy.Color, index, true);
+        yield return new WaitForSeconds(1f); // Move에 걸리는 시간
+        enemy.Indicator.SetActive(false);
+        yield return new WaitForSeconds(1f);
+
+        if (StageCube.Instance.touchArray[enemy.Color.ToInt()][index].ObjType == ObjectType.TRIGGER)
+            StageCube.Instance.touchArray[enemy.Color.ToInt()][index].Obj.OnHit(StatusEffect.HP_PERCENT, 100);
+
+        isMoving = false;
     }
 
     private List<int> GetPriorityMoveCube(WeaponType weaponType)

@@ -173,50 +173,53 @@ public class StageManager : MonoBehaviour
         stageStartPanel.SetActive(false);
         clickIgnorePanel.SetActive(false);
 
-        ChangeStatus();
+        ChangeStatus(StageStatus.PLAYER);
 
     }
-    public void ChangeStatus()
+    public void ClickFightButton()
+    {
+        if (StatusOfStage == StageStatus.PLAYER) ChangeStatus(StageStatus.FIGHT);
+    }
+    public void ChangeStatus(StageStatus stageStatus)
     {
         cubeManager.ChangeToNormal();
 
-        if (StatusOfStage == StageStatus.PLAYER)
+        StopCoroutine(fightLogic.FightLogicStart());
+        StopCoroutine(envLogic.EnvLogicStart());
+
+        switch (stageStatus)
         {
-            //Debug.Log("fight");
-            StatusOfStage = StageStatus.FIGHT;
-            StartCoroutine(fightLogic.Attack());
-        }
-        else if (StatusOfStage == StageStatus.FIGHT)
-        {
-            StartCoroutine(envLogic.MoveEnemy());
-            StatusOfStage = StageStatus.ENV;
-        }
-        else if (StatusOfStage == StageStatus.ENV || StatusOfStage == StageStatus.INIT)
-        {
-            if (StatusOfStage == StageStatus.ENV)
-            {
+            case StageStatus.PLAYER:
+                StatusOfStage = StageStatus.PLAYER;
                 turn++;
                 stageTexts[1].text = $"{turn} Turn";
+                SetStageTextValue(StageText.ALL_INIT, 0);
+                clickIgnorePanel.SetActive(false);
+                StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
+                break;
+
+            case StageStatus.FIGHT:
+                StatusOfStage = StageStatus.FIGHT;
                 EventManager.Instance.Effect.Effect(); // 축복이나 저주 발동
-            }
+                StartCoroutine(fightLogic.FightLogicStart());
+                break;
 
-            StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
+            case StageStatus.ENV:
+                StatusOfStage = StageStatus.ENV;
+                StartCoroutine(envLogic.EnvLogicStart());
+                break;
 
-            SetStageTextValue(StageText.ALL_INIT, 0);
-            StatusOfStage = StageStatus.PLAYER;
-            clickIgnorePanel.SetActive(false);
+            case StageStatus.END:
+                StatusOfStage = StageStatus.END;
+                break;
         }
     }
     public void CheckStageClear()
     {
         if (stageTextValues[StageText.MONSTER.ToInt()] > 0) return;
 
-        Debug.Log("clear");
+        ChangeStatus(StageStatus.END);
 
-        // 스테이지를 클리어한 경우
-        StopCoroutine(fightLogic.Attack());
-
-        StatusOfStage = StageStatus.END;
         clickIgnorePanel.SetActive(false);
 
         // 스테이지 종료 시 동료, 트리거 소멸
@@ -242,6 +245,9 @@ public class StageManager : MonoBehaviour
     }
     public void GameOver()
     {
+        // 게임 오버
+        StopCoroutine(fightLogic.FightLogicStart());
+
         gameOverPanel.SetActive(true);
     }
 
