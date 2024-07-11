@@ -394,89 +394,82 @@ public class ObjectManager : MonoBehaviour
     public void SetObjectInfo(Object obj, int index = 0)
     {
         Object targetObj = obj;
-        //이미지 설정
+        
+        //적과 플레이어, 동료의 공통 변수 값 설정
+        string objName = targetObj.name;
+        float hpValue = targetObj.HP / targetObj.MaxHp;
+        string hpText = $"{Mathf.CeilToInt(targetObj.HP)} / {Mathf.CeilToInt(targetObj.MaxHp)}";
+        string attackType = "타입: 타입";
+        switch (targetObj.GetComponent<Object>().AttackType)
+        {
+            case WeaponType.CAD:
+                attackType = "공격 타입: 근거리";
+                break;
+            case WeaponType.LAD:
+                attackType = "공격 타입: 원거리";
+                break;
+            case WeaponType.NULL:
+                attackType = "공격 타입: NULL";
+                break;
+            default:
+                Debug.Log("공격타입 없음");
+                break;
+        }
+        string basicAttackText = $"기본 공격력: {targetObj.MinDamage} ~ {targetObj.MaxDamage}";
 
         if (targetObj.Type == ObjectType.PLAYER || targetObj.Type == ObjectType.FRIEND) //플레이어 버튼 가져다대서 호출되는 부분
         {
+            //set player or mercenary image
             //int idx = clickedObj.ID - 100000; //ID 값을 받아 배열의 인덱스로 변환
             //if (idx + 1 > enemyInfoImages.Length)
             //    enemyInfoImage.sprite = enemyInfoImages[0];
             //else
             //    enemyInfoImage.sprite = enemyInfoImages[idx];
 
-            //  이름
-            objectInfoName.text = targetObj.name;
+            //name
+            objectInfoName.text = objName;
 
-            //  Hpbar
-            objectInfoHPslider.value = targetObj.HP / targetObj.MaxHp;
-            objectInfoHPText.text = $"{Mathf.CeilToInt(targetObj.HP)} / {Mathf.CeilToInt(targetObj.MaxHp)}";
+            //Hpbar
+            objectInfoHPslider.value = hpValue;
+            objectInfoHPText.text = hpText;
 
-            //  Attack Type
-            string type = "타입";
-            switch (targetObj.GetComponent<Object>().AttackType)
-            {
-                case WeaponType.CAD:
-                    type = "근거리";
-                    break;
-                case WeaponType.LAD:
-                    type = "원거리";
-                    break;
-                case WeaponType.NULL:
-                    type = "NULL";
-                    break;
-                default:
-                    Debug.Log("공격타입 없음");
-                    break;
-            }
-            objectInfoAttackType.text = type;
+            //Attack Type
+            objectInfoAttackType.text = attackType;
 
-            //  Basic Attack
-            string basicAttackText = $"{targetObj.MinDamage} ~ {targetObj.MaxDamage}";
+            //Basic Attack
             objectInfoBasicAttack.text = basicAttackText;
+
+            //panel position
             RectTransform panelTransform = ObjectInfoPanel.GetComponent<RectTransform>();
             panelTransform.position = new Vector3(index * 155 , 200, 0);
-            Debug.Log("위치");
+            Debug.Log("ㅇ");
+
         }
         else if (targetObj.Type == ObjectType.ENEMY) //적 클릭해서 호출되는 경우
         {
+            //image
             int idx = targetObj.ID - 100000; //ID 값을 받아 배열의 인덱스로 변환
             if (idx + 1 > enemyInfoImages.Length)
                 enemyInfoImage.sprite = enemyInfoImages[0];
             else
                 enemyInfoImage.sprite = enemyInfoImages[idx];
 
-            //  이름
-            enemyInfoName.text = targetObj.name;
+            //name
+            enemyInfoName.text = objName;
 
-            //  Hpbar
-            enemyInfoHPslider.value = targetObj.HP / targetObj.MaxHp;
-            enemyInfoHPText.text = $"{Mathf.CeilToInt(targetObj.HP)} / {Mathf.CeilToInt(targetObj.MaxHp)}";
+            //Hpbar
+            enemyInfoHPslider.value = hpValue;
+            enemyInfoHPText.text = hpText;
 
-            //  Attack Type
-            string type = "타입";
-            switch (targetObj.GetComponent<Object>().AttackType)
-            {
-                case WeaponType.CAD:
-                    type = "근거리";
-                    break;
-                case WeaponType.LAD:
-                    type = "원거리";
-                    break;
-                case WeaponType.NULL:
-                    type = "NULL";
-                    break;
-                default:
-                    Debug.Log("공격타입 없음");
-                    break;
-            }
-            enemyInfoAttackType.text = type;
+            //Attack Type
+            enemyInfoAttackType.text = attackType;
 
-            //  Basic Attack
-            string basicAttackText = $"{targetObj.MinDamage} ~ {targetObj.MaxDamage}";
+            //Basic Attack
             enemyInfoBasicAttack.text = basicAttackText;
 
             //Set Active = true
             EnemyInfoPanel.SetActive(true);
+            
         }
     }
 

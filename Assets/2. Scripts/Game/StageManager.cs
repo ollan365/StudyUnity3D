@@ -145,6 +145,12 @@ public class StageManager : MonoBehaviour
         int index = 0;
         
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
+        
+        for (int ind = 0; ind < stageEnemy.Count; ind++)
+        {
+            Debug.Log(stageEnemy[ind]);
+        }
+
         for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
         {
             for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)

@@ -6891,23 +6891,11 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 370234363}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 370234360}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1001 &372836184
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8671,7 +8659,7 @@ MonoBehaviour:
   - {fileID: 1588038328}
   - {fileID: 1622419590}
   - {fileID: 2146210244}
-  clickIgnorePanel: {fileID: 370234360}
+  clickIgnorePanel: {fileID: 1063095728}
   shopPopup: {fileID: 1242706782}
   inventoryPopup: {fileID: 1471152096}
   inventorySlot:
@@ -9692,7 +9680,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 2053901322}
   m_FillRect: {fileID: 2053901321}
   m_HandleRect: {fileID: 0}
@@ -27768,7 +27756,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 633888431}
   m_FillRect: {fileID: 633888430}
   m_HandleRect: {fileID: 0}
