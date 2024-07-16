@@ -115,7 +115,17 @@ public class Object : MonoBehaviour
 
         //플레이어, 적, 동료 이고, 살아있다면 데미지 출력
         if (popTextObj != null && gameObject.activeSelf)
-            PoppingText($"-{dmg}", new Color(0, 0, 1, 1));
+        {
+            string text;
+            if (dmg > 0)
+                text = $"-{Mathf.Abs(dmg)}";
+            else if(dmg < 0)
+                text = $"+{Mathf.Abs(dmg)}";
+            else
+                text = $"{Mathf.Abs(dmg)}";
+            PoppingText(text, new Color(0, 0, 1, 1));
+        }
+            
 
     }
 
