@@ -7,10 +7,20 @@ using static Constants;
 public class EventManager : MonoBehaviour
 {
     public static EventManager Instance { get; private set; }
+
+    [SerializeField] private CubeManager cubeManager;
+
+    [Header("Bingo")]
+    [SerializeField] private BingoStatus[] bingoStatus;
+    [SerializeField] private BingoUI[] bingoUI;
+
+    [Header("UI")]
+    [SerializeField] private GameObject[] setActiveFalse;
+
+    [Header("Event")]
     [SerializeField] private GameObject eventPanel;
     [SerializeField] private Button[] eventButtons;
     [SerializeField] private EventCard[] eventCards;
-    [SerializeField] private BingoStatus[] bingoStatus;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
     public ColorEffect Effect { get => colorEffect; }
     private Colors[][] bingoCheck;
@@ -45,6 +55,9 @@ public class EventManager : MonoBehaviour
 
         eventPanel.SetActive(true);
         colorEffect = new ColorEffect(color);
+        bingoUI[color.ToInt()].SetLineIcon();
+        cubeManager.SetEventStatus(true);
+        foreach (GameObject obj in setActiveFalse) obj.SetActive(false);
         EventAdd();
     }
     private void BingoMark()
@@ -134,7 +147,12 @@ public class EventManager : MonoBehaviour
 
         eventButtons[0].onClick.AddListener(() => Event(eventList[random_1].eventName));
         eventButtons[1].onClick.AddListener(() => Event(eventList[random_2].eventName));
-        foreach (Button b in eventButtons) b.onClick.AddListener(() => eventPanel.SetActive(false));
+        foreach (Button b in eventButtons)
+        {
+            b.onClick.AddListener(() => eventPanel.SetActive(false));
+            b.onClick.AddListener(() => cubeManager.SetEventStatus(false));
+            foreach (GameObject obj in setActiveFalse) b.onClick.AddListener(() => obj.SetActive(true));
+        }
 
         eventButtons[0].GetComponentInChildren<Text>().text = eventList[random_1].eventName;
         eventButtons[1].GetComponentInChildren<Text>().text = eventList[random_2].eventName;
@@ -209,24 +227,24 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "피의 각성":
-                colorEffect.Add(StatusEffect.POWERFUL);
-                colorEffect.Add(StatusEffect.CURSE);
+                colorEffect.Add(POWERFUL);
+                colorEffect.Add(CURSE);
                 break;
 
             case "비폭력주의":
-                colorEffect.Add(StatusEffect.SLIENCE);
+                colorEffect.Add(SLIENCE);
                 break;
 
             case "공격태세":
-                colorEffect.Add(StatusEffect.POWERFUL);
+                colorEffect.Add(POWERFUL);
                 break;
 
             case "낙인":
-                colorEffect.Add(StatusEffect.WEAKEN);
+                colorEffect.Add(WEAKEN);
                 break;
 
             case "회피의 달인":
-                colorEffect.Add(StatusEffect.INVINCIBILITY);
+                colorEffect.Add(INVINCIBILITY);
                 break;
 
             case "땅 파면 오백원 나오나?":
@@ -559,22 +577,22 @@ public class EventManager : MonoBehaviour
 public class ColorEffect
 {
     public Colors color;
-    private bool[] statusEffects = new bool[6] { false, false, false, false, false, false};
+    public bool[] statusEffects = new bool[6] { false, false, false, false, false, false};
 
     public ColorEffect(Colors color)
     {
         this.color = color;
     }
-    public void Add(StatusEffect effect)
+    public void Add(int effect)
     {
-        statusEffects[Int(effect)] = true;
+        statusEffects[effect] = true;
     }
     public int Dealt(Object obj)
     {
         if (obj.touchCube.RelativeColor != color) return 1;
 
-        if (statusEffects[Int(StatusEffect.SLIENCE)]) return 0;
-        else if (statusEffects[Int(StatusEffect.POWERFUL)]) return 2;
+        if (statusEffects[SLIENCE]) return 0;
+        else if (statusEffects[POWERFUL]) return 2;
         else return 1;
     }
 
@@ -582,37 +600,22 @@ public class ColorEffect
     {
         if (obj.touchCube.RelativeColor != color) return 1;
 
-        if (statusEffects[Int(StatusEffect.INVINCIBILITY)]) return 0;
-        else if (statusEffects[Int(StatusEffect.WEAKEN)]) return 2;
+        if (statusEffects[INVINCIBILITY]) return 0;
+        else if (statusEffects[WEAKEN]) return 2;
         else return 1;
     }
 
     public void Effect()
     {
-        if (statusEffects[Int(StatusEffect.BLESS)])
+        if (statusEffects[BLESS])
         {
             foreach (Object obj in EventManager.Instance.ObjectList(color))
                 obj.OnHit(StatusEffect.HP_PERCENT, -10);
         }
-        else if (statusEffects[Int(StatusEffect.CURSE)])
+        else if (statusEffects[CURSE])
         {
             foreach (Object obj in EventManager.Instance.ObjectList(color))
                 obj.OnHit(StatusEffect.HP_PERCENT, 10);
-        }
-    }
-
-    public int Int(StatusEffect effect)
-    {
-        switch (effect)
-        {
-            case StatusEffect.SLIENCE: return 0; // 침묵
-            case StatusEffect.POWERFUL: return 1; // 강화
-            case StatusEffect.INVINCIBILITY: return 2; // 무적
-            case StatusEffect.WEAKEN: return 3; // 취약
-            case StatusEffect.BLESS: return 4; // 축복
-            case StatusEffect.CURSE: return 5; // 저주
-
-            default: return -1; // ALL
         }
     }
 }

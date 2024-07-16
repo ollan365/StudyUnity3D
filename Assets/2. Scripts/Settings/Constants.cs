@@ -52,6 +52,7 @@ public static class Constants
     }
     public enum ItemType { WEAPON, PORTION, SCROLL, NULL }
     public enum StatusEffect { HP, HP_PERCENT, SLIENCE, POWERFUL, INVINCIBILITY, WEAKEN, BLESS, CURSE, ALL }
+    public const int SLIENCE = 0, POWERFUL = 1, INVINCIBILITY = 2, WEAKEN = 3, BLESS = 4, CURSE = 5;
     public enum StageText { ALL_INIT, END,  MONSTER, MOVE, ROTATE, WEAPON_CHANGE, MONSTER_INIT, MOVE_INIT, ROTATE_INIT, WEAPON_CHANGE_INIT }
     public static int ToInt(this StageText text)
     {

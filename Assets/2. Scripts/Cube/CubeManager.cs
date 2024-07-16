@@ -12,7 +12,7 @@ public class CubeManager : MonoBehaviour
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private Vector3 startPosition;
-    private enum PlayerTurnStatus { NORMAL, TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
+    private enum PlayerTurnStatus { NORMAL,TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED, EVENT }
     [SerializeField] private PlayerTurnStatus playerTurnStatus;
     private int itemID;
 
@@ -51,20 +51,27 @@ public class CubeManager : MonoBehaviour
             Camera.main.fieldOfView -= scrollWheel * Time.deltaTime * scrollSpeed;
         }
 
-        if (Input.GetMouseButtonDown(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
+        if (Input.GetMouseButtonDown(2))
         {
+            if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
             currentRotateSpeed = 0;
         }
-        if (Input.GetMouseButton(2) && (StageManager.Instance.StatusOfStage != StageStatus.INIT && StageManager.Instance.StatusOfStage != StageStatus.FIGHT))
+        
+        if (Input.GetMouseButton(2))
         {
+            if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
+
             transform.Rotate(0f, -Input.GetAxis("Mouse X") * currentRotateSpeed, 0f, Space.World);
             transform.Rotate(Input.GetAxis("Mouse Y") * currentRotateSpeed, 0f, Input.GetAxis("Mouse Y") * currentRotateSpeed, Space.World);
             
             currentRotateSpeed = Mathf.Clamp(currentRotateSpeed + Time.deltaTime * 10, 0, rotateSpeed);
         }
 
-        if (Input.GetMouseButtonDown(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
+        if (Input.GetMouseButtonDown(0))
         {
+            if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
+            if (playerTurnStatus == PlayerTurnStatus.EVENT) return;
+
             // 초기화
             mouseStartObject = null;
             mouseStartTouchCube = null;
@@ -98,8 +105,11 @@ public class CubeManager : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonUp(0) && (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END))
+        if (Input.GetMouseButtonUp(0))
         {
+            if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
+            if (playerTurnStatus == PlayerTurnStatus.EVENT) return;
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
             hits = Physics.RaycastAll(ray);
@@ -273,7 +283,18 @@ public class CubeManager : MonoBehaviour
         // 스테이지 시작
         StartCoroutine(StageManager.Instance.StartStage());
     }
-
+    public void SetEventStatus(bool flag)
+    {
+        if (flag)
+        {
+            ChangeToNormal();
+            playerTurnStatus = PlayerTurnStatus.EVENT;
+        }
+        else
+        {
+            playerTurnStatus = PlayerTurnStatus.NORMAL;
+        }
+    }
     public void SwitchPlayerTurnStatus(int itemIndex, ItemType itemType)
     {
         switch (itemType)
