@@ -88,17 +88,14 @@ public class ObjectManager : MonoBehaviour
                 string value = StaticManager.Instance.enemyDatas[objectID];
                 newObject.GetComponent<Object>().Init(objectType, value.Split(','), cube);
                 //newObject.transform.GetChild(objectID - 100000).gameObject.SetActive(true);
+                int meshCnt = newObject.transform.GetChild(1).childCount;
 
                 //disable default mesh and activate the mesh that matches the object ID.
-                //
-                newObject.transform.GetChild(1).gameObject.SetActive(false);
-                if (objectID == 100001)
-                    newObject.transform.GetChild(1).gameObject.SetActive(true);
-                else if (objectID == 100002)
-                    newObject.transform.GetChild(2).gameObject.SetActive(true);
-                else
-                    newObject.transform.GetChild(3).gameObject.SetActive(true);
+                int idx = (objectID - 100000) % meshCnt;
+                //newObject.transform.GetChild(1).GetChild(0).gameObject.SetActive(false);
+                newObject.transform.GetChild(1).GetChild(idx).gameObject.SetActive(true);
                 break;
+
             case ObjectType.FRIEND:
                 Dictionary<int, string> values = StaticManager.Instance.friendDatas[objectID];
                 value = values[StaticManager.Instance.Stage];
