@@ -7,6 +7,7 @@ public class ColorChange : MonoBehaviour
 {
     MeshRenderer meshRend;
     public int stage;
+    public int materialSize;
 
     public Constants.Colors color;
     // Start is called before the first frame update
@@ -14,8 +15,8 @@ public class ColorChange : MonoBehaviour
     {
         //cubeMaterialSet[stage][white]
         stage = StaticManager.Instance.Stage;
-        
-        gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[stage % 6][color.ToInt()];
+        materialSize = StaticManager.Instance.cubeMaterialSet.Length;
+        gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[stage % materialSize][color.ToInt()];
     }  
 
     // Update is called once per frame
@@ -24,7 +25,7 @@ public class ColorChange : MonoBehaviour
         if (stage != StaticManager.Instance.Stage)
         {
             stage = StaticManager.Instance.Stage;
-            gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[stage % 6][color.ToInt()];
+            gameObject.GetComponent<MeshRenderer>().material = StaticManager.Instance.cubeMaterialSet[stage % materialSize][color.ToInt()];
         }
     }
 }

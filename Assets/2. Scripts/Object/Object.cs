@@ -150,19 +150,18 @@ public class Object : MonoBehaviour
         //set value
         popText = popTextObj.GetComponent<Text>();
         popText.text = text;
-        Color textColor = color;
+        popText.color = color;
+        
 
         RectTransform rectTransform = popTextObj.GetComponent<RectTransform>();
         rectTransform.localPosition = Vector3.zero;
 
         sequence = DOTween.Sequence();
-        textColor.a = 1;
         sequence.Append(rectTransform.DOLocalMoveY(0.5f, 1.0f)).SetEase(Ease.OutCubic)
-                .Join(popText.DOColor(textColor, 1.0f));
-        
-        textColor.a = 0;
-        sequence.Append(rectTransform.DOLocalMoveY(1f, 1.0f)).SetEase(Ease.Linear)
-                .Join(popText.DOColor(textColor, 1.0f));
+                .Join(popText.DOFade(1.0f, 1.0f))
+                .Append(rectTransform.DOLocalMoveY(1f, 1.0f)).SetEase(Ease.Linear)
+                .Join(popText.DOFade(0.0f, 1.0f));
+
 
     }
 

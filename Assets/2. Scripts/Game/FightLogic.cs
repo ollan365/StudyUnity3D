@@ -158,7 +158,7 @@ public class FightLogic : MonoBehaviour
                 {
                     if (e.Color == color && AttackableRange(weaponType, index)[e.Index])
                         attackable.Add(enemyObj);
-                }
+                } 
                 else if (weaponType == WeaponType.AP)
                 {
                     if (e.Color != color && e.Index == index)
