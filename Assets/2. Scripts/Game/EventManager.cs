@@ -20,6 +20,8 @@ public class EventManager : MonoBehaviour
     [Header("Event")]
     [SerializeField] private GameObject eventPanel;
     [SerializeField] private Button[] eventButtons;
+    [SerializeField] private Text[] eventNameTexts;
+    [SerializeField] private Text[] eventDescriptionTexts;
     [SerializeField] private EventCard[] eventCards;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
     public ColorEffect Effect { get => colorEffect; }
@@ -43,6 +45,8 @@ public class EventManager : MonoBehaviour
 
     public void BingoCheck()
     {
+        if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER) return;
+
         BingoMark();
 
         Touch cube = StageManager.Instance.Player.touchCube;
@@ -154,8 +158,11 @@ public class EventManager : MonoBehaviour
             foreach (GameObject obj in setActiveFalse) b.onClick.AddListener(() => obj.SetActive(true));
         }
 
-        eventButtons[0].GetComponentInChildren<Text>().text = eventList[random_1].eventName;
-        eventButtons[1].GetComponentInChildren<Text>().text = eventList[random_2].eventName;
+        eventNameTexts[0].text = eventList[random_1].eventName;
+        eventNameTexts[1].text = eventList[random_2].eventName;
+
+        eventDescriptionTexts[0].text = eventList[random_1].EventDescription;
+        eventDescriptionTexts[1].text = eventList[random_2].EventDescription;
     }
     private bool CheckEvent(string name)
     {
@@ -172,14 +179,18 @@ public class EventManager : MonoBehaviour
                 if (RandomDeadObject() != null) return true;
                 else return false;
 
-            case "이름미정_1":
-            case "이름미정_3":
+            case "청부살인":
+            case "오아시스":
             case "복권 구매":
                 if (StaticManager.Instance.Gold > 100) return true;
                 else return false;
 
-            case "이름미정_2":
+            case "매수":
                 if (StaticManager.Instance.Gold > 100 && RandomDeadFriend() != null) return true;
+                else return false;
+
+            case "병 주고 약 주고":
+                if (RandomDeadEnemy() != null) return true;
                 else return false;
 
             default: return true;
@@ -212,7 +223,7 @@ public class EventManager : MonoBehaviour
                 ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 1);
                 break;
 
-            case "괴뢰":
+            case "지뢰":
                 ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 2);
                 break;
 
@@ -226,7 +237,7 @@ public class EventManager : MonoBehaviour
                     obj.OnHit(StatusEffect.HP_PERCENT, -50);
                 break;
 
-            case "피의 각성":
+            case "피의 대가":
                 colorEffect.Add(POWERFUL);
                 colorEffect.Add(CURSE);
                 break;
@@ -251,12 +262,12 @@ public class EventManager : MonoBehaviour
                 StaticManager.Instance.Gold += 500;
                 break;
 
-            case "이름미정_1":
+            case "청부살인":
                 StaticManager.Instance.Gold -= 100;
                 RandomObejectOfPEnemy().OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
 
-            case "이름미정_2":
+            case "매수":
                 StaticManager.Instance.Gold -= 100;
                 StartCoroutine(Revive(RandomDeadFriend()));
                 break;
@@ -266,7 +277,7 @@ public class EventManager : MonoBehaviour
                 StaticManager.Instance.Gold += Random.Range(50, 200);
                 break;
 
-            case "이름미정_4":
+            case "병 주고 약 주고":
                 StaticManager.Instance.Gold += 100;
                 StartCoroutine(Revive(RandomDeadEnemy()));
                 break;
@@ -276,27 +287,27 @@ public class EventManager : MonoBehaviour
                 RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
 
-            case "이름미정_5":
+            case "회전 증폭":
                 StageManager.Instance.SetStageTextValue(StageText.ROTATE, 5);
                 break;
 
-            case "이름미정_6":
+            case "회전 추가":
                 StageManager.Instance.SetStageTextValue(StageText.ROTATE_INIT, 5);
                 break;
 
-            case "이름미정_7":
+            case "빠른 손놀림":
                 StageManager.Instance.SetStageTextValue(StageText.WEAPON_CHANGE, 5);
                 break;
 
-            case "이름미정_8":
+            case "기민한 발놀림":
                 StageManager.Instance.SetStageTextValue(StageText.MOVE, 5);
                 break;
 
-            case "이름미정_9":
+            case "민첩한 걸음":
                 StageManager.Instance.SetStageTextValue(StageText.MOVE_INIT, 5);
                 break;
 
-            case "이름미정_10":
+            case "운수대통":
                 foreach (GameObject obj in StageManager.Instance.TreasureList)
                     if (obj.GetComponent<Object>().touchCube.RelativeColor == Effect.color)
                         StageManager.Instance.StagePlayLogic.Trigger(obj);

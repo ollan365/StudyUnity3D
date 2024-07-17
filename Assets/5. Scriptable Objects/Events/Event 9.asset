@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventColors: 01000000
   eventName: "\uB108 \uC8FD\uACE0 \uB098 \uC8FD\uC790"
-  eventDescription: 
+  eventDescription: "{TargetBlockColor} \uC0C9 \uBE14\uB85D \uC704\uC5D0 \uC788\uB294
+    \uC720\uB2DB\uC5D0\uAC8C <b>\uC800\uC8FC</b> \uC0C1\uD0DC\uB97C \uBD80\uC5EC\uD55C\uB2E4."
