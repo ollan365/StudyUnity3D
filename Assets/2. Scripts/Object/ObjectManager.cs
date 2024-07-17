@@ -34,8 +34,6 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private Slot[] shopSlot;
     [SerializeField] private ItemObject[] shopItemArray;
     private ItemSlot[] shopItemSlotArray;
-    // 변수
-    public bool isShopChanged = false;
 
     [Header("Enemy Info UI")]
     [SerializeField] private GameObject enemyInfoPanel;
@@ -66,6 +64,7 @@ public class ObjectManager : MonoBehaviour
         else Destroy(gameObject);
 
         shopItemSlotArray = new ItemSlot[9];
+        ChangeShop();
     }
 
     public GameObject Summons(Touch cube, ObjectType objectType, int objectID)
@@ -261,76 +260,59 @@ public class ObjectManager : MonoBehaviour
         }
         ChangePlayerInventory();
     }
-    public void ChangeShop() // 나중에 갈아엎자... 
+    public void OpenShop()
     {
         clickIgnorePanel.SetActive(true);
-
-        if (!isShopChanged)
-        {
-            isShopChanged = true;
-
-            int[] scroll = new int[3] { -1, -1, -1 };
-            int stage = StaticManager.Instance.Stage;
-
-            for (int i = 0; i < shopItemSlotArray.Length; i++)
-            {
-                if (i < 2) // 포션 2개 (무조건)
-                {
-                    if (shopItemArray[i].SpawnMinStage > stage || shopItemArray[i].SpawnMaxStage < stage)
-                    {
-                        shopSlot[i].SetActive(false);
-                        continue;
-                    }
-
-                    shopSlot[i].SetActive(true);
-
-                    shopItemSlotArray[i] = new(shopItemArray[i], 5);
-                    shopSlot[i].ChangeImage(shopItemArray[i].Icon);
-                    shopSlot[i].ChangeText(shopItemSlotArray[i].count + " / $" + shopItemArray[i].SellCost.ToString());
-                }
-                else if (i < 5) // 스크롤 3개 랜덤
-                {
-                    if (StaticManager.Instance.Stage < 5) // 스크롤은 5 스테이지 이후부터 구매 가능
-                    {
-                        shopSlot[i].SetActive(false);
-                        continue;
-                    }
-
-                    shopSlot[i].SetActive(true);
-
-                    int random = Random.Range(2, 11);
-                    while (random == scroll[0] || random == scroll[1] || random == scroll[2])
-                        random = Random.Range(2, 11);
-                    scroll[i - 2] = random;
-
-                    shopItemSlotArray[i] = new(shopItemArray[random], 3);
-                    shopSlot[i].ChangeImage(shopItemArray[random].Icon);
-                    shopSlot[i].ChangeText(shopItemSlotArray[i].count + " / $" + shopItemArray[random].SellCost.ToString());
-                }
-                else // 무기 4개
-                {
-                    int index = 0;
-                    for (int j = 11; j < 25; j++)
-                    {
-                        if (shopItemArray[j].SpawnMinStage > stage || shopItemArray[j].SpawnMaxStage < stage) continue;
-
-                        shopSlot[i + index].SetActive(true);
-
-                        shopItemSlotArray[i + index] = new(shopItemArray[j], 1);
-                        shopSlot[i + index].ChangeImage(shopItemArray[j].Icon);
-                        shopSlot[i + index].ChangeText(shopItemSlotArray[i + index].count + " / $" + shopItemArray[i + index].SellCost.ToString());
-                    }
-                    for (i = i + index; i < shopItemSlotArray.Length; i++)
-                        shopSlot[i].SetActive(false);
-
-                    return;
-                }
-            }
-        }
-
         shopPopup.SetActive(true);
         ChangePlayerInventory();
         inventoryPopup.SetActive(true);
+    }
+    public void ChangeShop()
+    {
+        int stage = StaticManager.Instance.Stage;
+        int[] scroll = new int[3] { 0, 0, 0 };
+        int scrollIndex = 3;
+
+        for (int i = 0; i < scroll.Length; i++)
+        {
+            int random = Random.Range(2, 11);
+            while (random == scroll[0] || random == scroll[1] || random == scroll[2])
+                random = Random.Range(2, 11);
+            scroll[i] = random;
+        }
+
+        int itemIndex = -1;
+        for (int shopIndex = 0; shopIndex < shopSlot.Length; shopIndex++)
+        {
+            bool moreItem = false;
+            for (int i = itemIndex + 1; i < shopItemArray.Length; i++)
+            {
+                if (shopItemArray[i].SpawnMinStage > stage || shopItemArray[i].SpawnMaxStage < stage) continue;
+
+                moreItem = true;
+
+                itemIndex = i;
+
+                if (shopItemArray[itemIndex].ItemType == ItemType.SCROLL && scrollIndex > 0)
+                    itemIndex = scroll[--scrollIndex];
+                else if (shopItemArray[itemIndex].ItemType == ItemType.SCROLL && scrollIndex == 0)
+                    continue;
+
+                break;
+            }
+            if (!moreItem) break;
+
+            shopSlot[shopIndex].SetActive(true);
+
+            if (shopItemArray[itemIndex].ItemType == ItemType.PORTION)
+                shopItemSlotArray[shopIndex] = new(shopItemArray[itemIndex], 10 + 5 * itemIndex);
+            else
+                shopItemSlotArray[shopIndex] = new(shopItemArray[itemIndex], 1);
+
+            shopSlot[shopIndex].ChangeImage(shopItemArray[itemIndex].Icon);
+            shopSlot[shopIndex].ChangeText(shopItemSlotArray[shopIndex].count + " / $" + shopItemArray[itemIndex].SellCost.ToString());
+        }
+
     }
     public void Buy(int index)
     {

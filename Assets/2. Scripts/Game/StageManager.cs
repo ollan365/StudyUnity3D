@@ -139,9 +139,6 @@ public class StageManager : MonoBehaviour
         player.SetActive(true);
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
-        // 값 초기화
-        ObjectManager.Instance.isShopChanged = false;
-
         int index = 0;
         
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
