@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Event 25
   m_EditorClassIdentifier: 
   eventColors: 03000000
-  eventName: "\uC774\uB984\uBBF8\uC815_7"
-  eventDescription: 
+  eventName: "\uD68C\uC804 \uCD94\uAC00"
+  eventDescription: "\uD604\uC7AC \uC2A4\uD14C\uC774\uC9C0\uC5D0\uC11C\uC758 \uD050\uBE0C
+    \uD68C\uC804 \uD69F\uC218\uB97C \uC601\uAD6C\uC801\uC73C\uB85C N \uC99D\uAC00\uC2DC\uD0A8\uB2E4."

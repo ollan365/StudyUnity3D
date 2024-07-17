@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: Event 11
   m_EditorClassIdentifier: 
   eventColors: 0100000004000000
-  eventName: "\uD53C\uC758 \uAC01\uC131"
-  eventDescription: 
+  eventName: "\uD53C\uC758 \uB300\uAC00"
+  eventDescription: "{TargetBlockColor} \uC0C9 \uBE14\uB85D \uC704\uC5D0 \uC788\uB294
+    \uC720\uB2DB\uC5D0\uAC8C <b>\uAC15\uD654, \uC800\uC8FC</b> \uC0C1\uD0DC\uB97C
+    \uBD80\uC5EC\uD55C\uB2E4."
