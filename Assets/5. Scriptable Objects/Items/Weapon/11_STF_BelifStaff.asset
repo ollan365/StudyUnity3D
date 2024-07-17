@@ -21,7 +21,7 @@ MonoBehaviour:
   spawnMaxStage: 20
   icon: {r: 0, g: 0, b: 1, a: 1}
   description: 
-  weaponType: 0
+  weaponType: 1
   level: 0
   weaponLevel:
   - level: 0

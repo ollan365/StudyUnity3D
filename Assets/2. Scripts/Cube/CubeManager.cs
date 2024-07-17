@@ -333,7 +333,7 @@ public class CubeManager : MonoBehaviour
                 {
                     case ObjectType.MERCHANT:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, false))
-                            ObjectManager.Instance.ChangeShop();
+                            ObjectManager.Instance.OpenShop();
                         break;
                     case ObjectType.TRIGGER:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, true))
