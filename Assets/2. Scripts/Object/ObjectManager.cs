@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using static Constants;
+using TMPro;
 
 public class ObjectManager : MonoBehaviour
 {
@@ -9,8 +10,8 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private GameObject[] friendObjectStatus;
     [SerializeField] private Transform dieObject;
     [SerializeField] private Object player;
-    [SerializeField] private Text goldText;
-    [SerializeField] private Text shopGoldText;
+    [SerializeField] private TMP_Text goldText;
+    [SerializeField] private TMP_Text shopGoldText;
 
     public static ObjectManager Instance { get; private set; }
     [Header("Manager")]
@@ -39,22 +40,22 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private GameObject enemyInfoPanel;
     [SerializeField] private Image enemyInfoImage;
     [SerializeField] private Sprite[] enemyInfoImages;
-    [SerializeField] private Text enemyInfoName;
+    [SerializeField] private TMP_Text enemyInfoName;
     [SerializeField] private Slider enemyInfoHPslider;
-    [SerializeField] private Text enemyInfoHPText;
-    [SerializeField] private Text enemyInfoAttackType;
-    [SerializeField] private Text enemyInfoBasicAttack;
+    [SerializeField] private TMP_Text enemyInfoHPText;
+    [SerializeField] private TMP_Text enemyInfoAttackType;
+    [SerializeField] private TMP_Text enemyInfoBasicAttack;
     public GameObject EnemyInfoPanel { get => enemyInfoPanel; }
 
     [Header("Object Info UI")]
     [SerializeField] private GameObject objectInfoPanel;
     [SerializeField] private Image objectInfoImage;
     [SerializeField] private Sprite[] objectInfoImages;
-    [SerializeField] private Text objectInfoName;
+    [SerializeField] private TMP_Text objectInfoName;
     [SerializeField] private Slider objectInfoHPslider;
-    [SerializeField] private Text objectInfoHPText;
-    [SerializeField] private Text objectInfoAttackType;
-    [SerializeField] private Text objectInfoBasicAttack;
+    [SerializeField] private TMP_Text objectInfoHPText;
+    [SerializeField] private TMP_Text objectInfoAttackType;
+    [SerializeField] private TMP_Text objectInfoBasicAttack;
     public GameObject ObjectInfoPanel { get => objectInfoPanel; }
 
 
@@ -421,7 +422,6 @@ public class ObjectManager : MonoBehaviour
             //panel position
             RectTransform panelTransform = ObjectInfoPanel.GetComponent<RectTransform>();
             panelTransform.position = new Vector3(index * 155 , 200, 0);
-            Debug.Log("ㅇ");
 
         }
         else if (targetObj.Type == ObjectType.ENEMY) //적 클릭해서 호출되는 경우

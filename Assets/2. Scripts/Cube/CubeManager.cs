@@ -248,9 +248,14 @@ public class CubeManager : MonoBehaviour
         foreach (GameObject position in array) position.GetComponent<CubePosition>().FindNewChild();
 
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
+       
 
         if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
-            EventManager.Instance.BingoCheck();
+        {
+            Debug.Log(EventManager.Instance);
+            EventManager.Instance.BingoCheck(); 
+        }
+           
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }

@@ -4,6 +4,7 @@ using System.Collections;
 using static Constants;
 using static Excel;
 using DG.Tweening;
+using TMPro;
 
 public class Object : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class Object : MonoBehaviour
     [SerializeField] private Slider hpSlider;
     [SerializeField] private GameObject popTextObj;
     public GameObject PopTextObject { get => popTextObj; }
-    private Text popText;
+    private TMP_Text popText;
 
     [SerializeField] private int id;
     [SerializeField] private string objName;
@@ -148,7 +149,7 @@ public class Object : MonoBehaviour
     public void PoppingText(string text, Color color)
     {
         //set value
-        popText = popTextObj.GetComponent<Text>();
+        popText = popTextObj.GetComponent<TMP_Text>();
         popText.text = text;
         popText.color = color;
         

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Slot : MonoBehaviour
 {
@@ -49,7 +50,7 @@ public class Slot : MonoBehaviour
         {
             equip.SetActive(false);
             count.SetActive(true);
-            count.GetComponentInChildren<Text>().text = text;
+            count.GetComponentInChildren<TMP_Text>().text = text;
         }
     }
 }
