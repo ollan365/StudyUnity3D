@@ -23,11 +23,12 @@ public class Object : MonoBehaviour
     [SerializeField] private ObjectType type;
     [SerializeField] private WeaponType weaponType;
     [SerializeField] private GameObject indicator;
+    [SerializeField] private float textFontSize;
 
     public Touch touchCube;
     private Sequence sequence;
-    private TextMeshProUGUI tmpUGUI;
     private RectTransform rectTransform;
+    
 
     public int ID { get => id; }
     public string Name { get => objName; }
@@ -65,7 +66,7 @@ public class Object : MonoBehaviour
 
     private void Awake()
     {
-        if (popText != null)
+        if (popTextObj != null)
         {
             popText = popTextObj.GetComponent<TMP_Text>();
             rectTransform = popTextObj.GetComponent<RectTransform>();
@@ -130,7 +131,7 @@ public class Object : MonoBehaviour
                 text = $"+{Mathf.Abs(dmg)}";
             else
                 text = $"{Mathf.Abs(dmg)}";
-            PoppingText(text, new Color(0, 0, 1, 1));
+            DamageText(text);
         }
             
 
@@ -172,18 +173,23 @@ public class Object : MonoBehaviour
 
     private void DamageText(string text, bool isCritical = false)
     {
+        //초기 값 설정
         popText.text = text;
+        popText.fontSize = 25;
+
         if (isCritical)
         {
             popText.color = UnityEngine.Color.red;
         }
 
-        
-        rectTransform.localPosition = Vector3.zero;
-
         sequence = DOTween.Sequence();
-        
-        
+        sequence.Append(popText.DOFontSize(textFontSize * 1.5f, 0.5f))
+                .Join(popText.DOFade(1.0f, 0.5f))
+                .Append(popText.DOFontSize(textFontSize, 0.5f))
+                .Append(popText.DOFade(0.0f,0.5f));
+
+        popText.fontSize = textFontSize;
+
 
     }
 

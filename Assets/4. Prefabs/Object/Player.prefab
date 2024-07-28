@@ -132,6 +132,7 @@ MonoBehaviour:
   type: 0
   weaponType: 0
   indicator: {fileID: 6358706613065406842}
+  textFontSize: 50
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0
