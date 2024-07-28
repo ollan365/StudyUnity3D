@@ -282,6 +282,7 @@ public class CubeManager : MonoBehaviour
 
         // 스테이지 시작
         StartCoroutine(StageManager.Instance.StartStage());
+        EventManager.Instance.BingoCheck();
     }
     public void SetEventStatus(bool flag)
     {
