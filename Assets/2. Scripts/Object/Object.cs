@@ -29,7 +29,6 @@ public class Object : MonoBehaviour
     private TextMeshProUGUI tmpUGUI;
     private RectTransform rectTransform;
 
-
     public int ID { get => id; }
     public string Name { get => objName; }
     public int MinDamage { get => minDamage; }
@@ -100,6 +99,7 @@ public class Object : MonoBehaviour
 
         this.touchCube = touchCube;
         Debug.Log($"{this.touchCube} / {touchCube}");
+
     }
 
     public void OnHit(StatusEffect effect, float damage)
@@ -164,7 +164,6 @@ public class Object : MonoBehaviour
                 .Join(popText.DOFade(1.0f, 1.0f))
                 .Append(rectTransform.DOLocalMoveY(1f, 1.0f)).SetEase(Ease.Linear)
                 .Join(popText.DOFade(0.0f, 1.0f));
-
 
     }
 
