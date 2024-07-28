@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 public class ExceptionHandler : MonoBehaviour
 {
     [SerializeField] private Image errorPanel;
-    [SerializeField] private Text errorText;
+    [SerializeField] private TMP_Text errorText;
 
     public static ExceptionHandler Instance { get; private set; }
     private Sequence sequence;

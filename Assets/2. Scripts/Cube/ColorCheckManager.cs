@@ -2,11 +2,12 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using static Constants;
+using TMPro;
 
 public class ColorCheckManager : MonoBehaviour
 {
     public static ColorCheckManager Instance { get; private set; }
-    [SerializeField] private Text[] bingoTexts;
+    //[SerializeField] private TMP_Text[] bingoTexts;
 
     private GameObject selectedCharacter;
     public GameObject SelectedCharacter { get => selectedCharacter; }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using static Constants;
 using static Excel;
+using TMPro;
 
 public class StageManager : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class StageManager : MonoBehaviour
     public PlayLogic StagePlayLogic { get => playLogic; }
 
     [Header("Texts")]
-    [SerializeField] private Text[] stageTexts;
+    [SerializeField] private TMP_Text[] stageTexts;
     private int[] stageTextValues;
 
     private int[] stageDatas;
@@ -44,7 +45,7 @@ public class StageManager : MonoBehaviour
 
     [Header("Panel")]
     [SerializeField] private GameObject stageStartPanel;
-    private Text startPanelText;
+    private TMP_Text startPanelText;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject clickIgnorePanel;
 
@@ -143,10 +144,10 @@ public class StageManager : MonoBehaviour
         
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
         
-        for (int ind = 0; ind < stageEnemy.Count; ind++)
-        {
-            Debug.Log(stageEnemy[ind]);
-        }
+        //for (int ind = 0; ind < stageEnemy.Count; ind++)
+        //{
+        //    Debug.Log(stageEnemy[ind]);
+        //}
 
         for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
         {
@@ -167,7 +168,7 @@ public class StageManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<Text>();
+        startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<TMP_Text>();
         startPanelText.text = $"Stage {StaticManager.Instance.Stage}";
         stageStartPanel.SetActive(true);
 
