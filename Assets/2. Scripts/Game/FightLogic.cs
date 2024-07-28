@@ -99,7 +99,10 @@ public class FightLogic : MonoBehaviour
             attacked[i].GetComponent<Object>().Indicator.SetActive(true);
             yield return new WaitForSeconds(0.5f);
 
-            attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);
+            if (attacker.Type == ObjectType.ENEMY)
+                attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);
+            else if (attacker.Type == ObjectType.PLAYER || attacker.Type == ObjectType.FRIEND)
+                attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage * Mathf.Pow(1.2f, attacked.Count - 1));
             yield return new WaitForFixedUpdate();
 
             //disable indicator
@@ -132,7 +135,7 @@ public class FightLogic : MonoBehaviour
         {
             for (int i = 0; i < 3; i++)
             {
-                if (StageManager.Instance.FriendList[i] == null || !StageManager.Instance.FriendList[i].activeSelf) continue;
+                if (StageManager.Instance.FriendList[i] == null || StageManager.Instance.FriendList[i].GetComponent<Object>().HP <= 0) continue;
 
                 Object f = StageManager.Instance.FriendList[i].GetComponent<Object>();
                 if (weaponType == WeaponType.CAD || weaponType == WeaponType.LAD)
@@ -151,7 +154,7 @@ public class FightLogic : MonoBehaviour
         {
             foreach (GameObject enemyObj in StageManager.Instance.EnemyList)
             {
-                if (!enemyObj.activeSelf) continue;
+                if (enemyObj.GetComponent<Object>().HP <= 0) continue;
 
                 Object e = enemyObj.GetComponent<Object>();
                 if (weaponType == WeaponType.CAD || weaponType == WeaponType.LAD)

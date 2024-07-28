@@ -137,6 +137,7 @@ public class StageManager : MonoBehaviour
     public IEnumerator StartStage()
     {
         //섞은 후 플레이어 활성화
+        // ObjectManager.Instance.Summons()
         player.SetActive(true);
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
