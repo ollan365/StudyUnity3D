@@ -305,7 +305,7 @@ public class StageManager : MonoBehaviour
         {
             foreach(Object obj in EventManager.Instance.AllObject)
             {
-                obj.OnHit(StatusEffect.HP_PERCENT, 10);
+                //obj.OnHit(StatusEffect.HP_PERCENT, 10);
             }
         }
         else if (StaticManager.Instance.Stage < 20 && turn >= 10)
