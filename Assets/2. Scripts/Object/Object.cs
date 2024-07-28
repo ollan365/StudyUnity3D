@@ -160,7 +160,6 @@ public class Object : MonoBehaviour
         popText.text = text;
         popText.color = color;
 
-        RectTransform rectTransform = popTextObj.GetComponent<RectTransform>();
         rectTransform.localPosition = Vector3.zero;
 
         sequence = DOTween.Sequence();
@@ -168,6 +167,8 @@ public class Object : MonoBehaviour
                 .Join(popText.DOFade(1.0f, 1.0f))
                 .Append(rectTransform.DOLocalMoveY(1f, 1.0f)).SetEase(Ease.Linear)
                 .Join(popText.DOFade(0.0f, 1.0f));
+
+        rectTransform.localPosition = Vector3.zero;
 
     }
 
@@ -183,13 +184,14 @@ public class Object : MonoBehaviour
         }
 
         sequence = DOTween.Sequence();
-        sequence.Append(popText.DOFontSize(textFontSize * 1.5f, 0.5f))
+        sequence.Append(rectTransform.DOLocalMoveY(0.5f, 0.1f))
+                .Append(popText.DOFontSize(textFontSize * 1.5f, 0.5f))
                 .Join(popText.DOFade(1.0f, 0.5f))
                 .Append(popText.DOFontSize(textFontSize, 0.5f))
                 .Append(popText.DOFade(0.0f,0.5f));
 
         popText.fontSize = textFontSize;
-
+        rectTransform.localPosition = Vector3.zero;
 
     }
 
@@ -197,8 +199,5 @@ public class Object : MonoBehaviour
     {
         if (other.GetComponent<Touch>() != null) touchCube = other.GetComponent<Touch>();
     }
-
-
-
 
 }
