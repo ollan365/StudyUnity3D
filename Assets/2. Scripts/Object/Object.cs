@@ -26,6 +26,8 @@ public class Object : MonoBehaviour
 
     public Touch touchCube;
     private Sequence sequence;
+    private TextMeshProUGUI tmpUGUI;
+    private RectTransform rectTransform;
 
     public int ID { get => id; }
     public string Name { get => objName; }
@@ -60,6 +62,13 @@ public class Object : MonoBehaviour
 
     public Colors Color { get => touchCube.Color; }
     public int Index { get => touchCube.Index; }
+
+    private void Awake()
+    {
+        popText = popTextObj.GetComponent<TMP_Text>();
+        rectTransform = popTextObj.GetComponent<RectTransform>();
+    }
+
     public void Init(ObjectType objType, string[] datas, Touch touchCube)
     {
         type = objType;
@@ -90,12 +99,6 @@ public class Object : MonoBehaviour
 
         this.touchCube = touchCube;
         Debug.Log($"{this.touchCube} / {touchCube}");
-
-    }
-
-    private void Start()
-    {
-        sequence = DOTween.Sequence();
 
     }
 
@@ -148,8 +151,8 @@ public class Object : MonoBehaviour
 
     public void PoppingText(string text, Color color)
     {
+        //기본적인 텍스트 띄우기
         //set value
-        popText = popTextObj.GetComponent<TMP_Text>();
         popText.text = text;
         popText.color = color;
 
@@ -161,6 +164,23 @@ public class Object : MonoBehaviour
                 .Join(popText.DOFade(1.0f, 1.0f))
                 .Append(rectTransform.DOLocalMoveY(1f, 1.0f)).SetEase(Ease.Linear)
                 .Join(popText.DOFade(0.0f, 1.0f));
+
+    }
+
+    private void DamageText(string text, bool isCritical = false)
+    {
+        popText.text = text;
+        if (isCritical)
+        {
+            popText.color = UnityEngine.Color.red;
+        }
+
+        
+        rectTransform.localPosition = Vector3.zero;
+
+        sequence = DOTween.Sequence();
+        
+        
 
     }
 
