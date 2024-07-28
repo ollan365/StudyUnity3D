@@ -167,6 +167,7 @@ MonoBehaviour:
   type: 2
   weaponType: 0
   indicator: {fileID: 1450857302552564418}
+  textFontSize: 50
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0
@@ -602,7 +603,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8783654563945295684
 Transform:
   m_ObjectHideFlags: 0
@@ -717,6 +718,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7983713671138276762, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_SizeDelta.x
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 7983713671138276762, guid: bbc2d5598ba482e459088253fec41676, type: 3}
+      propertyPath: m_SizeDelta.y
       value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8468494500217382815, guid: bbc2d5598ba482e459088253fec41676, type: 3}
