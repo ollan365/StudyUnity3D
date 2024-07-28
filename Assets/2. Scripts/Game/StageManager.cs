@@ -136,9 +136,16 @@ public class StageManager : MonoBehaviour
     }
     public IEnumerator StartStage()
     {
-        //섞은 후 플레이어 활성화
-        // ObjectManager.Instance.Summons()
-        player.SetActive(true);
+        //섞은 후 포탈에서 플레이어 생성
+        GameObject portal = ObjectManager.Instance.Summons(StageCube.Instance.touchArray[WHITE][3], ObjectType.PORTAL, 0);
+        ObjectManager.Instance.Summons(StageCube.Instance.touchArray[WHITE][3], ObjectType.PLAYER, 0);
+        player.gameObject.SetActive(true);
+        ColorCheckManager.Instance.CharacterSelect(player);
+        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(WHITE, 4));
+        yield return new WaitForSeconds(1f);
+        ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+        ObjectEffect.Instance.MakeSmall(portal);
+
         StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
 
         int index = 0;
@@ -304,17 +311,7 @@ public class StageManager : MonoBehaviour
 
         if (StaticManager.Instance.Stage < 10 && turn  >= 3)
         {
-            foreach(Object obj in EventManager.Instance.AllObject)
-            {
-                //obj.OnHit(StatusEffect.HP_PERCENT, 10);
-            }
-        }
-        else if (StaticManager.Instance.Stage < 20 && turn >= 10)
-        {
-            foreach (Object obj in EventManager.Instance.AllObject)
-            {
-                obj.OnHit(StatusEffect.HP_PERCENT, 10);
-            }
+            player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 10);
         }
     }
 

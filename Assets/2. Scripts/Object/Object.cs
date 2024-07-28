@@ -65,7 +65,7 @@ public class Object : MonoBehaviour
 
     private void Awake()
     {
-        if (popText != null)
+        if (popTextObj != null)
         {
             popText = popTextObj.GetComponent<TMP_Text>();
             rectTransform = popTextObj.GetComponent<RectTransform>();

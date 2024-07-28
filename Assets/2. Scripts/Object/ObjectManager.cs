@@ -83,6 +83,10 @@ public class ObjectManager : MonoBehaviour
         GameObject newObject;
 
         switch (objectType) {
+            case ObjectType.PLAYER:
+                newObject = StageManager.Instance.Player.gameObject;
+                break;
+
             case ObjectType.ENEMY:
                 newObject = Instantiate(enemyPrefab);
                 string value = StaticManager.Instance.enemyDatas[objectID];
