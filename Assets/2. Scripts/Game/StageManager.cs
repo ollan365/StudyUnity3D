@@ -50,7 +50,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject clickIgnorePanel;
 
     [Header("Status")]
-    private int turn = 1;
+    private int turn = 0;
     private StageStatus status;
     public StageStatus StatusOfStage
     {
@@ -195,11 +195,10 @@ public class StageManager : MonoBehaviour
         {
             case StageStatus.PLAYER:
                 StatusOfStage = StageStatus.PLAYER;
-                turn++;
-                stageTexts[1].text = $"{turn} Turn";
                 SetStageTextValue(StageText.ALL_INIT, 0);
                 clickIgnorePanel.SetActive(false);
                 StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
+                TurnLimit();
                 break;
 
             case StageStatus.FIGHT:
@@ -296,6 +295,26 @@ public class StageManager : MonoBehaviour
         // 보정을 위해 최종 회전 각도로 설정
         cube.transform.localRotation = Quaternion.Euler(endRotationVector);
         isCubeMove = false;
+    }
+
+    private void TurnLimit()
+    {
+        stageTexts[1].text = $"{++turn} Turn";
+
+        if (StaticManager.Instance.Stage < 10 && turn  >= 3)
+        {
+            foreach(Object obj in EventManager.Instance.AllObject)
+            {
+                obj.OnHit(StatusEffect.HP_PERCENT, 10);
+            }
+        }
+        else if (StaticManager.Instance.Stage < 20 && turn >= 10)
+        {
+            foreach (Object obj in EventManager.Instance.AllObject)
+            {
+                obj.OnHit(StatusEffect.HP_PERCENT, 10);
+            }
+        }
     }
 
     public void SummonsFriend(Colors color, int index, int scrollID)

@@ -526,7 +526,7 @@ public class EventManager : MonoBehaviour
 
         return null;
     }
-    private Object[] AllObject
+    public Object[] AllObject
     {
         get
         {
