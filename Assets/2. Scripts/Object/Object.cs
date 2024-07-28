@@ -65,8 +65,11 @@ public class Object : MonoBehaviour
 
     private void Awake()
     {
-        popText = popTextObj.GetComponent<TMP_Text>();
-        rectTransform = popTextObj.GetComponent<RectTransform>();
+        if (popText != null)
+        {
+            popText = popTextObj.GetComponent<TMP_Text>();
+            rectTransform = popTextObj.GetComponent<RectTransform>();
+        }
     }
 
     public void Init(ObjectType objType, string[] datas, Touch touchCube)
