@@ -152,7 +152,6 @@ public class Object : MonoBehaviour
         popText = popTextObj.GetComponent<TMP_Text>();
         popText.text = text;
         popText.color = color;
-        
 
         RectTransform rectTransform = popTextObj.GetComponent<RectTransform>();
         rectTransform.localPosition = Vector3.zero;
