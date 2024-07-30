@@ -121,13 +121,15 @@ MonoBehaviour:
   objectManager: {fileID: 0}
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 0}
-  goldText: {fileID: 0}
+  popTextObj: {fileID: 0}
   id: 0
   objName: 
   minDamage: 0
   maxDamage: 0
   type: 5
   weaponType: 0
+  indicator: {fileID: 0}
+  textFontSize: 0
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0
