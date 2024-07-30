@@ -115,8 +115,9 @@ public class Object : MonoBehaviour
             dmg = damage * EventManager.Instance.Effect.Received(this);
         else if (effect == StatusEffect.HP_PERCENT)
             dmg = maxHp * damage / 100 * EventManager.Instance.Effect.Received(this);
-
-        //데미지 깎기
+        Debug.Log(dmg);
+        //데미지를 반올림 한 후, HP에 반영한다.
+        dmg = Mathf.Round(dmg);
         HP -= dmg;
         if (HP <= 0)
             StartCoroutine(Death(HP, gameObject));
@@ -188,7 +189,8 @@ public class Object : MonoBehaviour
                 .Append(popText.DOFontSize(textFontSize * 1.5f, 0.5f))
                 .Join(popText.DOFade(1.0f, 0.5f))
                 .Append(popText.DOFontSize(textFontSize, 0.5f))
-                .Append(popText.DOFade(0.0f,0.5f));
+                .Append(popText.DOFade(0.0f, 0.5f))
+                .Append(rectTransform.DOLocalMoveY(0.0f, 0.1f));
 
         popText.fontSize = textFontSize;
         rectTransform.localPosition = Vector3.zero;
