@@ -25,7 +25,8 @@ public class StageManager : MonoBehaviour
     [SerializeField] private EnvLogic envLogic;
     public PlayLogic StagePlayLogic { get => playLogic; }
 
-    [Header("Texts")]
+    [Header("UI")]
+    [SerializeField] private GameObject[] UIObjects;
     [SerializeField] private TMP_Text[] stageTexts;
     private int[] stageTextValues;
 
@@ -98,7 +99,7 @@ public class StageManager : MonoBehaviour
         treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
         clickIgnorePanel.SetActive(true);
-        cubeManager.StartRandomTurn(stageDatas[MIX]);
+        StartCoroutine(StartStage());
     }
     public int GetStageTextValue(StageText text)
     {
@@ -136,27 +137,49 @@ public class StageManager : MonoBehaviour
     }
     public IEnumerator StartStage()
     {
-        //섞은 후 포탈에서 플레이어 생성
+        yield return new WaitForFixedUpdate();
+
+        // 보물 소환
+        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
+        {
+            Touch cube;
+            while (true)
+            {
+                cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
+                if (cube.Obj == null && cube != StageCube.Instance.touchArray[WHITE][3] && cube != StageCube.Instance.touchArray[WHITE][4])
+                    break;
+            }
+
+            treasure[i] = ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 0);
+            treasure[i].GetComponent<Object>().SetWeapon(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX], WeaponType.NULL);
+            yield return new WaitForFixedUpdate();
+        }
+        
+        // 화면 밝아짐
+        ScreenEffect.Instance.Fade(1, 0, 1);
+        yield return new WaitForSeconds(2f);
+
+        //포탈에서 플레이어 생성
         GameObject portal = ObjectManager.Instance.Summons(StageCube.Instance.touchArray[WHITE][3], ObjectType.PORTAL, 0);
+        ObjectEffect.Instance.MakeBig(portal);
+        yield return new WaitForSeconds(1f);
         ObjectManager.Instance.Summons(StageCube.Instance.touchArray[WHITE][3], ObjectType.PLAYER, 0);
+        yield return new WaitForSeconds(1f);
         player.gameObject.SetActive(true);
         ColorCheckManager.Instance.CharacterSelect(player);
         StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(WHITE, 4));
         yield return new WaitForSeconds(1f);
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
         ObjectEffect.Instance.MakeSmall(portal);
+        yield return new WaitForSeconds(2f);
 
-        StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
+        // 큐브 섞기
+        cubeManager.StartRandomTurn(stageDatas[MIX]);
+        yield return new WaitForSeconds(5);
 
+        // 적 소환
         int index = 0;
-        
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
-        
-        //for (int ind = 0; ind < stageEnemy.Count; ind++)
-        //{
-        //    Debug.Log(stageEnemy[ind]);
-        //}
-
         for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
         {
             for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
@@ -165,28 +188,24 @@ public class StageManager : MonoBehaviour
                 Debug.Log(enemy[index]);
                 
                 index++;
-                yield return new WaitForFixedUpdate();
             }
         }
-        
-        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
-        {
-            treasure[i] = ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 0);
-            treasure[i].GetComponent<Object>().SetWeapon(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX], WeaponType.NULL);
-            yield return new WaitForFixedUpdate();
-        }
+        yield return new WaitForSeconds(1.2f);
 
         startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<TMP_Text>();
         startPanelText.text = $"Stage {StaticManager.Instance.Stage}";
-        stageStartPanel.SetActive(true);
 
-        yield return new WaitForSeconds(1.2f);
-        
+        ChangeStatus(StageStatus.PLAYER);
+        yield return new WaitForSeconds(2f);
+
+        // UI 활성화
+        foreach (GameObject ui in UIObjects) ui.SetActive(true);
+        stageStartPanel.SetActive(true);
+        yield return new WaitForSeconds(1f);
         stageStartPanel.SetActive(false);
         clickIgnorePanel.SetActive(false);
 
-        ChangeStatus(StageStatus.PLAYER);
-
+        EventManager.Instance.BingoCheck();
     }
     public void ClickFightButton()
     {

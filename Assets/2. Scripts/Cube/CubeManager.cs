@@ -284,10 +284,6 @@ public class CubeManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
 
         duration *= 2;
-
-        // 스테이지 시작
-        StartCoroutine(StageManager.Instance.StartStage());
-        EventManager.Instance.BingoCheck();
     }
     public void SetEventStatus(bool flag)
     {
