@@ -186,12 +186,12 @@ public class CubeManager : MonoBehaviour
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
-    private void Turn(Colors color, int direction)
+    private void Turn(Colors color, int direction, bool isMaze = false)
     {
         if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL
             || (StageManager.Instance.GetStageTextValue(StageText.ROTATE) <= 0 && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)) return;
 
-        if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER) StageManager.Instance.SetStageTextValue(StageText.ROTATE, -1);
+        if (!isMaze && StageManager.Instance.StatusOfStage == StageStatus.PLAYER) StageManager.Instance.SetStageTextValue(StageText.ROTATE, -1);
 
         playerTurnStatus = PlayerTurnStatus.TURN;
 
@@ -224,9 +224,9 @@ public class CubeManager : MonoBehaviour
             position.transform.GetChild(0).parent = turnPoint.transform;
         }
 
-        StartCoroutine(TurnEffect(turnPoint, rotation, array));
+        StartCoroutine(TurnEffect(turnPoint, rotation, array, isMaze));
     }
-    private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array)
+    private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array, bool isMaze)
     {
         Quaternion startRotation = turnPoint.transform.localRotation;
         Quaternion endRotation = Quaternion.Euler(rotation) * startRotation;
@@ -250,7 +250,7 @@ public class CubeManager : MonoBehaviour
         yield return new WaitForFixedUpdate(); // 이게 없으면 check cube의 layer가 바뀌기 전에 빙고 체크함
        
 
-        if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
+        if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER && !isMaze)
         {
             Debug.Log(EventManager.Instance);
             EventManager.Instance.BingoCheck(); 
@@ -259,11 +259,11 @@ public class CubeManager : MonoBehaviour
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
-    public void StartRandomTurn(int randomCount)
+    public void StartRandomTurn(int randomCount, bool isMaze)
     {
-        StartCoroutine(RandomTurn(randomCount));
+        StartCoroutine(RandomTurn(randomCount, isMaze));
     }
-    private IEnumerator RandomTurn(int randomCount)
+    private IEnumerator RandomTurn(int randomCount, bool isMaze)
     {
         yield return new WaitForFixedUpdate(); // 반드시 필요!
 
@@ -278,7 +278,7 @@ public class CubeManager : MonoBehaviour
             direction = direction == 1 ? 1 : -1;
             int value = Random.Range(0, 9);
 
-            Turn(value.ToColor(), direction);
+            Turn(value.ToColor(), direction, isMaze);
         }
         while (playerTurnStatus == PlayerTurnStatus.TURN)
             yield return new WaitForFixedUpdate();

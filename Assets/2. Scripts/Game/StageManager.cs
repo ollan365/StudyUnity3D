@@ -174,7 +174,7 @@ public class StageManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         // 큐브 섞기
-        cubeManager.StartRandomTurn(stageDatas[MIX]);
+        cubeManager.StartRandomTurn(stageDatas[MIX], false);
         yield return new WaitForSeconds(5);
 
         // 적 소환

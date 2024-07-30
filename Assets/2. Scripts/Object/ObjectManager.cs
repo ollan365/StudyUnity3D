@@ -319,9 +319,9 @@ public class ObjectManager : MonoBehaviour
         }
 
     }
-    public void Buy(int index)
+    public void AddItem(int index, bool buy)
     {
-        if (StaticManager.Instance.Gold < shopItemSlotArray[index].item.SellCost) return;
+        if (buy && StaticManager.Instance.Gold < shopItemSlotArray[index].item.SellCost) return;
 
         int inventoryIndex = -1;
 
@@ -360,6 +360,11 @@ public class ObjectManager : MonoBehaviour
         inventorySlot[inventoryIndex].ChangeText(StaticManager.Instance.inventory[inventoryIndex].count.ToString());
         shopInventorySlot[inventoryIndex].ChangeText(StaticManager.Instance.inventory[inventoryIndex].count.ToString());
 
+        // 인벤토리 변경
+        ChangePlayerInventory();
+
+        if (!buy) return; // 구매한 게 아니면 return
+
         // 가진 돈 변경
         StaticManager.Instance.Gold -= shopItemSlotArray[index].item.SellCost;
 
@@ -369,10 +374,6 @@ public class ObjectManager : MonoBehaviour
             shopSlot[index].SetActive(false);
         else
             shopSlot[index].ChangeText(shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString());
-
-        // 인벤토리 변경
-        ChangePlayerInventory();
-        return;
     }
 
     public void SetObjectInfo(Object obj, int index = 0)

@@ -317,6 +317,15 @@ public class EventManager : MonoBehaviour
                         StageManager.Instance.StagePlayLogic.Trigger(obj);
                 break;
 
+            case "오아시스":
+                StaticManager.Instance.Gold -= 100;
+                ObjectManager.Instance.AddItem(110000, false);
+                break;
+
+            case "미궁":
+                cubeManager.StartRandomTurn(5, true);
+                break;
+
             default: Debug.Log(name); break;
         }
     }
