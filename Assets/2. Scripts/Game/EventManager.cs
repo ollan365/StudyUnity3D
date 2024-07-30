@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using static Constants;
 using TMPro;
 
@@ -23,9 +24,6 @@ public class EventManager : MonoBehaviour
     [SerializeField] private Button[] eventButtons;
     [SerializeField] private TMP_Text[] eventNameTexts;
     [SerializeField] private TMP_Text[] eventDescriptionTexts;
-    [SerializeField] private GameObject[] footNoteLines;
-    [SerializeField] private GameObject[] rightFootNotes;
-    [SerializeField] private GameObject[] leftFootNotes;
     [SerializeField] private EventCard[] eventCards;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
     public ColorEffect Effect { get => colorEffect; }
@@ -167,26 +165,9 @@ public class EventManager : MonoBehaviour
 
         eventDescriptionTexts[0].text = eventList[random_1].EventDescription[0];
         eventDescriptionTexts[1].text = eventList[random_2].EventDescription[0];
-
-        if(eventList[random_1].EventDescription.Count > 1)
-        {
-            footNoteLines[0].SetActive(true);
-            for(int i = 1;i< eventList[random_1].EventDescription.Count; i++)
-            {
-                rightFootNotes[i - 1].SetActive(true);
-                rightFootNotes[i - 1].GetComponent<TMP_Text>().text = eventList[random_1].EventDescription[i];
-            }
-        }
-        if (eventList[random_2].EventDescription.Count > 1)
-        {
-            footNoteLines[1].SetActive(true);
-            for (int i = 1; i < eventList[random_2].EventDescription.Count; i++)
-            {
-                leftFootNotes[i - 1].SetActive(true);
-                leftFootNotes[i - 1].GetComponent<TMP_Text>().text = eventList[random_2].EventDescription[i];
-            }
-        }
     }
+    
+
     private bool CheckEvent(string name)
     {
         switch (name)
