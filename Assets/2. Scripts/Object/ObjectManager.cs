@@ -402,14 +402,15 @@ public class ObjectManager : MonoBehaviour
         }
         string basicAttackText = $"기본 공격력: {targetObj.MinDamage} ~ {targetObj.MaxDamage}";
 
+
+
         if (targetObj.Type == ObjectType.PLAYER || targetObj.Type == ObjectType.FRIEND) //플레이어 버튼 가져다대서 호출되는 부분
         {
-            //set player or mercenary image
-            //int idx = clickedObj.ID - 100000; //ID 값을 받아 배열의 인덱스로 변환
-            //if (idx + 1 > enemyInfoImages.Length)
-            //    enemyInfoImage.sprite = enemyInfoImages[0];
-            //else
-            //    enemyInfoImage.sprite = enemyInfoImages[idx];
+            //플레이어, 동료들의 사진 구별해서 넣기 일단은 동료 구별없이
+            if(targetObj.Type == ObjectType.PLAYER)
+                objectInfoImage.sprite = objectInfoImages[0];
+            else
+                objectInfoImage.sprite = objectInfoImages[1];
 
             //name
             objectInfoName.text = objName;

@@ -229,6 +229,21 @@ MonoBehaviour:
     m_Scale: 1
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
+  - m_Index: 13
+    m_Metrics:
+      m_Width: 11.25
+      m_Height: 22.5
+      m_HorizontalBearingX: 6.296875
+      m_HorizontalBearingY: 3.78125
+      m_HorizontalAdvance: 23.40625
+    m_GlyphRect:
+      m_X: 651
+      m_Y: 147
+      m_Width: 12
+      m_Height: 23
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
   - m_Index: 14
     m_Metrics:
       m_Width: 39.609375
@@ -2069,6 +2084,10 @@ MonoBehaviour:
     m_GlyphIndex: 2
     m_Scale: 1
   - m_ElementType: 1
+    m_Unicode: 44
+    m_GlyphIndex: 13
+    m_Scale: 1
+  - m_ElementType: 1
     m_Unicode: 45
     m_GlyphIndex: 14
     m_Scale: 1
@@ -3268,17 +3287,9 @@ MonoBehaviour:
     m_Width: 2
     m_Height: 101
   - m_X: 640
-    m_Y: 137
-    m_Width: 33
-    m_Height: 6
-  - m_X: 640
     m_Y: 107
     m_Width: 1
     m_Height: 36
-  - m_X: 641
-    m_Y: 137
-    m_Width: 32
-    m_Height: 60
   - m_X: 672
     m_Y: 107
     m_Width: 1
@@ -4154,7 +4165,8 @@ MonoBehaviour:
           m_YAdvance: 0
       m_FeatureLookupFlags: 0
   fallbackFontAssets: []
-  m_FallbackFontAssetTable: []
+  m_FallbackFontAssetTable:
+  - {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_CreationSettings:
     sourceFontFileName: 
     sourceFontFileGUID: 9e4403aff7b3ce84f897150c3e328ca3
