@@ -66,7 +66,7 @@ public class ColorCheckManager : MonoBehaviour
             if (obj != ObjectType.NULL && obj != ObjectType.PORTAL && obj != ObjectType.TRIGGER && obj != ObjectType.MERCHANT)
                 movableCube[i] = false;
 
-            if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
+            if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END)
                 StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
         }
     }

@@ -200,7 +200,7 @@ public class EventManager : MonoBehaviour
             default: return true;
         }
     }
-    private void Event(string name)
+    public void Event(string name)
     {
         switch (name)
         {
@@ -319,7 +319,7 @@ public class EventManager : MonoBehaviour
 
             case "오아시스":
                 StaticManager.Instance.Gold -= 100;
-                ObjectManager.Instance.AddItem(110000, false);
+                ObjectManager.Instance.AddItem(110000, null);
                 break;
 
             case "미궁":

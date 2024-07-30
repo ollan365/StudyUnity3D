@@ -180,6 +180,10 @@ public class StageManager : MonoBehaviour
         cubeManager.StartRandomTurn(stageDatas[MIX], false);
         yield return new WaitForSeconds(5);
 
+        // 플레이어 쪽으로 회전
+        StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
+        yield return new WaitForSeconds(1.2f);
+
         // 적 소환
         int index = 0;
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
@@ -198,9 +202,6 @@ public class StageManager : MonoBehaviour
         startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<TMP_Text>();
         startPanelText.text = $"Stage {StaticManager.Instance.Stage}";
 
-        ChangeStatus(StageStatus.PLAYER);
-        yield return new WaitForSeconds(2f);
-
         // UI 활성화
         foreach (GameObject ui in UIObjects) ui.SetActive(true);
         stageStartPanel.SetActive(true);
@@ -208,6 +209,7 @@ public class StageManager : MonoBehaviour
         stageStartPanel.SetActive(false);
         clickIgnorePanel.SetActive(false);
 
+        ChangeStatus(StageStatus.PLAYER);
         EventManager.Instance.BingoCheck();
     }
     public void ClickFightButton()
