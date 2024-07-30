@@ -5,9 +5,12 @@ using UnityEngine.UI;
 using static Constants;
 using static Excel;
 using TMPro;
+using DG.Tweening;
 
 public class StageManager : MonoBehaviour
 {
+    Sequence sequence;
+
     public static StageManager Instance { get; private set; }
     [SerializeField] private GameObject player;
     public Object Player { get => player.GetComponent<Object>(); }
@@ -195,6 +198,7 @@ public class StageManager : MonoBehaviour
     public void ChangeStatus(StageStatus stageStatus)
     {
         cubeManager.ChangeToNormal();
+        sequence = DOTween.Sequence();
 
         StopCoroutine(fightLogic.FightLogicStart());
         StopCoroutine(envLogic.EnvLogicStart());
@@ -210,6 +214,7 @@ public class StageManager : MonoBehaviour
                 break;
 
             case StageStatus.FIGHT:
+                //sequence.Append();
                 StatusOfStage = StageStatus.FIGHT;
                 EventManager.Instance.Effect.Effect(); // 축복이나 저주 발동
                 StartCoroutine(fightLogic.FightLogicStart());
@@ -330,5 +335,25 @@ public class StageManager : MonoBehaviour
             }
         }
     }
+
+    private void StatusChangeEffect(StageStatus status)
+    {
+        switch (status) {
+            case StageStatus.INIT:
+                break;
+            case StageStatus.PLAYER:
+                break;
+            case StageStatus.FIGHT:
+
+                break;
+            case StageStatus.ENV:
+                break;
+            case StageStatus.END:
+                break;
+        }
+       
+
+    }
+
 
 }

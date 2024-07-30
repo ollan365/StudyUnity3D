@@ -4,10 +4,13 @@ using UnityEngine;
 using System.Linq;
 using static Constants;
 using static Excel;
+using DG.Tweening;
 
 public class FightLogic : MonoBehaviour
 {
     private bool attacking = false;
+    private Sequence sequence;
+
     public IEnumerator FightLogicStart()
     {
         Object player = StageManager.Instance.Player;
@@ -74,11 +77,20 @@ public class FightLogic : MonoBehaviour
             StageManager.Instance.ChangeStatus(StageStatus.ENV);
     }
 
-    private void LookAt(GameObject src, GameObject dst)
+    private Vector3 LookAt(GameObject src, GameObject dst)
     {
         Vector3 direc = src.transform.position - dst.transform.position;
-        Quaternion rot = Quaternion.LookRotation(direc);
-        src.transform.rotation = rot;
+        Quaternion sRot = Quaternion.LookRotation(direc);
+        Quaternion dRot = Quaternion.LookRotation(-direc);
+        src.transform.rotation = sRot;
+        dst.transform.rotation = dRot;
+        sequence = DOTween.Sequence();
+
+        sequence.Append(src.transform.DOMove(dst.transform.position, 1.2f)).SetEase(Ease.InExpo)
+                .SetDelay(0.3f)
+                .Append(src.transform.DOLocalMove(Vector3.zero, 1.2f)).SetEase(Ease.OutExpo);
+
+        return direc;
     }
 
     private IEnumerator Attack(Object attacker, List<GameObject> attacked)
@@ -92,12 +104,17 @@ public class FightLogic : MonoBehaviour
 
         for(int i = 0; i < attacked.Count; i++)
         {
-            LookAt(attacker.gameObject, attacked[i]);
-
             //activate indicator
             attacker.Indicator.SetActive(true);
             attacked[i].GetComponent<Object>().Indicator.SetActive(true);
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
+
+            Vector3 srcToDst = LookAt(attacker.gameObject, attacked[i]);
+
+            //근거리가 때리는 연출
+            
+
+
 
             if (attacker.Type == ObjectType.ENEMY)
                 attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);

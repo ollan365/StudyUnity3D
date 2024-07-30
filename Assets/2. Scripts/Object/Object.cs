@@ -115,7 +115,7 @@ public class Object : MonoBehaviour
             dmg = damage * EventManager.Instance.Effect.Received(this);
         else if (effect == StatusEffect.HP_PERCENT)
             dmg = maxHp * damage / 100 * EventManager.Instance.Effect.Received(this);
-        Debug.Log(dmg);
+
         //데미지를 반올림 한 후, HP에 반영한다.
         dmg = Mathf.Round(dmg);
         HP -= dmg;
