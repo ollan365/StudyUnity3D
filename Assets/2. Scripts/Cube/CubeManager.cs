@@ -12,7 +12,7 @@ public class CubeManager : MonoBehaviour
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
     private Vector3 startPosition;
-    private enum PlayerTurnStatus { NORMAL,TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED, EVENT }
+    private enum PlayerTurnStatus { NORMAL,TURN, CHARACTER_SELECTED, PORTION_SELECTED, SUMMONS_SELECTED }
     [SerializeField] private PlayerTurnStatus playerTurnStatus;
     private int itemID;
 
@@ -20,10 +20,12 @@ public class CubeManager : MonoBehaviour
     private float maxValue = 75f;
     private float minValue = 40f;
 
+    public bool IsEvent { get; set; }
 
     private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
+        IsEvent = false;
     }
     private void Update()
     {
@@ -70,7 +72,7 @@ public class CubeManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
-            if (playerTurnStatus == PlayerTurnStatus.EVENT) return;
+            if (IsEvent) return;
 
             // 초기화
             mouseStartObject = null;
@@ -108,7 +110,7 @@ public class CubeManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
-            if (playerTurnStatus == PlayerTurnStatus.EVENT) return;
+            if (IsEvent) return;
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
@@ -255,7 +257,6 @@ public class CubeManager : MonoBehaviour
             Debug.Log(EventManager.Instance);
             EventManager.Instance.BingoCheck(); 
         }
-           
 
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
@@ -284,18 +285,6 @@ public class CubeManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
 
         duration *= 2;
-    }
-    public void SetEventStatus(bool flag)
-    {
-        if (flag)
-        {
-            ChangeToNormal();
-            playerTurnStatus = PlayerTurnStatus.EVENT;
-        }
-        else
-        {
-            playerTurnStatus = PlayerTurnStatus.NORMAL;
-        }
     }
     public void SwitchPlayerTurnStatus(int itemIndex, ItemType itemType)
     {
@@ -343,7 +332,10 @@ public class CubeManager : MonoBehaviour
                         break;
                     case ObjectType.PORTAL:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, true))
+                        {
+                            ObjectEffect.Instance.MakeSmall(obj.gameObject);
                             StageManager.Instance.NextStage();
+                        }
                         break;
                     case ObjectType.PLAYER:
                     case ObjectType.FRIEND:

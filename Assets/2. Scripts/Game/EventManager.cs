@@ -62,7 +62,7 @@ public class EventManager : MonoBehaviour
         eventPanel.SetActive(true);
         colorEffect = new ColorEffect(color);
         bingoUI[color.ToInt()].SetLineIcon();
-        cubeManager.SetEventStatus(true);
+        cubeManager.IsEvent = true;
         foreach (GameObject obj in setActiveFalse) obj.SetActive(false);
         EventAdd();
     }
@@ -153,12 +153,6 @@ public class EventManager : MonoBehaviour
 
         eventButtons[0].onClick.AddListener(() => Event(eventList[random_1].eventName));
         eventButtons[1].onClick.AddListener(() => Event(eventList[random_2].eventName));
-        foreach (Button b in eventButtons)
-        {
-            b.onClick.AddListener(() => eventPanel.SetActive(false));
-            b.onClick.AddListener(() => cubeManager.SetEventStatus(false));
-            foreach (GameObject obj in setActiveFalse) b.onClick.AddListener(() => obj.SetActive(true));
-        }
 
         eventNameTexts[0].text = eventList[random_1].eventName;
         eventNameTexts[1].text = eventList[random_2].eventName;
@@ -200,7 +194,7 @@ public class EventManager : MonoBehaviour
             default: return true;
         }
     }
-    private void Event(string name)
+    public void Event(string name)
     {
         switch (name)
         {
@@ -232,7 +226,7 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "³Ê Á×°í ³ª Á×ÀÚ":
-                foreach(Object obj in ObjectList(Colors.RED))
+                foreach (Object obj in ObjectList(Colors.RED))
                     obj.OnHit(StatusEffect.HP_PERCENT, 50);
                 break;
 
@@ -319,7 +313,7 @@ public class EventManager : MonoBehaviour
 
             case "¿À¾Æ½Ã½º":
                 StaticManager.Instance.Gold -= 100;
-                ObjectManager.Instance.AddItem(110000, false);
+                ObjectManager.Instance.AddItem(110000, null);
                 break;
 
             case "¹Ì±Ã":
@@ -328,6 +322,16 @@ public class EventManager : MonoBehaviour
 
             default: Debug.Log(name); break;
         }
+
+        StartCoroutine(EffectAfterEvent());
+    }
+    private IEnumerator EffectAfterEvent()
+    {
+        eventPanel.SetActive(false);
+        yield return new WaitForSeconds(1);
+
+        foreach (GameObject obj in setActiveFalse) obj.SetActive(true);
+        cubeManager.IsEvent = false;
     }
 
     private IEnumerator Revive(Object obj)

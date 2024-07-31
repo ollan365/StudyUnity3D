@@ -180,6 +180,10 @@ public class StageManager : MonoBehaviour
         cubeManager.StartRandomTurn(stageDatas[MIX], false);
         yield return new WaitForSeconds(5);
 
+        // 플레이어 쪽으로 회전
+        StartCoroutine(CubeRotate(player.GetComponent<Object>().Color));
+        yield return new WaitForSeconds(1.2f);
+
         // 적 소환
         int index = 0;
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
@@ -198,9 +202,6 @@ public class StageManager : MonoBehaviour
         startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<TMP_Text>();
         startPanelText.text = $"Stage {StaticManager.Instance.Stage}";
 
-        ChangeStatus(StageStatus.PLAYER);
-        yield return new WaitForSeconds(2f);
-
         // UI 활성화
         foreach (GameObject ui in UIObjects) ui.SetActive(true);
         stageStartPanel.SetActive(true);
@@ -208,6 +209,7 @@ public class StageManager : MonoBehaviour
         stageStartPanel.SetActive(false);
         clickIgnorePanel.SetActive(false);
 
+        ChangeStatus(StageStatus.PLAYER);
         EventManager.Instance.BingoCheck();
     }
     public void ClickFightButton()
@@ -253,9 +255,12 @@ public class StageManager : MonoBehaviour
     public void CheckStageClear()
     {
         if (stageTextValues[StageText.MONSTER.ToInt()] > 0) return;
-
+        StartCoroutine(StageClear());
+    }
+    private IEnumerator StageClear()
+    {
         ChangeStatus(StageStatus.END);
-
+        SetStageTextValue(StageText.END, 0);
         clickIgnorePanel.SetActive(false);
 
         // 스테이지 종료 시 동료, 트리거 소멸
@@ -265,14 +270,11 @@ public class StageManager : MonoBehaviour
             t.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
         EventManager.Instance.StageEnd();
 
+        yield return new WaitForSeconds(3f);
+
         // 상인과 포탈 소환
         ObjectType[] summonObjectArray = new ObjectType[2] { ObjectType.MERCHANT, ObjectType.PORTAL };
-        foreach (ObjectType type in summonObjectArray)
-        {
-            ObjectManager.Instance.Summons(null, type, 0);
-        }
-
-        SetStageTextValue(StageText.END, 0);
+        foreach (ObjectType type in summonObjectArray) ObjectManager.Instance.Summons(null, type, 0);
     }
     public void NextStage()
     {
