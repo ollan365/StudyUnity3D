@@ -29,7 +29,6 @@ public class StageManager : MonoBehaviour
     public PlayLogic StagePlayLogic { get => playLogic; }
 
     [Header("UI")]
-    [SerializeField] private GameObject[] UIObjects;
     [SerializeField] private TMP_Text[] stageTexts;
     private int[] stageTextValues;
 
@@ -203,7 +202,7 @@ public class StageManager : MonoBehaviour
         startPanelText.text = $"Stage {StaticManager.Instance.Stage}";
 
         // UI 활성화
-        foreach (GameObject ui in UIObjects) ui.SetActive(true);
+        ScreenEffect.Instance.SetUIActive(true);
         stageStartPanel.SetActive(true);
         yield return new WaitForSeconds(1f);
         stageStartPanel.SetActive(false);
@@ -227,6 +226,7 @@ public class StageManager : MonoBehaviour
         switch (stageStatus)
         {
             case StageStatus.PLAYER:
+                ScreenEffect.Instance.SetUIActive(true);
                 StatusOfStage = StageStatus.PLAYER;
                 SetStageTextValue(StageText.ALL_INIT, 0);
                 clickIgnorePanel.SetActive(false);
@@ -235,8 +235,8 @@ public class StageManager : MonoBehaviour
                 break;
 
             case StageStatus.FIGHT:
-                //sequence.Append();
                 StatusOfStage = StageStatus.FIGHT;
+                ScreenEffect.Instance.SetUIActive(false);
                 ScreenEffect.Instance.StatusChangeEffect();
                 EventManager.Instance.Effect.Effect(); // 축복이나 저주 발동
                 StartCoroutine(fightLogic.FightLogicStart());

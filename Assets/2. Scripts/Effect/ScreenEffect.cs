@@ -3,10 +3,15 @@ using UnityEngine.UI;
 using UnityEngine;
 using static Constants;
 using DG.Tweening;
+using TMPro;
 
 public class ScreenEffect : MonoBehaviour
 {
     private Sequence sequence;
+
+    [Header("Basic UI Object")]
+    [SerializeField] public GameObject[] UIObjects;
+    
 
 
     [Header("Fight Turn Effect")]
@@ -109,4 +114,14 @@ public class ScreenEffect : MonoBehaviour
                 break;
         } 
     }
+
+    public void SetUIActive(bool active)
+    {
+        if (active)
+            foreach (GameObject ui in ScreenEffect.Instance.UIObjects) ui.SetActive(true);
+        else
+            foreach (GameObject ui in ScreenEffect.Instance.UIObjects) ui.SetActive(false);
+    }
+
+
 }
