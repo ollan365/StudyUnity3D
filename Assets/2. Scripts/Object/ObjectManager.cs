@@ -319,17 +319,37 @@ public class ObjectManager : MonoBehaviour
         }
 
     }
-    public void AddItem(int index, bool buy)
+    public void BuyItem(int index)
     {
-        if (buy && StaticManager.Instance.Gold < shopItemSlotArray[index].item.SellCost) return;
+        if (StaticManager.Instance.Gold < shopItemSlotArray[index].item.SellCost) return;
+
+        // 아이템 추가
+        AddItem(0, shopItemSlotArray[index].item);
+
+        // 가진 돈 변경
+        StaticManager.Instance.Gold -= shopItemSlotArray[index].item.SellCost;
+
+        // 상점 슬롯 변경
+        shopItemSlotArray[index].count--;
+        if (shopItemSlotArray[index].count <= 0) // 물건이 다 팔렸을 때
+            shopSlot[index].SetActive(false);
+        else
+            shopSlot[index].ChangeText(shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString());
+    }
+    public void AddItem(int itemIndex, ItemObject item)
+    {
+        if (item == null)
+        {
+            foreach (ItemObject i in shopItemArray) if (i.ID == itemIndex) item = i;
+        }
 
         int inventoryIndex = -1;
 
         for (int i = 0; i < StaticManager.Instance.inventory.Length; i++) // 먼저, 이미 있는 아이템인지 확인
         {
-            if (StaticManager.Instance.inventory[i].item == shopItemSlotArray[index].item) // 이미 있는 아이템인 경우
+            if (StaticManager.Instance.inventory[i].item == item) // 이미 있는 아이템인 경우
             {
-                if (shopItemSlotArray[index].item.ItemType == ItemType.WEAPON) return; // 무기는 하나만 소유 가능
+                if (item.ItemType == ItemType.WEAPON) return; // 무기는 하나만 소유 가능
                 inventoryIndex = i;
                 break;
             }
@@ -342,14 +362,14 @@ public class ObjectManager : MonoBehaviour
                 if (StaticManager.Instance.inventory[i].item.ItemType == ItemType.NULL)
                 {
                     inventoryIndex = i;
-                    StaticManager.Instance.inventory[i].item = shopItemSlotArray[index].item;
+                    StaticManager.Instance.inventory[i].item = item;
                     StaticManager.Instance.inventory[i].count = 0;
                     break;
                 }
             }
         }
 
-        if(inventoryIndex == -1) // 인벤토리에 더 이상 남은 슬롯이 없을 때
+        if (inventoryIndex == -1) // 인벤토리에 더 이상 남은 슬롯이 없을 때
         {
             Debug.Log("There is no more slot!");
             return;
@@ -362,18 +382,6 @@ public class ObjectManager : MonoBehaviour
 
         // 인벤토리 변경
         ChangePlayerInventory();
-
-        if (!buy) return; // 구매한 게 아니면 return
-
-        // 가진 돈 변경
-        StaticManager.Instance.Gold -= shopItemSlotArray[index].item.SellCost;
-
-        // 상점 슬롯 변경
-        shopItemSlotArray[index].count--;
-        if (shopItemSlotArray[index].count <= 0) // 물건이 다 팔렸을 때
-            shopSlot[index].SetActive(false);
-        else
-            shopSlot[index].ChangeText(shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString());
     }
 
     public void SetObjectInfo(Object obj, int index = 0)
@@ -387,10 +395,10 @@ public class ObjectManager : MonoBehaviour
         string attackType = "타입: 타입";
         switch (targetObj.GetComponent<Object>().AttackType)
         {
-            case WeaponType.CAD:
+            case WeaponType.SWORD:
                 attackType = "공격 타입: 근거리";
                 break;
-            case WeaponType.LAD:
+            case WeaponType.STAFF:
                 attackType = "공격 타입: 원거리";
                 break;
             case WeaponType.NULL:

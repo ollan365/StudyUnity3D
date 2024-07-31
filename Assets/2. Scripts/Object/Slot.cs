@@ -23,7 +23,7 @@ public class Slot : MonoBehaviour
         }
         else if (slotType == SlotType.STORE)
         {
-            itemImage.GetComponent<Button>().onClick.AddListener(() => ObjectManager.Instance.AddItem(index, true));
+            itemImage.GetComponent<Button>().onClick.AddListener(() => ObjectManager.Instance.BuyItem(index));
         }
     }
     public void SetActive(bool on)

@@ -39,14 +39,14 @@ public static class Constants
 
     public enum ObjectType { PLAYER, FRIEND, ENEMY, TRIGGER, MERCHANT, PORTAL, SOLDIER, NULL }
     public enum StageStatus { INIT, PLAYER, ENV, FIGHT, END }
-    public enum WeaponType { CAD, LAD, AP, NULL }
+    public enum WeaponType { SWORD, STAFF, HOLY, NULL }
     public static WeaponType ToEnum(this string weaponType)
     {
         switch (weaponType)
         {
-            case "CAD": return WeaponType.CAD;
-            case "LAD": return WeaponType.LAD;
-            case "AP": return WeaponType.AP;
+            case "CAD": return WeaponType.SWORD;
+            case "LAD": return WeaponType.STAFF;
+            case "AP": return WeaponType.HOLY;
             default: return WeaponType.NULL;
         }
     }
