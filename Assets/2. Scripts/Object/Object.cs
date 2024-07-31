@@ -24,6 +24,7 @@ public class Object : MonoBehaviour
     [SerializeField] private WeaponType weaponType;
     [SerializeField] private GameObject indicator;
     [SerializeField] private float textFontSize;
+    [SerializeField] private GameObject overheadCanvas;
 
     public Touch touchCube;
     private Sequence sequence;
@@ -37,6 +38,7 @@ public class Object : MonoBehaviour
     public ObjectType Type { get => type; }
     public WeaponType AttackType { get => weaponType; }
     public GameObject Indicator { get => indicator; }
+    public GameObject OverheadCanvas { get => overheadCanvas; }
 
     public void SetWeapon(int min, int max, WeaponType weaponType)
     {
