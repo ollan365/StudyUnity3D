@@ -395,10 +395,10 @@ public class ObjectManager : MonoBehaviour
         string attackType = "타입: 타입";
         switch (targetObj.GetComponent<Object>().AttackType)
         {
-            case WeaponType.CAD:
+            case WeaponType.SWORD:
                 attackType = "공격 타입: 근거리";
                 break;
-            case WeaponType.LAD:
+            case WeaponType.STAFF:
                 attackType = "공격 타입: 원거리";
                 break;
             case WeaponType.NULL:

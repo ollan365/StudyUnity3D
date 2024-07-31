@@ -63,7 +63,7 @@ public class EnvLogic : MonoBehaviour
 
         List<int> priorityMoveCube = new();
 
-        if (weaponType == WeaponType.CAD)
+        if (weaponType == WeaponType.SWORD)
         {
             switch (playerIndex)
             {
@@ -96,7 +96,7 @@ public class EnvLogic : MonoBehaviour
                     break;
             }
         }
-        else if (weaponType == WeaponType.LAD)
+        else if (weaponType == WeaponType.STAFF)
         {
             switch (playerIndex)
             {

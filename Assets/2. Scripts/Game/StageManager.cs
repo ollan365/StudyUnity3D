@@ -254,9 +254,12 @@ public class StageManager : MonoBehaviour
     public void CheckStageClear()
     {
         if (stageTextValues[StageText.MONSTER.ToInt()] > 0) return;
-
+        StartCoroutine(StageClear());
+    }
+    private IEnumerator StageClear()
+    {
         ChangeStatus(StageStatus.END);
-
+        SetStageTextValue(StageText.END, 0);
         clickIgnorePanel.SetActive(false);
 
         // 스테이지 종료 시 동료, 트리거 소멸
@@ -266,14 +269,11 @@ public class StageManager : MonoBehaviour
             t.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
         EventManager.Instance.StageEnd();
 
+        yield return new WaitForSeconds(3f);
+
         // 상인과 포탈 소환
         ObjectType[] summonObjectArray = new ObjectType[2] { ObjectType.MERCHANT, ObjectType.PORTAL };
-        foreach (ObjectType type in summonObjectArray)
-        {
-            ObjectManager.Instance.Summons(null, type, 0);
-        }
-
-        SetStageTextValue(StageText.END, 0);
+        foreach (ObjectType type in summonObjectArray) ObjectManager.Instance.Summons(null, type, 0);
     }
     public void NextStage()
     {
