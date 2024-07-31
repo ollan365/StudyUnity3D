@@ -85,17 +85,14 @@ public class FightLogic : MonoBehaviour
         src.transform.rotation = sRot;
         dst.transform.rotation = dRot;
 
+        Vector3 knockback = dst.transform.position + (dst.transform.position - src.transform.position)/6;
+
         sequence = DOTween.Sequence();
-        sequence.Append(src.transform.DOMove(dst.transform.position, 0.5f)).SetEase(Ease.InExpo)
-                .SetDelay(0.3f)
-                .Append(src.transform.DOLocalMove(Vector3.zero, 1.0f)).SetEase(Ease.Linear)
-                .OnComplete(seqEnd);
+        sequence.Append(src.transform.DOMove(dst.transform.position, 0.3f)).SetEase(Ease.InExpo)
+                .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
+                .Join(dst.transform.DOMove(knockback, 0.1f))
+                .Insert(0.4f, dst.transform.DOLocalMove(Vector3.zero, 0.05f)).SetEase(Ease.Linear);
 
-    }
-
-    private void seqEnd()
-    {
-        Debug.Log("LookAt End");
     }
 
     private IEnumerator Attack(Object attacker, List<GameObject> attacked)
