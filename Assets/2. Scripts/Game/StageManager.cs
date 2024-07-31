@@ -237,6 +237,7 @@ public class StageManager : MonoBehaviour
             case StageStatus.FIGHT:
                 //sequence.Append();
                 StatusOfStage = StageStatus.FIGHT;
+                ScreenEffect.Instance.StatusChangeEffect();
                 EventManager.Instance.Effect.Effect(); // 축복이나 저주 발동
                 StartCoroutine(fightLogic.FightLogicStart());
                 break;
@@ -356,25 +357,5 @@ public class StageManager : MonoBehaviour
             }
         }
     }
-
-    private void StatusChangeEffect(StageStatus status)
-    {
-        switch (status) {
-            case StageStatus.INIT:
-                break;
-            case StageStatus.PLAYER:
-                break;
-            case StageStatus.FIGHT:
-
-                break;
-            case StageStatus.ENV:
-                break;
-            case StageStatus.END:
-                break;
-        }
-       
-
-    }
-
 
 }
