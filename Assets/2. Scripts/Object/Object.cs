@@ -199,7 +199,7 @@ public class Object : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Touch>() != null) touchCube = other.GetComponent<Touch>();
+        if (StageManager.Instance.StatusOfStage != StageStatus.FIGHT && other.GetComponent<Touch>() != null) touchCube = other.GetComponent<Touch>();
     }
 
 }

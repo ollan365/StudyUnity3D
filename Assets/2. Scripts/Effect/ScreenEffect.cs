@@ -26,7 +26,6 @@ public class ScreenEffect : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        coverPanel = GetComponentInChildren<Image>();
     }
 
     public void Fade(float start, float end, float fadeTime, Image fadeObject = null)
@@ -69,9 +68,8 @@ public class ScreenEffect : MonoBehaviour
         sequence = DOTween.Sequence();
         switch (StageManager.Instance.StatusOfStage)
         {
-            case StageStatus.INIT:
-                break;
             case StageStatus.PLAYER:
+                //플레이어 턴으로 넘어갈 때의 연출
                 break;
             case StageStatus.FIGHT:
                 //활성화
@@ -91,27 +89,29 @@ public class ScreenEffect : MonoBehaviour
 
                         .SetDelay(0.2f)
                         .Append(fightBackground.DOFade(0.0f, 1.0f))
-                        .OnComplete(offObjects);
-
-                
-                
-
-                break;
-            case StageStatus.ENV:
-                break;
-            case StageStatus.END:
+                        .OnComplete(()=> offObjects(StageStatus.FIGHT));
                 break;
             default:
                 break;
         }
     }
 
-    public void offObjects()
+    public void offObjects(StageStatus status)
     {
-        fightBackground.gameObject.SetActive(false);
-        leftSwd.gameObject.SetActive(false);
-        rightSwd.gameObject.SetActive(false);
-        leftSwd.localPosition = new Vector3(-950f, 0f, 0f);
-        rightSwd.localPosition = new Vector3(950f, 0f, 0f);
+        switch (status)
+        {
+            case StageStatus.PLAYER:
+                break;
+
+            case StageStatus.FIGHT:
+                fightBackground.gameObject.SetActive(false);
+                leftSwd.gameObject.SetActive(false);
+                rightSwd.gameObject.SetActive(false);
+                leftSwd.localPosition = new Vector3(-950f, 0f, 0f);
+                rightSwd.localPosition = new Vector3(950f, 0f, 0f);
+                break;
+            default:
+                break;
+        } 
     }
 }

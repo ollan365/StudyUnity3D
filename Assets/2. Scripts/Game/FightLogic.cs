@@ -77,24 +77,30 @@ public class FightLogic : MonoBehaviour
             StageManager.Instance.ChangeStatus(StageStatus.ENV);
     }
 
-    private Vector3 LookAt(GameObject src, GameObject dst)
+    private void LookAt(GameObject src, GameObject dst)
     {
         Vector3 direc = src.transform.position - dst.transform.position;
         Quaternion sRot = Quaternion.LookRotation(direc);
         Quaternion dRot = Quaternion.LookRotation(-direc);
         src.transform.rotation = sRot;
         dst.transform.rotation = dRot;
+
         sequence = DOTween.Sequence();
-
-        sequence.Append(src.transform.DOMove(dst.transform.position, 1.2f)).SetEase(Ease.InExpo)
+        sequence.Append(src.transform.DOMove(dst.transform.position, 0.5f)).SetEase(Ease.InExpo)
                 .SetDelay(0.3f)
-                .Append(src.transform.DOLocalMove(Vector3.zero, 1.2f)).SetEase(Ease.OutExpo);
+                .Append(src.transform.DOLocalMove(Vector3.zero, 1.0f)).SetEase(Ease.Linear)
+                .OnComplete(seqEnd);
 
-        return direc;
+    }
+
+    private void seqEnd()
+    {
+        Debug.Log("LookAt End");
     }
 
     private IEnumerator Attack(Object attacker, List<GameObject> attacked)
     {
+        Debug.Log("공격자: " + attacker.gameObject + " 피격자: " + attacked.Count);
         if (attacked.Count == 0)
         { attacking = false; yield break; }
 
@@ -109,12 +115,7 @@ public class FightLogic : MonoBehaviour
             attacked[i].GetComponent<Object>().Indicator.SetActive(true);
             yield return new WaitForSeconds(0.2f);
 
-            Vector3 srcToDst = LookAt(attacker.gameObject, attacked[i]);
-
-            //근거리가 때리는 연출
-            
-
-
+            LookAt(attacker.gameObject, attacked[i]);
 
             if (attacker.Type == ObjectType.ENEMY)
                 attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);
