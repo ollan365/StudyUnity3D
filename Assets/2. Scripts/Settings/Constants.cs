@@ -70,4 +70,5 @@ public static class Constants
         }
     }
     public enum BingoStatus { NONE, ONE, ALL }
+    public enum Particle { Enemy_Summon, Friend_Summon }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using static Constants;
 
 public class CubeManager : MonoBehaviour
@@ -8,6 +9,7 @@ public class CubeManager : MonoBehaviour
 
     [SerializeField] private float duration; // 회전에 걸리는 시간
     [SerializeField] private float rotateSpeed; //Cube Object Rotation Speed
+    private Stack<TurnData> turnDataSave;
     private float currentRotateSpeed = 0;
     private Touch mouseStartTouchCube;
     private GameObject mouseStartObject;
@@ -26,6 +28,7 @@ public class CubeManager : MonoBehaviour
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
         IsEvent = false;
+        turnDataSave = new();
     }
     private void Update()
     {
@@ -188,7 +191,7 @@ public class CubeManager : MonoBehaviour
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
         playerTurnStatus = PlayerTurnStatus.NORMAL;
     }
-    private void Turn(Colors color, int direction, bool isMaze = false)
+    private void Turn(Colors color, int direction, bool isMaze = false, bool isInverse = false)
     {
         if (color == Colors.NULL || playerTurnStatus != PlayerTurnStatus.NORMAL
             || (StageManager.Instance.GetStageTextValue(StageText.ROTATE) <= 0 && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)) return;
@@ -226,6 +229,7 @@ public class CubeManager : MonoBehaviour
             position.transform.GetChild(0).parent = turnPoint.transform;
         }
 
+        if(!isInverse) turnDataSave.Push(new TurnData(color, direction));
         StartCoroutine(TurnEffect(turnPoint, rotation, array, isMaze));
     }
     private IEnumerator TurnEffect(GameObject turnPoint, Vector3 rotation, GameObject[] array, bool isMaze)
@@ -286,6 +290,27 @@ public class CubeManager : MonoBehaviour
 
         duration *= 2;
     }
+    public void InverseTurn()
+    {
+        StartCoroutine(InverseTurnCoroutine());
+    }
+    private IEnumerator InverseTurnCoroutine()
+    {
+        yield return new WaitForFixedUpdate();
+
+        duration = 3 / turnDataSave.Count;
+
+        while (turnDataSave.Count != 0)
+        {
+            while (playerTurnStatus == PlayerTurnStatus.TURN)
+                yield return new WaitForFixedUpdate();
+
+            TurnData turn = turnDataSave.Pop();
+            Turn(turn.color, turn.direction * -1, false, true);
+        }
+        while (playerTurnStatus == PlayerTurnStatus.TURN)
+            yield return new WaitForFixedUpdate();
+    }
     public void SwitchPlayerTurnStatus(int itemIndex, ItemType itemType)
     {
         switch (itemType)
@@ -333,8 +358,7 @@ public class CubeManager : MonoBehaviour
                     case ObjectType.PORTAL:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, true))
                         {
-                            ObjectEffect.Instance.MakeSmall(obj.gameObject);
-                            StageManager.Instance.NextStage();
+                            StageManager.Instance.NextStage(obj.gameObject);
                         }
                         break;
                     case ObjectType.PLAYER:
@@ -377,5 +401,17 @@ public class CubeManager : MonoBehaviour
             case PlayerTurnStatus.TURN:
                 break;
         }
+    }
+}
+
+public struct TurnData
+{
+    public Colors color;
+    public int direction;
+
+    public TurnData(Colors color, int direction)
+    {
+        this.color = color;
+        this.direction = direction;
     }
 }

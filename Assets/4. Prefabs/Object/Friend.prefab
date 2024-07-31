@@ -132,6 +132,7 @@ MonoBehaviour:
   weaponType: 0
   indicator: {fileID: 7920125139360843035}
   textFontSize: 25
+  overheadCanvas: {fileID: 3171656486546711155}
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0
@@ -375,6 +376,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &3171656486546711155 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7627561725414285032, guid: bbc2d5598ba482e459088253fec41676, type: 3}
+  m_PrefabInstance: {fileID: 5033184072583691419}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &3485597951153101572 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8468494500217382815, guid: bbc2d5598ba482e459088253fec41676, type: 3}

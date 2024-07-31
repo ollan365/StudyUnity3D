@@ -133,6 +133,7 @@ MonoBehaviour:
   weaponType: 0
   indicator: {fileID: 6358706613065406842}
   textFontSize: 50
+  overheadCanvas: {fileID: 3567611475229776818}
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0
@@ -360,15 +361,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5572723562541749126, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5572723562541749126, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7627561725414285032, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_Name
       value: Canvas World Space
+      objectReference: {fileID: 0}
+    - target: {fileID: 7627561725414285032, guid: bbc2d5598ba482e459088253fec41676, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7983713671138276762, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_SizeDelta.x
@@ -480,6 +485,11 @@ MonoBehaviour:
 --- !u!224 &3305109582217274053 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8468494500217382815, guid: bbc2d5598ba482e459088253fec41676, type: 3}
+  m_PrefabInstance: {fileID: 6365901046568617306}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3567611475229776818 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7627561725414285032, guid: bbc2d5598ba482e459088253fec41676, type: 3}
   m_PrefabInstance: {fileID: 6365901046568617306}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &6621551295297145703 stripped
