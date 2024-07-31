@@ -185,7 +185,7 @@ public class Object : MonoBehaviour
         }
 
         sequence = DOTween.Sequence();
-        sequence.Append(rectTransform.DOLocalMoveY(0.5f, 0.1f))
+        sequence.Append(rectTransform.DOLocalMoveY(0.5f, 0.1f)).SetDelay(0.15f)
                 .Append(popText.DOFontSize(textFontSize * 1.5f, 0.5f))
                 .Join(popText.DOFade(1.0f, 0.5f))
                 .Append(popText.DOFontSize(textFontSize, 0.5f))
