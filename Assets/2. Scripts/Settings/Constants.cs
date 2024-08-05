@@ -70,5 +70,18 @@ public static class Constants
         }
     }
     public enum BingoStatus { NONE, ONE, ALL }
-    public enum Particle { Enemy_Summon, Friend_Summon }
+    public enum Particle
+    { 
+        Enemy_Summon,
+        Friend_Summon,
+        Heal,
+        Enemy_INVINCIBILITY,
+        PlayerTeam_INVINCIBILITY,
+        Attack_PlayerTeam_BySword,
+        PlayerTeam_Sttaff_Projectile,
+        PlayerTeam_Sttaff_Charging,
+        Attack_Enemy_BySword,
+        Enemy_Sttaff_Projectile,
+        Enemy_Sttaff_Charging,
+    }
 }
