@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -11751,6 +11751,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 974382774053221035, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 631695463}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &631695465 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4698402151052848256, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
+  m_PrefabInstance: {fileID: 631695463}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &633276165 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7729280503450332981, guid: 09647b92112830142a768068298df0d2, type: 3}
@@ -14704,8 +14709,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particlePrefabs:
   - {fileID: 8773381781396489466, guid: 10dd21f5be7c14641af64a5b47f1929d, type: 3}
-  - {fileID: 2649134482686606479, guid: edc323bc29f08c645805b8dafc3a1810, type: 3}
-  testObjectForParticle: {fileID: 1126331715}
+  - {fileID: 2834388740668858265, guid: 90ffece102c8e004fad57d44ee14f340, type: 3}
+  - {fileID: 5023353015567381922, guid: e747544088e0b8842a0eca8697a4f65a, type: 3}
+  - {fileID: 4631137236932131032, guid: fc9d2d55dc8168c48b7c5483555d92f9, type: 3}
+  - {fileID: 8460317685369823947, guid: 9e660ba70afa72749bd2ada41aa3c28c, type: 3}
+  - {fileID: 1835174905073365006, guid: adfd6c86cf180e64aaaa1bece2395926, type: 3}
+  - {fileID: 8780727661788297695, guid: d21e5b00fdb343444a500464d07897b8, type: 3}
+  - {fileID: 3546323823116515695, guid: 8d1dff39f05ce0e44804cb469b83a578, type: 3}
+  - {fileID: 31835927839385643, guid: 82430a8cbe341974ca88fc0319c48f72, type: 3}
+  - {fileID: 7653787099927154482, guid: db5486219ba247746b2df5fe8cfb8119, type: 3}
+  - {fileID: 3676554860531327467, guid: 7c3def371b2b8614bb5d78ec6e318587, type: 3}
+  testObjectForParticle:
+  - {fileID: 1126331715}
+  - {fileID: 2056644293}
+  - {fileID: 631695465}
+  - {fileID: 1801803418}
+  - {fileID: 1482359089}
+  - {fileID: 1319961438}
+  testParticle: 2
 --- !u!4 &801527895
 Transform:
   m_ObjectHideFlags: 0
@@ -25799,11 +25820,11 @@ MonoBehaviour:
       - m_Target: {fileID: 801527894}
         m_TargetAssemblyTypeName: ParticleManager, Assembly-CSharp
         m_MethodName: TestParticle
-        m_Mode: 3
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -27183,6 +27204,11 @@ PrefabInstance:
 --- !u!4 &1319961437 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 974382774053221035, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
+  m_PrefabInstance: {fileID: 1319961436}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1319961438 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4698402151052848256, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 1319961436}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1328470603
@@ -30868,12 +30894,17 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 866461321260495778, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 1482359086}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1482359089}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52bea5a3f9cc70c4e945eb3518965bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1482359089 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4698402151052848256, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
+  m_PrefabInstance: {fileID: 1482359086}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1490955604
 GameObject:
   m_ObjectHideFlags: 0
@@ -37697,12 +37728,17 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 866461321260495778, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 1801803415}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1801803418}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52bea5a3f9cc70c4e945eb3518965bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1801803418 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4698402151052848256, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
+  m_PrefabInstance: {fileID: 1801803415}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1811209134
 GameObject:
   m_ObjectHideFlags: 0
@@ -40032,7 +40068,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 866461321260495778, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 631695463}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 631695465}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52bea5a3f9cc70c4e945eb3518965bc8, type: 3}
@@ -40708,7 +40744,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 866461321260495778, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 1319961436}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1319961438}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52bea5a3f9cc70c4e945eb3518965bc8, type: 3}
@@ -41487,12 +41523,17 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 866461321260495778, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 2056644290}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2056644293}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52bea5a3f9cc70c4e945eb3518965bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2056644293 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4698402151052848256, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
+  m_PrefabInstance: {fileID: 2056644290}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2058150635
 GameObject:
   m_ObjectHideFlags: 0

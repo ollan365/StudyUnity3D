@@ -136,8 +136,9 @@ public class Object : MonoBehaviour
                 text = $"{Mathf.Abs(dmg)}";
             DamageText(text);
         }
-            
 
+        // 회복이면 파티클 시스템 플레이
+        if (damage < 0) ParticleManager.Instance.PlayParticle(touchCube.gameObject, Particle.Heal);
     }
 
     //death 기능을 코루틴으로 설정하고, 1초 딜레이 시켜, 데미지 이펙트가 모두 나오고 오브젝트 비활성화
