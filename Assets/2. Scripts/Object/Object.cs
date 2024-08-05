@@ -118,24 +118,24 @@ public class Object : MonoBehaviour
         else if (effect == StatusEffect.HP_PERCENT)
             dmg = maxHp * damage / 100 * EventManager.Instance.Effect.Received(this);
 
-        //데미지를 반올림 한 후, HP에 반영한다.
-        dmg = Mathf.Round(dmg);
-        HP -= dmg;
-        if (HP <= 0)
-            StartCoroutine(Death(HP, gameObject));
-
         //플레이어, 적, 동료 이고, 살아있다면 데미지 출력
         if (popTextObj != null && gameObject.activeSelf)
         {
             string text;
             if (dmg > 0)
                 text = $"-{Mathf.Abs(dmg)}";
-            else if(dmg < 0)
+            else if (dmg < 0)
                 text = $"+{Mathf.Abs(dmg)}";
             else
                 text = $"{Mathf.Abs(dmg)}";
             DamageText(text);
         }
+
+        //데미지를 반올림 한 후, HP에 반영한다.
+        dmg = Mathf.Round(dmg);
+        HP -= dmg;
+        if (HP <= 0)
+            StartCoroutine(Death(HP, gameObject));
 
         // 회복이면 파티클 시스템 플레이
         if (damage < 0) ParticleManager.Instance.PlayParticle(touchCube.gameObject, Particle.Heal);
@@ -179,6 +179,7 @@ public class Object : MonoBehaviour
     private void DamageText(string text, bool isCritical = false)
     {
         //초기 값 설정
+        Debug.Log("damage text start");
         popText.text = text;
         popText.fontSize = 25;
 
@@ -188,8 +189,8 @@ public class Object : MonoBehaviour
         }
 
         sequence = DOTween.Sequence();
-        sequence.Append(rectTransform.DOLocalMoveY(0.5f, 0.1f)).SetDelay(0.15f)
-                .Append(popText.DOFontSize(textFontSize * 1.5f, 0.5f))
+        sequence.Append(rectTransform.DOLocalMoveY(0.5f, 0.1f))
+                .Append(popText.DOFontSize(textFontSize * 1.3f, 0.5f))
                 .Join(popText.DOFade(1.0f, 0.5f))
                 .Append(popText.DOFontSize(textFontSize, 0.5f))
                 .Append(popText.DOFade(0.0f, 0.5f))

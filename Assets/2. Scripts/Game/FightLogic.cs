@@ -84,15 +84,40 @@ public class FightLogic : MonoBehaviour
         Quaternion dRot = Quaternion.LookRotation(-direc);
         src.transform.rotation = sRot;
         dst.transform.rotation = dRot;
+    }
 
-        Vector3 knockback = dst.transform.position + (dst.transform.position - src.transform.position)/6;
-
+    private void AttackProduction(Transform src, Transform dst, float weight = 1)
+    {
+        //공격자의 공격 타입을 얻고, 그에 따른 연출
+        //
         sequence = DOTween.Sequence();
-        sequence.Append(src.transform.DOMove(dst.transform.position, 0.3f)).SetEase(Ease.InExpo)
-                .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
-                .Join(dst.transform.DOMove(knockback, 0.1f))
-                .Insert(0.4f, dst.transform.DOLocalMove(Vector3.zero, 0.05f)).SetEase(Ease.Linear);
+        Vector3 knockback = dst.transform.position + (dst.transform.position - src.transform.position) / 6;
+        switch (src.GetComponent<Object>().AttackType)
+        {
+            case WeaponType.SWORD:
+                sequence.Append(src.transform.DOMove(dst.transform.position, 0.3f).SetEase(Ease.InExpo))
+                            .InsertCallback(0.2f, () => dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight))
+                        .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
+                        .Join(dst.transform.DOMove(knockback, 0.1f))
+                        .Insert(0.4f, dst.transform.DOLocalMove(Vector3.zero, 0.05f)).SetEase(Ease.Linear);
+                break;
 
+            case WeaponType.STAFF:
+                sequence.Append(src.transform.DOMove(dst.transform.position, 0.3f).SetEase(Ease.InExpo))
+                            .InsertCallback(0.2f, () => dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight))
+                        .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
+                        .Join(dst.transform.DOMove(knockback, 0.1f))
+                        .Insert(0.4f, dst.transform.DOLocalMove(Vector3.zero, 0.05f)).SetEase(Ease.Linear);
+                break;
+
+            case WeaponType.HOLY:
+                break;
+
+            case WeaponType.NULL:
+                break;
+            default:
+                break;
+        }
     }
 
     private IEnumerator Attack(Object attacker, List<GameObject> attacked)
@@ -115,9 +140,11 @@ public class FightLogic : MonoBehaviour
             LookAt(attacker.gameObject, attacked[i]);
 
             if (attacker.Type == ObjectType.ENEMY)
-                attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);
+                //attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);
+                AttackProduction(attacker.transform, attacked[i].transform);
             else if (attacker.Type == ObjectType.PLAYER || attacker.Type == ObjectType.FRIEND)
-                attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage * Mathf.Pow(1.2f, attacked.Count - 1));
+                //attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage * Mathf.Pow(1.2f, attacked.Count - 1));
+                AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, attacked.Count - 1));
             yield return new WaitForFixedUpdate();
 
             //disable indicator
@@ -176,7 +203,7 @@ public class FightLogic : MonoBehaviour
                 {
                     if (e.Color == color && AttackableRange(weaponType, index)[e.Index])
                         attackable.Add(enemyObj);
-                } 
+                }
                 else if (weaponType == WeaponType.HOLY)
                 {
                     if (e.Color != color && e.Index == index)
