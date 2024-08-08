@@ -20,6 +20,7 @@ public class ObjectManager : MonoBehaviour
 
     [Header("Prefabs")]
     [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private GameObject[] bossPrefab;
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject[] triggerPrefabs;
     [SerializeField] private GameObject merchantPrefab;
@@ -88,16 +89,20 @@ public class ObjectManager : MonoBehaviour
                 break;
 
             case ObjectType.ENEMY:
-                newObject = Instantiate(enemyPrefab);
+                if (objectID > 100010)
+                {
+                    newObject = Instantiate(bossPrefab[objectID - 100010]);
+                }
+                else
+                {
+                    newObject = Instantiate(enemyPrefab);
+
+                    int meshCnt = newObject.transform.GetChild(1).childCount;
+                    int idx = (objectID - 100000) % meshCnt;
+                    newObject.transform.GetChild(1).GetChild(idx).gameObject.SetActive(true);
+                }
                 string value = StaticManager.Instance.enemyDatas[objectID];
                 newObject.GetComponent<Object>().Init(objectType, value.Split(','), cube);
-                //newObject.transform.GetChild(objectID - 100000).gameObject.SetActive(true);
-                int meshCnt = newObject.transform.GetChild(1).childCount;
-
-                //disable default mesh and activate the mesh that matches the object ID.
-                int idx = (objectID - 100000) % meshCnt;
-                //newObject.transform.GetChild(1).GetChild(0).gameObject.SetActive(false);
-                newObject.transform.GetChild(1).GetChild(idx).gameObject.SetActive(true);
                 break;
 
             case ObjectType.FRIEND:
