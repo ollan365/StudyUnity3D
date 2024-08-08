@@ -86,7 +86,7 @@ public class FightLogic : MonoBehaviour
         dst.transform.rotation = dRot;
     }
 
-    private void AttackProduction(Transform src, Transform dst, float weight = 1)
+    private float AttackProduction(Transform src, Transform dst, float weight = 1)
     {
         //공격자의 공격 타입을 얻고, 그에 따른 연출
         //
@@ -100,23 +100,22 @@ public class FightLogic : MonoBehaviour
                         .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
                         .Join(dst.transform.DOMove(knockback, 0.1f))
                         .Insert(0.4f, dst.transform.DOLocalMove(Vector3.zero, 0.05f)).SetEase(Ease.Linear);
-                break;
+
+                return ParticleManager.Instance.AttackParticle(src, dst);
 
             case WeaponType.STAFF:
-                sequence.Append(src.transform.DOMove(dst.transform.position, 0.3f).SetEase(Ease.InExpo))
-                            .InsertCallback(0.2f, () => dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight))
-                        .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
-                        .Join(dst.transform.DOMove(knockback, 0.1f))
-                        .Insert(0.4f, dst.transform.DOLocalMove(Vector3.zero, 0.05f)).SetEase(Ease.Linear);
-                break;
+                // 넉백될때 데미지 닳도록 수정해주세용
+                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight);
+                
+                return ParticleManager.Instance.AttackParticle(src, dst);
 
             case WeaponType.HOLY:
-                break;
+                return 0;
 
             case WeaponType.NULL:
-                break;
+                return 0;
             default:
-                break;
+                return 0;
         }
     }
 
@@ -141,11 +140,10 @@ public class FightLogic : MonoBehaviour
 
             if (attacker.Type == ObjectType.ENEMY)
                 //attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);
-                AttackProduction(attacker.transform, attacked[i].transform);
+                yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform));
             else if (attacker.Type == ObjectType.PLAYER || attacker.Type == ObjectType.FRIEND)
                 //attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage * Mathf.Pow(1.2f, attacked.Count - 1));
-                AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, attacked.Count - 1));
-            yield return new WaitForFixedUpdate();
+                yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, attacked.Count - 1)));
 
             //disable indicator
             attacker.Indicator.SetActive(false);
