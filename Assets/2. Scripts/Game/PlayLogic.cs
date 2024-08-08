@@ -7,16 +7,19 @@ using static Constants;
 public class PlayLogic : MonoBehaviour
 {
     private Sequence sequence;
+    private Animator animator;
 
     private void Start()
     {
         sequence = DOTween.Sequence();
+        
     }
 
     public void Trigger (GameObject obj)
     {
         Object triggerObj = obj.GetComponent<Object>();
-        
+        Debug.Log("Trigger name: " + triggerObj.name);
+
         switch (triggerObj.Name)
         {
             case "Treasure": StartCoroutine(OpenTreasure(triggerObj)); break;
@@ -26,11 +29,21 @@ public class PlayLogic : MonoBehaviour
     }
     private IEnumerator OpenTreasure(Object obj)
     {
+        Vector3 direc = StageManager.Instance.Player.transform.position - obj.transform.position;
+        Quaternion pRot = Quaternion.LookRotation(direc);
+        Quaternion oRot = Quaternion.LookRotation(direc);
+        StageManager.Instance.Player.transform.rotation = pRot;
+        obj.transform.rotation = oRot;
+
+        animator = obj.GetComponent<Animator>();
+        animator.SetBool("Open", true);
         int gold = (int)obj.Damage;
         StaticManager.Instance.Gold += gold;
-        ObjectManager.Instance.ObjectDie(obj.gameObject);
-
         ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().PoppingText($"+{gold}", Color.red);
+        yield return new WaitForSeconds(2f);
+
+        ObjectManager.Instance.ObjectDie(obj.gameObject);
+        ColorCheckManager.Instance.Move(obj.Color, obj.Index, true);
         yield break;
     }
     private IEnumerator EatForbiddenFruit(Object obj)
