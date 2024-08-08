@@ -57,6 +57,7 @@ MonoBehaviour:
   weaponType: 0
   indicator: {fileID: 0}
   textFontSize: 0
+  overheadCanvas: {fileID: 0}
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0

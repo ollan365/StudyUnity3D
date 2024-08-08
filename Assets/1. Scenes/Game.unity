@@ -14717,7 +14717,7 @@ MonoBehaviour:
   - {fileID: 8780727661788297695, guid: d21e5b00fdb343444a500464d07897b8, type: 3}
   - {fileID: 3546323823116515695, guid: 8d1dff39f05ce0e44804cb469b83a578, type: 3}
   - {fileID: 31835927839385643, guid: 82430a8cbe341974ca88fc0319c48f72, type: 3}
-  - {fileID: 7653787099927154482, guid: db5486219ba247746b2df5fe8cfb8119, type: 3}
+  - {fileID: 8780727661788297695, guid: d21e5b00fdb343444a500464d07897b8, type: 3}
   - {fileID: 3676554860531327467, guid: 7c3def371b2b8614bb5d78ec6e318587, type: 3}
   testObjectForParticle:
   - {fileID: 1126331715}
@@ -14726,7 +14726,8 @@ MonoBehaviour:
   - {fileID: 1801803418}
   - {fileID: 1482359089}
   - {fileID: 1319961438}
-  testParticle: 2
+  testParticle: 6
+  projectileSpeed: 10
 --- !u!4 &801527895
 Transform:
   m_ObjectHideFlags: 0
