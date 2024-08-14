@@ -30,9 +30,9 @@ public class Slot : MonoBehaviour
     {
         item.SetActive(on);
     }
-    public void ChangeImage(Color color)
+    public void ChangeImage(Sprite sprite)
     {
-        itemImage.GetComponent<Image>().color = color;
+        itemImage.GetComponent<Image>().sprite = sprite;
     }
     public void ChangeText(string text)
     {

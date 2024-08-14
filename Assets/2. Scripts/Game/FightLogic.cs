@@ -121,7 +121,6 @@ public class FightLogic : MonoBehaviour
 
     private IEnumerator Attack(Object attacker, List<GameObject> attacked)
     {
-        Debug.Log("공격자: " + attacker.gameObject + " 피격자: " + attacked.Count);
         if (attacked.Count == 0)
         { attacking = false; yield break; }
 

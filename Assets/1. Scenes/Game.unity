@@ -4022,6 +4022,11 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &194768346 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6273344801388872673, guid: 014f5e27a72cb534c813ab575c8baa15, type: 3}
+  m_PrefabInstance: {fileID: 194768343}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &196379232
 GameObject:
   m_ObjectHideFlags: 0
@@ -9574,6 +9579,13 @@ MonoBehaviour:
   objectInfoHPText: {fileID: 1811209138}
   objectInfoAttackType: {fileID: 1125628773}
   objectInfoBasicAttack: {fileID: 1842497866}
+  playerWeapon: {fileID: 194768346}
+  weapons:
+  - {fileID: 648909195865136375, guid: 7aaed58213e380c499fc225e92b07853, type: 3}
+  - {fileID: 3097236184402197886, guid: aa9adc4db68ba2543857c971239fb787, type: 3}
+  - {fileID: 725720561042874929, guid: 01b11bc097b5a484282f4a0adda662bd, type: 3}
+  - {fileID: 3028205134758857411, guid: dfbc85f7f691ebc489a6073ded7f32b3, type: 3}
+  - {fileID: 5684989371586828938, guid: f20e64d81794bd2488efa1f9fc9f7bba, type: 3}
 --- !u!114 &502851762
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -190,7 +190,6 @@ public class Object : MonoBehaviour
     private void DamageText(string text, bool isCritical = false)
     {
         //초기 값 설정
-        Debug.Log("damage text start");
         popText.text = text;
         popText.fontSize = 25;
 

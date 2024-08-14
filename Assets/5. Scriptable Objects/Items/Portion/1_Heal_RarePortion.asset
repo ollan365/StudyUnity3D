@@ -19,7 +19,7 @@ MonoBehaviour:
   buyCost: 120
   spawnMinStage: 8
   spawnMaxStage: 23
-  icon: {r: 1, g: 0, b: 0, a: 1}
+  icon: {fileID: 21300000, guid: 0977ca87c3c7cb34ea1dc3d9908af876, type: 3}
   description: 
   statusEffect: 1
   value: 0

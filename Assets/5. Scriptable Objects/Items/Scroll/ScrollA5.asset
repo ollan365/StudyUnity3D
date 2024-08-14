@@ -19,6 +19,6 @@ MonoBehaviour:
   buyCost: 130
   spawnMinStage: 5
   spawnMaxStage: 23
-  icon: {r: 0, g: 1, b: 0, a: 1}
+  icon: {fileID: 21300000, guid: 58ce5409aec0a5b46944c19c9231ff5c, type: 3}
   description: 
   friendIndex: 120004
