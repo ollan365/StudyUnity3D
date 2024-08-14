@@ -104,8 +104,6 @@ public class Object : MonoBehaviour
         HP = hp;
 
         this.touchCube = touchCube;
-        Debug.Log($"{this.touchCube} / {touchCube}");
-
     }
 
     public void OnHit(StatusEffect effect, float damage)
@@ -117,6 +115,9 @@ public class Object : MonoBehaviour
             dmg = damage * EventManager.Instance.Effect.Received(this);
         else if (effect == StatusEffect.HP_PERCENT)
             dmg = maxHp * damage / 100 * EventManager.Instance.Effect.Received(this);
+
+        // 보스 스킬에 따라 데미지 변경
+        if (Boss.Instance) dmg *= Boss.Instance.ReceivedDamageChange(this);
 
         //플레이어, 적, 동료 이고, 살아있다면 데미지 출력
         if (popTextObj != null && gameObject.activeSelf)

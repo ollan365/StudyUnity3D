@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 9915054925414412}
   - component: {fileID: -7414625306632185504}
   m_Layer: 9
-  m_Name: Uriel
+  m_Name: Michael
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -158,12 +158,12 @@ MonoBehaviour:
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 1942201304163159168}
   popTextObj: {fileID: 4622889297829939124}
-  id: 100010
-  objName: "\uC6B0\uB9AC\uC5D8"
+  id: 100013
+  objName: "\uBBF8\uCE74\uC5D8"
   minDamage: 0
   maxDamage: 0
   type: 2
-  weaponType: 0
+  weaponType: 1
   indicator: {fileID: 1450857302552564418}
   textFontSize: 50
   overheadCanvas: {fileID: 3044722780688914273}
@@ -184,6 +184,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   phasePercents: 500000003c00000028000000
   skillEffectTime: 0
+  playerCantMove: 0
+  playerWeaken: 0
+  slienceObject: {fileID: 0}
+  enemyPowerful: 0
+  shadowColor: 9
+  invincibility: 0
+  invincibilityObjects: []
+  blindness: 0
 --- !u!1 &1450857302552564418
 GameObject:
   m_ObjectHideFlags: 0

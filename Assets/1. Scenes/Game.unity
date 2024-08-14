@@ -9465,7 +9465,8 @@ MonoBehaviour:
   shopGoldText: {fileID: 893349068}
   cubeManager: {fileID: 924633}
   enemyPrefab: {fileID: 360777001147702422, guid: 8f91185271672b6499de09a66bba49d0, type: 3}
-  bossPrefab: []
+  bossPrefab:
+  - {fileID: 360777001147702422, guid: 1a686610a4d1c944086202df5d5454b8, type: 3}
   friendPrefab: {fileID: 360777001147702422, guid: 1d29f093945026448bcbc74c2cf70b0c, type: 3}
   triggerPrefabs:
   - {fileID: 360777001147702422, guid: 2760ecf787b1bd34aabe0b7874e52e20, type: 3}
@@ -11111,6 +11112,7 @@ MonoBehaviour:
   stageStartPanel: {fileID: 75974628}
   gameOverPanel: {fileID: 1358166159}
   clickIgnorePanel: {fileID: 1063095728}
+  isBossStage: 0
 --- !u!4 &608311169
 Transform:
   m_ObjectHideFlags: 0

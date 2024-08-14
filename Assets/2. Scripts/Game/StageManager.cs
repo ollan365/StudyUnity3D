@@ -53,6 +53,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject clickIgnorePanel;
 
     [Header("Status")]
+    public bool isBossStage = false;
     private int turn = 0;
     private StageStatus status;
     public StageStatus StatusOfStage
@@ -150,8 +151,8 @@ public class StageManager : MonoBehaviour
                 int cubeColor = Random.Range(0, 6), cubeIndex = Random.Range(0, 9);
                 cube = StageCube.Instance.touchArray[cubeColor][cubeIndex];
                 if (cube.Obj != null
-                    || cubeColor == WHITE && cubeIndex == 3
-                    || cubeColor == WHITE && cubeIndex == 4)
+                    || (cubeColor == WHITE && cubeIndex == 3)
+                    || (cubeColor == WHITE && cubeIndex == 4))
                     continue;
 
                 break;
@@ -192,31 +193,11 @@ public class StageManager : MonoBehaviour
         int index = 0;
         List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
 
-        Touch[] enemyPositions = new Touch[stageDatas[ENEMY_COUNT]];
-        for(int i = 0; i < stageDatas[ENEMY_COUNT]; i++)
-        {
-            Touch cube;
-            while (true)
-            {
-                cube = StageCube.Instance.touchArray[Random.Range(0, 6)][Random.Range(0, 9)];
-                if (cube.Obj == null)
-                {
-                    enemyPositions[i] = cube;
-                    ParticleManager.Instance.PlayParticle(cube.gameObject, Particle.Enemy_Summon);
-                    break;
-                }
-            }
-        }
-
-        yield return new WaitForSeconds(0.4f);
-
         for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
         {
             for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
             {
-                enemy[index] = ObjectManager.Instance.Summons(enemyPositions[index], ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
-                Debug.Log(enemy[index]);
-                
+                enemy[index] = ObjectManager.Instance.Summons(null, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
                 index++;
             }
         }
@@ -404,16 +385,10 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
-                StartCoroutine(SummonFriendCoroutine(cube, i, scrollID));
+                friend[index] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 ObjectManager.Instance.UseItem(ItemType.SCROLL, scrollID);
                 break;
             }
         }
-    }
-    private IEnumerator SummonFriendCoroutine(Touch cube, int index, int scrollID)
-    {
-        ParticleManager.Instance.PlayParticle(cube.gameObject, Particle.Friend_Summon);
-        yield return new WaitForSeconds(0.3f);
-        friend[index] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
     }
 }
