@@ -108,8 +108,6 @@ public class EventManager : MonoBehaviour
 
                     if (bingoStatus[color] != BingoStatus.NONE) continue;
 
-                    Debug.Log($"¸é: {i.ToColor()} / ºù°í»ö: {color.ToColor()}");
-
                     for (int k = 0; k < list[j].Count; k++)
                     {
                         bingoCheck[i][list[j][k]] = color.ToColor();
@@ -334,7 +332,7 @@ public class EventManager : MonoBehaviour
         cubeManager.IsEvent = false;
     }
 
-    private IEnumerator Revive(Object obj)
+    public IEnumerator Revive(Object obj, float hpPercent = 100)
     {
         Touch cube;
         while (true)
@@ -353,7 +351,7 @@ public class EventManager : MonoBehaviour
         StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(cube.Color, cube.Index));
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
 
-        obj.OnHit(StatusEffect.HP_PERCENT, -100);
+        obj.OnHit(StatusEffect.HP_PERCENT, -hpPercent);
 
         Debug.Log($"{obj} : {obj.HP} / Touch: {cube.Color} {cube.Index}");
     }
@@ -435,7 +433,7 @@ public class EventManager : MonoBehaviour
         }
         return null;
     }
-    private Object RandomDeadEnemy()
+    public Object RandomDeadEnemy()
     {
         int deadEnemyCount = 0;
         foreach (GameObject obj in StageManager.Instance.EnemyList)
@@ -469,20 +467,20 @@ public class EventManager : MonoBehaviour
             return count;
         }
     }
-    private int EnemyCount
+    public int EnemyCount
     {
         get
         {
             int count = 0;
             for (int i = 0; i < StageManager.Instance.EnemyList.Length; i++)
             {
-                if (StageManager.Instance.EnemyList[i].activeSelf)
+                if (StageManager.Instance.EnemyList[i].GetComponent<Object>().HP > 0)
                     count++;
             }
             return count;
         }
     }
-    private Object RandomObejectOfPlayerTeam(bool includePlayer)
+    public Object RandomObejectOfPlayerTeam(bool includePlayer)
     {
         if (FriendCount == 0 && !includePlayer) return null;
 

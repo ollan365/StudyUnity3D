@@ -22,6 +22,9 @@ public class ColorCheckManager : MonoBehaviour
     }
     public void CharacterSelect(GameObject character)
     {
+        // 보스 구속으로 인한 플레이어 이동 불가 상태 (경고창 띄우는 등의 이펙트 필요)
+        if (Boss.Instance && Boss.Instance.playerCantMove && character.GetComponent<Object>().Type == ObjectType.PLAYER) return;
+
         selectedCharacter = character;
         MovableCubeSetting(selectedCharacter.GetComponent<Object>().Index);
     }

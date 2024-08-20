@@ -89,14 +89,24 @@ public class FightLogic : MonoBehaviour
     private float AttackProduction(Transform src, Transform dst, float weight = 1)
     {
         //공격자의 공격 타입을 얻고, 그에 따른 연출
-        //
         sequence = DOTween.Sequence();
         Vector3 knockback = dst.transform.position + (dst.transform.position - src.transform.position) / 6;
+
+        // 보스 스킬 효과에 따라 weight 달라짐
+        if(src.GetComponent<Object>().Type == ObjectType.ENEMY)
+        {
+            if (Boss.Instance && Boss.Instance.enemyPowerful) weight = 1.1f;
+            else weight = 1;
+        }  
+
+        // OnHit()을 기다렸다가 시키면, turn 넘어갈 때, 죽었는지 살았는지 판단할 때, 공격 판단 등 너무 많이 꼬이므로
+        // 체력바가 닳고, 데미지 텍스트가 뜨는 건 미루더라도 HP 자체는 먼저 닳아야 함
         switch (src.GetComponent<Object>().AttackType)
         {
             case WeaponType.SWORD:
+                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight, 0.2f);
+
                 sequence.Append(src.transform.DOMove(dst.transform.position, 0.3f).SetEase(Ease.InExpo))
-                            .InsertCallback(0.2f, () => dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight))
                         .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
                         .Join(dst.transform.DOMove(knockback, 0.1f))
                         .Insert(0.4f, dst.transform.DOLocalMove(Vector3.zero, 0.05f)).SetEase(Ease.Linear);
@@ -104,10 +114,9 @@ public class FightLogic : MonoBehaviour
                 return ParticleManager.Instance.AttackParticle(src, dst);
 
             case WeaponType.STAFF:
-                // 넉백될때 데미지 닳도록 수정해주세용
-                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight);
-                
-                return ParticleManager.Instance.AttackParticle(src, dst);
+                float time = ParticleManager.Instance.AttackParticle(src, dst);
+                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight, time);
+                return time;
 
             case WeaponType.HOLY:
                 return 0;
@@ -121,7 +130,20 @@ public class FightLogic : MonoBehaviour
 
     private IEnumerator Attack(Object attacker, List<GameObject> attacked)
     {
-        Debug.Log("공격자: " + attacker.gameObject + " 피격자: " + attacked.Count);
+        if (attacker.GetComponent<Boss>() && attacker.GetComponent<Boss>().UseSkill())
+        {
+            attacker.Indicator.SetActive(true);
+            yield return new WaitForSeconds(0.2f);
+
+            yield return new WaitForSeconds(attacker.GetComponent<Boss>().skillEffectTime + 0.5f);
+
+            attacker.Indicator.SetActive(false);
+            yield return new WaitForSeconds(0.1f);
+
+            attacking = false;
+            yield break;
+        }
+
         if (attacked.Count == 0)
         { attacking = false; yield break; }
 
@@ -129,23 +151,21 @@ public class FightLogic : MonoBehaviour
         while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
         yield return new WaitForSeconds(1f);
 
+        if (Boss.Instance && Boss.Instance.slienceObject == attacker.gameObject)
+        { attacking = false; yield break; }
+
         for(int i = 0; i < attacked.Count; i++)
         {
-            //activate indicator
+            // activate indicator
             attacker.Indicator.SetActive(true);
             attacked[i].GetComponent<Object>().Indicator.SetActive(true);
             yield return new WaitForSeconds(0.2f);
 
             LookAt(attacker.gameObject, attacked[i]);
 
-            if (attacker.Type == ObjectType.ENEMY)
-                //attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage);
-                yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform));
-            else if (attacker.Type == ObjectType.PLAYER || attacker.Type == ObjectType.FRIEND)
-                //attacked[i].GetComponent<Object>().OnHit(StatusEffect.HP, attacker.Damage * Mathf.Pow(1.2f, attacked.Count - 1));
-                yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, attacked.Count - 1)));
+            yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, attacked.Count - 1)));
 
-            //disable indicator
+            // disable indicator
             attacker.Indicator.SetActive(false);
             attacked[i].GetComponent<Object>().Indicator.SetActive(false);
             yield return new WaitForSeconds(0.1f);
