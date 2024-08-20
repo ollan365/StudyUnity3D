@@ -150,7 +150,7 @@ public class StaticManager : MonoBehaviour
 
             if (data[i].Split(',')[FRIEND_ID] == "") break;
 
-            while ((i + add < 172) && data[i].Split(',')[FRIEND_ID] == data[i + add].Split(',')[FRIEND_ID])
+            while ((i + add < data.Length + 1) && data[i].Split(',')[FRIEND_ID] == data[i + add].Split(',')[FRIEND_ID])
             {
                 valueList.Add(int.Parse(data[i + add].Split(',')[FRIEND_STAGE]), data[i]);
                 add++;

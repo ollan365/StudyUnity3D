@@ -54,13 +54,7 @@ public class Object : MonoBehaviour
     public float HP
     {
         get => hp;
-        private set
-        {
-            hp = Mathf.Clamp(value, 0, maxHp);
-
-            if (hpSlider != null) hpSlider.value = hp / maxHp;
-            if (bottomHP != null) bottomHP.value = hp / maxHp;
-        }
+        private set => hp = Mathf.Clamp(value, 0, maxHp);
     }
 
     public Colors Color { get => touchCube.Color; }
@@ -104,11 +98,9 @@ public class Object : MonoBehaviour
         HP = hp;
 
         this.touchCube = touchCube;
-        Debug.Log($"{this.touchCube} / {touchCube}");
-
     }
 
-    public void OnHit(StatusEffect effect, float damage)
+    public void OnHit(StatusEffect effect, float damage, float effectDelay = 0)
     {
         float dmg = 0f; //데미지를 텍스트로 출력하기 위해 필요한 변수
 
@@ -118,8 +110,21 @@ public class Object : MonoBehaviour
         else if (effect == StatusEffect.HP_PERCENT)
             dmg = maxHp * damage / 100 * EventManager.Instance.Effect.Received(this);
 
+        // 보스 스킬에 따라 데미지 변경
+        if (Boss.Instance) dmg *= Boss.Instance.ReceivedDamageChange(this);
+
+        //데미지를 반올림 한 후, HP에 반영한다.
+        dmg = Mathf.Round(dmg);
+        HP -= dmg;
+
+        StartCoroutine(HPEffect(effectDelay, dmg));
+    }
+    private IEnumerator HPEffect(float delay, float dmg)
+    {
+        yield return new WaitForSeconds(delay);
+
         //플레이어, 적, 동료 이고, 살아있다면 데미지 출력
-        if (popTextObj != null && gameObject.activeSelf)
+        if (popTextObj != null && HP > 0)
         {
             string text;
             if (dmg > 0)
@@ -131,14 +136,11 @@ public class Object : MonoBehaviour
             DamageText(text);
         }
 
-        //데미지를 반올림 한 후, HP에 반영한다.
-        dmg = Mathf.Round(dmg);
-        HP -= dmg;
-        if (HP <= 0)
-            StartCoroutine(Death(HP, gameObject));
+        if (hpSlider != null) hpSlider.value = hp / maxHp;
+        if (bottomHP != null) bottomHP.value = hp / maxHp;
 
-        // 회복이면 파티클 시스템 플레이
-        if (damage < 0) ParticleManager.Instance.PlayParticle(touchCube.gameObject, Particle.Heal);
+        if (HP <= 0) StartCoroutine(Death(HP, gameObject));
+        if (dmg < 0) ParticleManager.Instance.PlayParticle(touchCube.gameObject, Particle.Heal);
     }
 
     //death 기능을 코루틴으로 설정하고, 1초 딜레이 시켜, 데미지 이펙트가 모두 나오고 오브젝트 비활성화
