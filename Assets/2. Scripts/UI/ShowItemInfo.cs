@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 using static Constants;
 
-public class ShowItemInfo : MonoBehaviour
+public class ShowItemInfo : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] Image itemImage;
     [SerializeField] TMP_Text itemName;
@@ -63,6 +63,10 @@ public class ShowItemInfo : MonoBehaviour
 
         gameObject.SetActive(true);
         
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        gameObject.SetActive(false);
     }
 
 }
