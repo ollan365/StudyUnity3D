@@ -104,7 +104,7 @@ public class FightLogic : MonoBehaviour
         switch (src.GetComponent<Object>().AttackType)
         {
             case WeaponType.SWORD:
-                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight);
+                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight, 0.2f);
 
                 sequence.Append(src.transform.DOMove(dst.transform.position, 0.3f).SetEase(Ease.InExpo))
                         .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
@@ -114,9 +114,9 @@ public class FightLogic : MonoBehaviour
                 return ParticleManager.Instance.AttackParticle(src, dst);
 
             case WeaponType.STAFF:
-                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight);
-                
-                return ParticleManager.Instance.AttackParticle(src, dst);
+                float time = ParticleManager.Instance.AttackParticle(src, dst);
+                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight, time);
+                return time;
 
             case WeaponType.HOLY:
                 return 0;
@@ -132,7 +132,14 @@ public class FightLogic : MonoBehaviour
     {
         if (attacker.GetComponent<Boss>() && attacker.GetComponent<Boss>().UseSkill())
         {
-            yield return new WaitForSeconds(attacker.GetComponent<Boss>().skillEffectTime);
+            attacker.Indicator.SetActive(true);
+            yield return new WaitForSeconds(0.2f);
+
+            yield return new WaitForSeconds(attacker.GetComponent<Boss>().skillEffectTime + 0.5f);
+
+            attacker.Indicator.SetActive(false);
+            yield return new WaitForSeconds(0.1f);
+
             attacking = false;
             yield break;
         }
@@ -144,11 +151,12 @@ public class FightLogic : MonoBehaviour
         while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
         yield return new WaitForSeconds(1f);
 
-        if (Boss.Instance && Boss.Instance.slienceObject == attacker.gameObject) yield break;
+        if (Boss.Instance && Boss.Instance.slienceObject == attacker.gameObject)
+        { attacking = false; yield break; }
 
         for(int i = 0; i < attacked.Count; i++)
         {
-            //activate indicator
+            // activate indicator
             attacker.Indicator.SetActive(true);
             attacked[i].GetComponent<Object>().Indicator.SetActive(true);
             yield return new WaitForSeconds(0.2f);
@@ -157,7 +165,7 @@ public class FightLogic : MonoBehaviour
 
             yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, attacked.Count - 1)));
 
-            //disable indicator
+            // disable indicator
             attacker.Indicator.SetActive(false);
             attacked[i].GetComponent<Object>().Indicator.SetActive(false);
             yield return new WaitForSeconds(0.1f);

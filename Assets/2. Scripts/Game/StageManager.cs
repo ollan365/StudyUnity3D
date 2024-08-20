@@ -245,6 +245,7 @@ public class StageManager : MonoBehaviour
 
             case StageStatus.FIGHT:
                 StatusOfStage = StageStatus.FIGHT;
+                if (Boss.Instance) Boss.Instance.FightTurn();
                 ScreenEffect.Instance.SetUIActive(false);
                 ScreenEffect.Instance.StatusChangeEffect();
                 EventManager.Instance.Effect.Effect(); // 축복이나 저주 발동
@@ -308,8 +309,8 @@ public class StageManager : MonoBehaviour
     }
     private IEnumerator NextStageCoroutine(GameObject portal)
     {
-        ColorCheckManager.Instance.CharacterSelectCancel(player, true);
-        yield return new WaitForSeconds(1);
+        cubeManager.ChangeToNormal();
+        yield return new WaitForSeconds(1f);
         player.SetActive(false);
         ObjectEffect.Instance.MakeSmall(portal);
         yield return new WaitForSeconds(1);
@@ -318,7 +319,7 @@ public class StageManager : MonoBehaviour
     public void GameOver()
     {
         // 게임 오버
-        StopCoroutine(fightLogic.FightLogicStart());
+        // StopCoroutine(fightLogic.FightLogicStart());
 
         gameOverPanel.SetActive(true);
     }

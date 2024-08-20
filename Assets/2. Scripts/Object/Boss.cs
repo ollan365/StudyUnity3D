@@ -10,6 +10,7 @@ public class Boss : MonoBehaviour
 
     [SerializeField] private int[] phasePercents;
     private bool[] useSkill;
+    private float minHPpercent;
     private Object thisObject;
     public float skillEffectTime = 0;
 
@@ -32,6 +33,7 @@ public class Boss : MonoBehaviour
 
         useSkill = new bool[phasePercents.Length];
         for (int i = 0; i < useSkill.Length; i++) useSkill[i] = false;
+        minHPpercent = 100;
 
         StageManager.Instance.isBossStage = true;
     }
@@ -52,10 +54,12 @@ public class Boss : MonoBehaviour
     }
     public bool UseSkill()
     {
-        float hpPercent = (thisObject.HP / thisObject.MaxHp) * 100;
+        if (minHPpercent > thisObject.HP / thisObject.MaxHp * 100)
+            minHPpercent = thisObject.HP / thisObject.MaxHp * 100;
+
         for (int i = 0; i < useSkill.Length; i++)
         {
-            if (hpPercent <= phasePercents[i] && !useSkill[i])
+            if (minHPpercent <= phasePercents[i] && !useSkill[i])
             {
                 useSkill[i] = true;
                 skillEffectTime = Skill(i);
@@ -140,9 +144,10 @@ public class Boss : MonoBehaviour
         }
         if (phase == 3)
         {
-            ParticleManager.Instance.PlayParticle(thisObject.touchCube.gameObject, Particle.Attack_Enemy_BySword);
+            Object randomObj = EventManager.Instance.RandomObejectOfPlayerTeam(true);
+            ParticleManager.Instance.PlayParticle(randomObj.touchCube.gameObject, Particle.Attack_Enemy_BySword);
             yield return new WaitForSeconds(0.5f);
-            slienceObject = EventManager.Instance.RandomObejectOfPlayerTeam(true).gameObject;
+            slienceObject = randomObj.gameObject;
         }
     }
     private IEnumerator Raphael(int phase)
