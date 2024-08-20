@@ -199,8 +199,8 @@ public class ObjectManager : MonoBehaviour
                     break;
                 }
 
-        // Á×Àº ¾ÖµéÀº ÇöÀç ±× °³¼ö ¸ÂÃß±â¸¦ À§ÇØ¼­ ÀÏ´ÜÀº ´Ù¸¥ °÷¿¡ ¿Å°ÜµÐ´Ù
-        // ³ªÁß¿¡ °ø°Ý ½Ã½ºÅÛ¸¸ ¾îÂ° ¹Ù²Ù¸é ±×³É destroy ÇØµµ µÉµí
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß±â¸¦ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ï´ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å°ÜµÐ´ï¿½
+        // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½Â° ï¿½Ù²Ù¸ï¿½ ï¿½×³ï¿½ destroy ï¿½Øµï¿½ ï¿½Éµï¿½
         obj.transform.position = dieObject.position;
         obj.transform.parent = dieObject;
     }
@@ -291,7 +291,7 @@ public class ObjectManager : MonoBehaviour
             case ItemType.SCROLL:
                 for (int i = 0; i < 3; i++)
                 {
-                    if (StageManager.Instance.FriendList[i] == null) // ÀÌ°Ç µ¿·á ¼ÒÈ¯ÀÌ ÇÑ ½ºÅ×ÀÌÁö¿¡¼­ 3¹ø¸¸ °¡´ÉÇÒ ¶§±ä ÇÔ
+                    if (StageManager.Instance.FriendList[i] == null) // ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 3ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
                     {
                         cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].item.ID, ItemType.SCROLL);
                         return;
@@ -377,15 +377,15 @@ public class ObjectManager : MonoBehaviour
     {
         if (StaticManager.Instance.Gold < shopItemSlotArray[index].item.SellCost) return;
 
-        // ¾ÆÀÌÅÛ Ãß°¡
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         AddItem(0, shopItemSlotArray[index].item);
 
-        // °¡Áø µ· º¯°æ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         StaticManager.Instance.Gold -= shopItemSlotArray[index].item.SellCost;
 
-        // »óÁ¡ ½½·Ô º¯°æ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         shopItemSlotArray[index].count--;
-        if (shopItemSlotArray[index].count <= 0) // ¹°°ÇÀÌ ´Ù ÆÈ·ÈÀ» ¶§
+        if (shopItemSlotArray[index].count <= 0) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½È·ï¿½ï¿½ï¿½ ï¿½ï¿½
             shopSlot[index].SetActive(false);
         else
             shopSlot[index].ChangeText(shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString());
@@ -399,17 +399,17 @@ public class ObjectManager : MonoBehaviour
 
         int inventoryIndex = -1;
 
-        for (int i = 0; i < StaticManager.Instance.inventory.Length; i++) // ¸ÕÀú, ÀÌ¹Ì ÀÖ´Â ¾ÆÀÌÅÛÀÎÁö È®ÀÎ
+        for (int i = 0; i < StaticManager.Instance.inventory.Length; i++) // ï¿½ï¿½ï¿½ï¿½, ï¿½Ì¹ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         {
-            if (StaticManager.Instance.inventory[i].item == item) // ÀÌ¹Ì ÀÖ´Â ¾ÆÀÌÅÛÀÎ °æ¿ì
+            if (StaticManager.Instance.inventory[i].item == item) // ï¿½Ì¹ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             {
-                if (item.ItemType == ItemType.WEAPON) return; // ¹«±â´Â ÇÏ³ª¸¸ ¼ÒÀ¯ °¡´É
+                if (item.ItemType == ItemType.WEAPON) return; // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 inventoryIndex = i;
                 break;
             }
         }
 
-        if (inventoryIndex == -1) // ¾ø´Â ¾ÆÀÌÅÛÀÎ °æ¿ì
+        if (inventoryIndex == -1) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         {
             for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
             {
@@ -423,18 +423,18 @@ public class ObjectManager : MonoBehaviour
             }
         }
 
-        if (inventoryIndex == -1) // ÀÎº¥Åä¸®¿¡ ´õ ÀÌ»ó ³²Àº ½½·ÔÀÌ ¾øÀ» ¶§
+        if (inventoryIndex == -1) // ï¿½Îºï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         {
             Debug.Log("There is no more slot!");
             return;
         }
 
-        // ÀÎº¥Åä¸®ÀÇ ¾ÆÀÌÅÛ °³¼ö º¯°æ
+        // ï¿½Îºï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         StaticManager.Instance.inventory[inventoryIndex].count++;
         inventorySlot[inventoryIndex].ChangeText(StaticManager.Instance.inventory[inventoryIndex].count.ToString());
         shopInventorySlot[inventoryIndex].ChangeText(StaticManager.Instance.inventory[inventoryIndex].count.ToString());
 
-        // ÀÎº¥Åä¸® º¯°æ
+        // ï¿½Îºï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½
         ChangePlayerInventory();
     }
 
@@ -442,33 +442,33 @@ public class ObjectManager : MonoBehaviour
     {
         Object targetObj = obj;
         
-        //Àû°ú ÇÃ·¹ÀÌ¾î, µ¿·áÀÇ °øÅë º¯¼ö °ª ¼³Á¤
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         string objName = targetObj.name;
         float hpValue = targetObj.HP / targetObj.MaxHp;
         string hpText = $"{Mathf.CeilToInt(targetObj.HP)} / {Mathf.CeilToInt(targetObj.MaxHp)}";
-        string attackType = "Å¸ÀÔ: Å¸ÀÔ";
+        string attackType = "Å¸ï¿½ï¿½: Å¸ï¿½ï¿½";
         switch (targetObj.GetComponent<Object>().AttackType)
         {
             case WeaponType.SWORD:
-                attackType = "°ø°Ý Å¸ÀÔ: ±Ù°Å¸®";
+                attackType = "ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½: ï¿½Ù°Å¸ï¿½";
                 break;
             case WeaponType.STAFF:
-                attackType = "°ø°Ý Å¸ÀÔ: ¿ø°Å¸®";
+                attackType = "ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½: ï¿½ï¿½ï¿½Å¸ï¿½";
                 break;
             case WeaponType.NULL:
-                attackType = "°ø°Ý Å¸ÀÔ: NULL";
+                attackType = "ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½: NULL";
                 break;
             default:
-                Debug.Log("°ø°ÝÅ¸ÀÔ ¾øÀ½");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
                 break;
         }
-        string basicAttackText = $"±âº» °ø°Ý·Â: {targetObj.MinDamage} ~ {targetObj.MaxDamage}";
+        string basicAttackText = $"ï¿½âº» ï¿½ï¿½ï¿½Ý·ï¿½: {targetObj.MinDamage} ~ {targetObj.MaxDamage}";
 
 
 
-        if (targetObj.Type == ObjectType.PLAYER || targetObj.Type == ObjectType.FRIEND) //ÇÃ·¹ÀÌ¾î ¹öÆ° °¡Á®´Ù´ë¼­ È£ÃâµÇ´Â ºÎºÐ
+        if (targetObj.Type == ObjectType.PLAYER || targetObj.Type == ObjectType.FRIEND) //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½ï¿½Ù´ë¼­ È£ï¿½ï¿½Ç´ï¿½ ï¿½Îºï¿½
         {
-            //ÇÃ·¹ÀÌ¾î, µ¿·áµéÀÇ »çÁø ±¸º°ÇØ¼­ ³Ö±â ÀÏ´ÜÀº µ¿·á ±¸º°¾øÀÌ
+            //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ö±ï¿½ ï¿½Ï´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if(targetObj.Type == ObjectType.PLAYER)
                 objectInfoImage.sprite = objectInfoImages[0];
             else
@@ -492,10 +492,10 @@ public class ObjectManager : MonoBehaviour
             panelTransform.position = new Vector3(index * 155 , 200, 0);
 
         }
-        else if (targetObj.Type == ObjectType.ENEMY) //Àû Å¬¸¯ÇØ¼­ È£ÃâµÇ´Â °æ¿ì
+        else if (targetObj.Type == ObjectType.ENEMY) //ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ø¼ï¿½ È£ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½
         {
             //image
-            int idx = targetObj.ID - 100000; //ID °ªÀ» ¹Þ¾Æ ¹è¿­ÀÇ ÀÎµ¦½º·Î º¯È¯
+            int idx = targetObj.ID - 100000; //ID ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
             if (idx + 1 > enemyInfoImages.Length)
                 enemyInfoImage.sprite = enemyInfoImages[0];
             else
