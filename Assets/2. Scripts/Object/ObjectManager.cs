@@ -367,11 +367,11 @@ public class ObjectManager : MonoBehaviour
             shopSlot[shopIndex].ChangeImage(shopItemArray[itemIndex].Icon);
             shopSlot[shopIndex].ChangeText(shopItemSlotArray[shopIndex].count + " / $" + shopItemArray[itemIndex].SellCost.ToString());
         }
-        for(int i = shopIndex; i < shopSlot.Length; i++)
-        {
-            shopSlot[i].SetActive(true);
-            shopItemSlotArray[i].Init();
-        }
+        //for(int i = shopIndex; i < shopSlot.Length; i++)
+        //{
+        //    shopSlot[i].SetActive(true);
+        //    shopItemSlotArray[i].Init();
+        //}
     }
     public void BuyItem(int index)
     {
