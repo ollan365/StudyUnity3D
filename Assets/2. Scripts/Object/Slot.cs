@@ -61,7 +61,7 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
 
 
-        //½½·Ô Å¸ÀÔ¿¡ µû¶ó ´Ù¸¥ ÀÎº¥Åä¸®¸¦ ÂüÁ¶ÇÏ¿© itemInfoPanelÀ» ±¸¼ºÇÑ´Ù.
+        //ìŠ¬ë¡¯ íƒ€ì…ì— ë”°ë¼ ë‹¤ë¥¸ ì¸ë²¤í† ë¦¬ë¥¼ ì°¸ì¡°í•˜ì—¬ itemInfoPanelì„ êµ¬ì„±í•œë‹¤.
         switch (slotType)
         {
             case SlotType.INVENTORY:
@@ -76,8 +76,7 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if(eventData.pointerCurrentRaycast.gameObject != itemInfoPanel)
-            itemInfoPanel.SetActive(false);
+        itemInfoPanel.SetActive(false);
     }
 
 
