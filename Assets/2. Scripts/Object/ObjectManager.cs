@@ -367,11 +367,13 @@ public class ObjectManager : MonoBehaviour
             shopSlot[shopIndex].ChangeImage(shopItemArray[itemIndex].Icon);
             shopSlot[shopIndex].ChangeText(shopItemSlotArray[shopIndex].count + " / $" + shopItemArray[itemIndex].SellCost.ToString());
         }
-        //for(int i = shopIndex; i < shopSlot.Length; i++)
-        //{
-        //    shopSlot[i].SetActive(true);
-        //    shopItemSlotArray[i].Init();
-        //}
+
+        for(int i = shopIndex; i < shopSlot.Length; i++)
+        {
+            shopSlot[i].SetActive(false);
+            shopItemSlotArray[i] = new ItemSlot(null, 0);
+            shopItemSlotArray[i].Init();
+        }
     }
     public void BuyItem(int index)
     {
@@ -446,23 +448,22 @@ public class ObjectManager : MonoBehaviour
         string objName = targetObj.name;
         float hpValue = targetObj.HP / targetObj.MaxHp;
         string hpText = $"{Mathf.CeilToInt(targetObj.HP)} / {Mathf.CeilToInt(targetObj.MaxHp)}";
-        string attackType = "Ÿ��: Ÿ��";
+        string attackType = "공격 타입: 근/원거리";
         switch (targetObj.GetComponent<Object>().AttackType)
         {
             case WeaponType.SWORD:
-                attackType = "���� Ÿ��: �ٰŸ�";
+                attackType = "공격 타입: 근거리";
                 break;
             case WeaponType.STAFF:
-                attackType = "���� Ÿ��: ���Ÿ�";
+                attackType = "공격 타입: 원거리";
                 break;
             case WeaponType.NULL:
-                attackType = "���� Ÿ��: NULL";
+                attackType = "공격 타입: NULL";
                 break;
             default:
-                Debug.Log("����Ÿ�� ����");
                 break;
         }
-        string basicAttackText = $"�⺻ ���ݷ�: {targetObj.MinDamage} ~ {targetObj.MaxDamage}";
+        string basicAttackText = $"기본 공격력: {targetObj.MinDamage} ~ {targetObj.MaxDamage}";
 
 
 

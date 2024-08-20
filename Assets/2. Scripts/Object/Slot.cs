@@ -59,6 +59,8 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+
+
         //슬롯 타입에 따라 다른 인벤토리를 참조하여 itemInfoPanel을 구성한다.
         switch (slotType)
         {
@@ -70,18 +72,12 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 itemInfoPanel.GetComponent<ShowItemInfo>().SetItemInfo(ObjectManager.Instance.ShopItemSlotArray[index].item, gameObject.GetComponent<Slot>());
                 break;
         }
-
-        if (slotType == SlotType.INVENTORY)
-        {
-        }else if (slotType == SlotType.STORE_INVENTORY)
-        {
-
-        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        itemInfoPanel.SetActive(false);
+        if(eventData.pointerCurrentRaycast.gameObject != itemInfoPanel)
+            itemInfoPanel.SetActive(false);
     }
 
 
