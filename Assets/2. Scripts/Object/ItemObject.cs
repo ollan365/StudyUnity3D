@@ -21,8 +21,8 @@ public abstract class ItemObject : ScriptableObject
     public int SpawnMaxStage { get => spawnMaxStage; set => spawnMaxStage = value; }
 
 
-    [SerializeField] private Color icon; // 아이템의 아이콘 or 적이나 동료 등의 초상화  일단은 색으로 대체
-    public Color Icon { get => icon; set => icon = value; }
+    [SerializeField] private Sprite icon; // 아이템의 아이콘 or 적이나 동료 등의 초상화  일단은 색으로 대체
+    public Sprite Icon { get => icon; set => icon = value; }
 
     [TextArea(15, 20)] public string description;
 

@@ -166,13 +166,24 @@ public class Object : MonoBehaviour
         popText.text = text;
         popText.color = color;
 
-        rectTransform.localPosition = Vector3.zero;
-
         sequence = DOTween.Sequence();
-        sequence.Append(rectTransform.DOLocalMoveY(0.5f, 1.0f)).SetEase(Ease.OutCubic)
+        if (color == UnityEngine.Color.yellow)
+        {
+            rectTransform.localPosition = Vector3.zero;
+            sequence.Append(rectTransform.DOLocalMoveY(0.5f, 1.0f)).SetEase(Ease.OutCubic)
                 .Join(popText.DOFade(1.0f, 1.0f))
                 .Append(rectTransform.DOLocalMoveY(1f, 1.0f)).SetEase(Ease.Linear)
                 .Join(popText.DOFade(0.0f, 1.0f));
+        }
+        else if (color == UnityEngine.Color.red)
+        {
+            sequence.Append(rectTransform.DOLocalMoveY(1.0f, 0.1f)).SetEase(Ease.OutCubic)
+                .Join(popText.DOFade(1.0f, 0.1f))
+                .Append(rectTransform.DOLocalMoveY(0.0f, 2.0f)).SetEase(Ease.OutCubic)
+                .Join(popText.DOFade(0.0f, 2.0f));
+        }
+        
+        
 
         rectTransform.localPosition = Vector3.zero;
 
@@ -181,7 +192,6 @@ public class Object : MonoBehaviour
     private void DamageText(string text, bool isCritical = false)
     {
         //초기 값 설정
-        Debug.Log("damage text start");
         popText.text = text;
         popText.fontSize = 25;
 

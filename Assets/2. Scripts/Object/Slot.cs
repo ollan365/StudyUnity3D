@@ -2,18 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
-public class Slot : MonoBehaviour
+public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] int index;
     public enum SlotType { INVENTORY, STORE_INVENTORY, STORE }
     [SerializeField] private SlotType slotType;
+    public SlotType STYPE { get => slotType; }
 
     [SerializeField] private GameObject item;
     [SerializeField] private GameObject itemImage;
     [SerializeField] private GameObject equip;
     [SerializeField] private GameObject count;
+    [SerializeField] private GameObject itemInfoPanel;
 
     private void Start()
     {
@@ -30,9 +33,9 @@ public class Slot : MonoBehaviour
     {
         item.SetActive(on);
     }
-    public void ChangeImage(Color color)
+    public void ChangeImage(Sprite sprite)
     {
-        itemImage.GetComponent<Image>().color = color;
+        itemImage.GetComponent<Image>().sprite = sprite;
     }
     public void ChangeText(string text)
     {
@@ -53,4 +56,34 @@ public class Slot : MonoBehaviour
             count.GetComponentInChildren<TMP_Text>().text = text;
         }
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        //슬롯 타입에 따라 다른 인벤토리를 참조하여 itemInfoPanel을 구성한다.
+        switch (slotType)
+        {
+            case SlotType.INVENTORY:
+            case SlotType.STORE_INVENTORY:
+                itemInfoPanel.GetComponent<ShowItemInfo>().SetItemInfo(StaticManager.Instance.inventory[index].item, gameObject.GetComponent<Slot>());
+                break;
+            case SlotType.STORE:
+                itemInfoPanel.GetComponent<ShowItemInfo>().SetItemInfo(ObjectManager.Instance.ShopItemSlotArray[index].item, gameObject.GetComponent<Slot>());
+                break;
+        }
+
+        if (slotType == SlotType.INVENTORY)
+        {
+        }else if (slotType == SlotType.STORE_INVENTORY)
+        {
+
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        itemInfoPanel.SetActive(false);
+    }
+
+
+
 }

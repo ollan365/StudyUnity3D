@@ -10,7 +10,7 @@ public class ItemSlot
         this.count = count;
     }
 
-    public void init()
+    public void Init()
     {
         item = StaticManager.Instance.nullObject;
         count = 1;

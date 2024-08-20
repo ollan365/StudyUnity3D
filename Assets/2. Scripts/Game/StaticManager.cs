@@ -27,7 +27,19 @@ public class StaticManager : MonoBehaviour
         }
     }
     private int gold = 1000; // 일단 테스트를 위해 1000골드
-    public int Gold { get => gold; set => gold = value; }
+    public int Gold
+    {
+        get => gold; 
+        
+        set
+        {
+            if (gold < value) player.PoppingText("+" + value.ToString(), Color.yellow);
+            else if (gold > value) player.PoppingText("-" + value.ToString(), Color.red);
+            
+            gold = value;
+        }
+
+    }
 
     [Header("Item List")]
     [SerializeField] private List<Portion> portionList;

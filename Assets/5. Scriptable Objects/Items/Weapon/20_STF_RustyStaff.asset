@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb098f7e3ebda15409ec6fdde3607b7f, type: 3}
+  m_Name: 20_STF_RustyStaff
+  m_EditorClassIdentifier: 
+  itemName: "\uB179\uC2A8 \uC9C0\uD321\uC774"
+  id: 110021
+  itemType: 0
+  sellCost: 0
+  buyCost: 0
+  spawnMinStage: 2
+  spawnMaxStage: 4
+  icon: {fileID: 21300000, guid: a94f06bbff5372d40985c539b6fb5066, type: 3}
+  description: 
+  weaponType: 1
+  level: 0
+  weaponLevel:
+  - level: 0
+    minDamage: 60
+    maxDamage: 70
+  - level: 1
+    minDamage: 78
+    maxDamage: 90
+  weaponObject: {fileID: 0}

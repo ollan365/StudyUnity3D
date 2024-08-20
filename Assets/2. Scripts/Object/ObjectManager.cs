@@ -37,6 +37,14 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private Slot[] shopSlot;
     [SerializeField] private ItemObject[] shopItemArray;
     private ItemSlot[] shopItemSlotArray;
+    public ItemSlot[] ShopItemSlotArray { get => shopItemSlotArray; }
+
+    [Header("Item Info UI")]
+    [SerializeField] private GameObject itemInfoPanel;
+    public GameObject ItemInfoPanel { get => itemInfoPanel; }
+    [SerializeField] private GameObject itemSlot;
+    public GameObject ItemSlot { get => itemSlot; set => itemSlot = value; }
+    
 
     [Header("Enemy Info UI")]
     [SerializeField] private GameObject enemyInfoPanel;
@@ -59,6 +67,10 @@ public class ObjectManager : MonoBehaviour
     [SerializeField] private TMP_Text objectInfoAttackType;
     [SerializeField] private TMP_Text objectInfoBasicAttack;
     public GameObject ObjectInfoPanel { get => objectInfoPanel; }
+
+    [Header("Player Weapon")]
+    [SerializeField] private GameObject playerWeapon;
+    [SerializeField] private GameObject[] weapons;
 
 
     private void Awake()
@@ -199,7 +211,7 @@ public class ObjectManager : MonoBehaviour
 
         for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
-            if (StaticManager.Instance.inventory[i].count == 0) StaticManager.Instance.inventory[i].init();
+            if (StaticManager.Instance.inventory[i].count == 0) StaticManager.Instance.inventory[i].Init();
 
             switch (StaticManager.Instance.inventory[i].item.ItemType)
             {
@@ -228,7 +240,7 @@ public class ObjectManager : MonoBehaviour
 
         for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
-            if (StaticManager.Instance.inventory[i].count == 0) StaticManager.Instance.inventory[i].init();
+            if (StaticManager.Instance.inventory[i].count == 0) StaticManager.Instance.inventory[i].Init();
 
             switch (StaticManager.Instance.inventory[i].item.ItemType)
             {
@@ -260,6 +272,16 @@ public class ObjectManager : MonoBehaviour
                 if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].item && StageManager.Instance.GetStageTextValue(StageText.WEAPON_CHANGE) > 0)
                 {
                     StaticManager.Instance.PlayerWeapon = (Weapon)StaticManager.Instance.inventory[index].item;
+
+                    if(playerWeapon.transform.childCount != 0)
+                        Destroy(playerWeapon.transform.GetChild(0).gameObject);
+
+                    int idx = (StaticManager.Instance.inventory[index].item.ID - 110014);
+                    idx = (weapons.Length == 0) ? 0 : idx % weapons.Length;
+                    Debug.Log(idx);
+                    GameObject.Instantiate(weapons[idx], playerWeapon.transform);
+                    
+
                     StageManager.Instance.SetStageTextValue(StageText.WEAPON_CHANGE, -1);
                 }
                 break;
@@ -314,7 +336,8 @@ public class ObjectManager : MonoBehaviour
         }
 
         int itemIndex = -1;
-        for (int shopIndex = 0; shopIndex < shopSlot.Length; shopIndex++)
+        int shopIndex;
+        for (shopIndex = 0; shopIndex < shopSlot.Length; shopIndex++)
         {
             bool moreItem = false;
             for (int i = itemIndex + 1; i < shopItemArray.Length; i++)
@@ -344,7 +367,11 @@ public class ObjectManager : MonoBehaviour
             shopSlot[shopIndex].ChangeImage(shopItemArray[itemIndex].Icon);
             shopSlot[shopIndex].ChangeText(shopItemSlotArray[shopIndex].count + " / $" + shopItemArray[itemIndex].SellCost.ToString());
         }
-
+        for(int i = shopIndex; i < shopSlot.Length; i++)
+        {
+            shopSlot[i].SetActive(true);
+            shopItemSlotArray[i].Init();
+        }
     }
     public void BuyItem(int index)
     {

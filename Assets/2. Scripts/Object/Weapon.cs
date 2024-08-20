@@ -11,6 +11,7 @@ public class Weapon : ItemObject
     public int MinDamage { get => weaponLevel[Level].minDamage; }
     public int MaxDamage { get => weaponLevel[Level].maxDamage; }
     [SerializeField] private WeaponLevel[] weaponLevel;
+    [SerializeField] private GameObject weaponObject;
 }
 
 [System.Serializable]

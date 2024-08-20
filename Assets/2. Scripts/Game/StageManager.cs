@@ -203,7 +203,7 @@ public class StageManager : MonoBehaviour
         }
         yield return new WaitForSeconds(1.2f);
 
-        startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<TMP_Text>();
+        startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<TMP_Text>(); 
         startPanelText.text = $"Stage {StaticManager.Instance.Stage}";
 
         // UI 활성화
