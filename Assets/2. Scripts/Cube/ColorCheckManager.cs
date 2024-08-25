@@ -33,12 +33,16 @@ public class ColorCheckManager : MonoBehaviour
         if (!mustChange && selectedCharacter != character)
             return false;
 
+        selectedCharacter = null;
+
         MovableCubeSetting(-1);
         return true;
     }
 
     private void MovableCubeSetting(int index)
     {
+        if (selectedCharacter == null) index = -1;
+
         switch (index)
         {
             case 0:

@@ -49,6 +49,7 @@ public class ParticleManager : MonoBehaviour
                 break;
             case Particle.Enemy_INVINCIBILITY:
             case Particle.PlayerTeam_INVINCIBILITY:
+                particleObj.transform.localScale = new Vector3(0.2f, 0.3f, 0.2f);
                 break;
 
             case Particle.PlayerTeam_Sttaff_Projectile:
@@ -85,17 +86,17 @@ public class ParticleManager : MonoBehaviour
     {
         GameObject chargingObject = null, projectile = null;
 
-        // Â÷Â¡ ½ÃÀÛ
+        // ì°¨ì§• ì‹œìž‘
         if (isEnemy) chargingObject = PlayParticle(src.gameObject, Particle.Enemy_Sttaff_Charging);
         else chargingObject = PlayParticle(src.gameObject, Particle.PlayerTeam_Sttaff_Charging);
         yield return new WaitForSeconds(0.5f);
 
-        // Åõ»çÃ¼ »ý¼º
+        // íˆ¬ì‚¬ì²´ ìƒì„±
         if (isEnemy) projectile = PlayParticle(src.gameObject, Particle.Enemy_Sttaff_Projectile);
         else projectile = PlayParticle(src.gameObject, Particle.PlayerTeam_Sttaff_Projectile);
         yield return new WaitForSeconds(0.5f);
 
-        // Â÷Â¡ ³¡ -> Åõ»çÃ¼ ³¯¸²
+        // ì°¨ì§• ë -> íˆ¬ì‚¬ì²´ ë‚ ë¦¼
         Destroy(chargingObject);
 
         Vector3 direction = (dst.transform.position - src.transform.position).normalized;
