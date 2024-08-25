@@ -124,7 +124,7 @@ public class Object : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         //플레이어, 적, 동료 이고, 살아있다면 데미지 출력
-        if (popTextObj != null && HP > 0)
+        if (popTextObj != null )
         {
             string text;
             if (dmg > 0)
@@ -141,6 +141,31 @@ public class Object : MonoBehaviour
 
         if (HP <= 0) StartCoroutine(Death(HP, gameObject));
         if (dmg < 0) ParticleManager.Instance.PlayParticle(touchCube.gameObject, Particle.Heal);
+    }
+    private void DamageText(string text, bool isCritical = false)
+    {
+        //초기 값 설정
+        popText.text = text;
+        popText.fontSize = 25;
+
+        popText.color = UnityEngine.Color.blue;
+        if (isCritical)
+        {
+            popText.color = UnityEngine.Color.red;
+        }
+
+        sequence = DOTween.Sequence();
+        sequence.Append(rectTransform.DOLocalMoveY(0.5f, 0.1f))
+                .Append(popText.DOFontSize(textFontSize * 1.3f, 0.5f))
+                .Join(popText.DOFade(1.0f, 0.5f))
+                .Append(popText.DOFontSize(textFontSize, 0.5f))
+                .Append(popText.DOFade(0.0f, 0.5f))
+                .Append(rectTransform.DOLocalMoveY(0.0f, 0.1f));
+
+        
+        popText.fontSize = textFontSize;
+        rectTransform.localPosition = Vector3.zero;
+
     }
 
     //death 기능을 코루틴으로 설정하고, 1초 딜레이 시켜, 데미지 이펙트가 모두 나오고 오브젝트 비활성화
@@ -185,30 +210,6 @@ public class Object : MonoBehaviour
         
         
 
-        rectTransform.localPosition = Vector3.zero;
-
-    }
-
-    private void DamageText(string text, bool isCritical = false)
-    {
-        //초기 값 설정
-        popText.text = text;
-        popText.fontSize = 25;
-
-        if (isCritical)
-        {
-            popText.color = UnityEngine.Color.red;
-        }
-
-        sequence = DOTween.Sequence();
-        sequence.Append(rectTransform.DOLocalMoveY(0.5f, 0.1f))
-                .Append(popText.DOFontSize(textFontSize * 1.3f, 0.5f))
-                .Join(popText.DOFade(1.0f, 0.5f))
-                .Append(popText.DOFontSize(textFontSize, 0.5f))
-                .Append(popText.DOFade(0.0f, 0.5f))
-                .Append(rectTransform.DOLocalMoveY(0.0f, 0.1f));
-
-        popText.fontSize = textFontSize;
         rectTransform.localPosition = Vector3.zero;
 
     }

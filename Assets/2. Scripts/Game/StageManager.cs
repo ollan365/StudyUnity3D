@@ -269,6 +269,7 @@ public class StageManager : MonoBehaviour
     }
     private IEnumerator StageClear()
     {
+        clickIgnorePanel.SetActive(true);
         ChangeStatus(StageStatus.END);
         SetStageTextValue(StageText.END, 0);
 
@@ -326,7 +327,9 @@ public class StageManager : MonoBehaviour
 
     public IEnumerator CubeRotate(Colors color)
     {
-        isCubeMove = true;
+        if (isCubeMove)
+            yield break;
+        
 
         Quaternion startRotation = cube.transform.localRotation;
         Vector3 endRotationVector = new();
