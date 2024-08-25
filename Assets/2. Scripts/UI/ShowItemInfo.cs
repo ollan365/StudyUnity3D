@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 using static Constants;
 
-public class ShowItemInfo : MonoBehaviour, IPointerExitHandler
+public class ShowItemInfo : MonoBehaviour
 {
     [SerializeField] Image itemImage;
     [SerializeField] TMP_Text itemName;
@@ -14,18 +14,18 @@ public class ShowItemInfo : MonoBehaviour, IPointerExitHandler
 
     public void SetItemInfo(ItemObject item, Slot slot)
     {
-        //item typeÀÌ NULLÀÎ °æ¿ì, Á¤º¸Ã¢À» ¶ç¿ìÁö ¾Ê´Â´Ù.
+        //item typeì´ NULLì¸ ê²½ìš°, ì •ë³´ì°½ì„ ë„ìš°ì§€ ì•ŠëŠ”ë‹¤.
         if (item.ItemType == ItemType.NULL)
             return;
 
-        //item info panelÀÇ À§Ä¡¸¦ ¼³Á¤ÇÑ´Ù.
+        //item info panelì˜ ìœ„ì¹˜ë¥¼ ì„¤ì •í•œë‹¤.
         Vector3 pos = slot.transform.position;
-        pos.y += 190;
-        pos.x += 5;
+        pos.y += 30;
+        pos.x -= 30;
         gameObject.transform.position = pos;
 
-        //itemÀ» ¹Ş°í, itemÀÇ Å¸ÀÔ¿¡ µû¶ó ´Ù¿îÄ³½ºÆÃ ÇÏ¿© ¾Ë¸ÂÀº Á¤º¸¸¦ ¼³Á¤ÇÑ´Ù.
-        //Å¸ÀÔ°ú ¹«°üÇÏ°Ô ¼³Á¤ÇÒ ¼ö ÀÖ´Â Á¤º¸¿Í, Å¸ÀÔ¿¡ µû¶ó ´Ù¸£°Ô ¼³Á¤ÇØ¾ß ÇÒ Á¤º¸¸¦ ±¸ºĞÇÏ¿© ¼³Á¤ÇÑ´Ù.
+        //itemì„ ë°›ê³ , itemì˜ íƒ€ì…ì— ë”°ë¼ ë‹¤ìš´ìºìŠ¤íŒ… í•˜ì—¬ ì•Œë§ì€ ì •ë³´ë¥¼ ì„¤ì •í•œë‹¤.
+        //íƒ€ì…ê³¼ ë¬´ê´€í•˜ê²Œ ì„¤ì •í•  ìˆ˜ ìˆëŠ” ì •ë³´ì™€, íƒ€ì…ì— ë”°ë¼ ë‹¤ë¥´ê²Œ ì„¤ì •í•´ì•¼ í•  ì •ë³´ë¥¼ êµ¬ë¶„í•˜ì—¬ ì„¤ì •í•œë‹¤.
         itemImage.sprite = item.Icon;
         itemName.text = item.ItemName;
         itemDesc.text = item.description;
@@ -33,10 +33,10 @@ public class ShowItemInfo : MonoBehaviour, IPointerExitHandler
         switch (slot.STYPE)
         {
             case Slot.SlotType.INVENTORY:
-                itemPrice.text = $"ÆÇ¸Å°¡: {item.SellCost}G";
+                itemPrice.text = $"íŒë§¤ê°€: {item.SellCost}G";
                 break;
             case Slot.SlotType.STORE_INVENTORY:
-                itemPrice.text = $"±¸¸Å°¡: {item.BuyCost}G";
+                itemPrice.text = $"êµ¬ë§¤ê°€: {item.BuyCost}G";
                 break;
             default:
                 itemPrice.text = $"";
@@ -46,10 +46,10 @@ public class ShowItemInfo : MonoBehaviour, IPointerExitHandler
         switch (item.ItemType) 
         {
             case ItemType.WEAPON:
-                itemAtk.text = $"±âº» °ø°İ·Â: {((Weapon)item).MinDamage} ~ {((Weapon)item).MaxDamage}";
+                itemAtk.text = $"ê¸°ë³¸ ê³µê²©ë ¥: {((Weapon)item).MinDamage} ~ {((Weapon)item).MaxDamage}";
                 break;
             case ItemType.PORTION:
-                itemAtk.text = $"È¸º¹·® {((Portion)item).HealRate} ~ {((Portion)item).HealRate}";
+                itemAtk.text = $"íšŒë³µëŸ‰ {((Portion)item).HealRate} ~ {((Portion)item).HealRate}";
                 break;
             case ItemType.SCROLL:
                 itemAtk.text = $"";
@@ -63,10 +63,6 @@ public class ShowItemInfo : MonoBehaviour, IPointerExitHandler
 
         gameObject.SetActive(true);
         
-    }
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        gameObject.SetActive(false);
     }
 
 }
