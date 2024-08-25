@@ -33,7 +33,7 @@ public class StaticManager : MonoBehaviour
         
         set
         {
-            if (gold < value) player.PoppingText("+" + value.ToString(), Color.yellow);
+            if (gold < value) player.PoppingText("+" + (value - gold).ToString(), Color.yellow);
             else if (gold > value) player.PoppingText("-" + (gold - value).ToString(), Color.red);
             
             gold = value;

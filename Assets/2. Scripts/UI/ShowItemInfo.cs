@@ -18,30 +18,36 @@ public class ShowItemInfo : MonoBehaviour
         if (item.ItemType == ItemType.NULL)
             return;
 
-        //item info panel의 위치를 설정한다.
-        Vector3 pos = slot.transform.position;
-        pos.y += 30;
-        pos.x -= 30;
-        gameObject.transform.position = pos;
-
         //item을 받고, item의 타입에 따라 다운캐스팅 하여 알맞은 정보를 설정한다.
         //타입과 무관하게 설정할 수 있는 정보와, 타입에 따라 다르게 설정해야 할 정보를 구분하여 설정한다.
         itemImage.sprite = item.Icon;
         itemName.text = item.ItemName;
         itemDesc.text = item.description;
 
+        //item info panel의 위치를 설정한다.
+        Vector3 pos = slot.transform.position;
         switch (slot.STYPE)
         {
             case Slot.SlotType.INVENTORY:
+                pos.y += 30;
+                pos.x -= 30;
                 itemPrice.text = $"판매가: {item.SellCost}G";
                 break;
             case Slot.SlotType.STORE_INVENTORY:
+                pos.y += 55.5f;
+                pos.x -= 51f;
+                itemPrice.text = $"판매가: {item.SellCost}G";
+                break;
+            case Slot.SlotType.STORE:
+                pos.y += 55.5f;
+                pos.x -= 51f;
                 itemPrice.text = $"구매가: {item.BuyCost}G";
                 break;
             default:
                 itemPrice.text = $"";
                 break;
         }
+        gameObject.transform.position = pos;
 
         switch (item.ItemType) 
         {
@@ -49,7 +55,7 @@ public class ShowItemInfo : MonoBehaviour
                 itemAtk.text = $"기본 공격력: {((Weapon)item).MinDamage} ~ {((Weapon)item).MaxDamage}";
                 break;
             case ItemType.PORTION:
-                itemAtk.text = $"회복량 {((Portion)item).HealRate} ~ {((Portion)item).HealRate}";
+                itemAtk.text = $"회복량: {((Portion)item).HealRate}";
                 break;
             case ItemType.SCROLL:
                 itemAtk.text = $"";

@@ -707,11 +707,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5572723562541749126, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5572723562541749126, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7627561725414285032, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_Name
@@ -719,15 +719,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7627561725414285032, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7983713671138276762, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 196
       objectReference: {fileID: 0}
     - target: {fileID: 7983713671138276762, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 150
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8468494500217382815, guid: bbc2d5598ba482e459088253fec41676, type: 3}
       propertyPath: m_Pivot.x

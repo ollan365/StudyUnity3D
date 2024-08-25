@@ -269,6 +269,7 @@ public class StageManager : MonoBehaviour
     }
     private IEnumerator StageClear()
     {
+        clickIgnorePanel.SetActive(true);
         ChangeStatus(StageStatus.END);
         SetStageTextValue(StageText.END, 0);
 
