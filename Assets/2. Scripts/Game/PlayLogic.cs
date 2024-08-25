@@ -39,7 +39,9 @@ public class PlayLogic : MonoBehaviour
         animator.SetBool("Open", true);
         int gold = (int)obj.Damage;
         StaticManager.Instance.Gold += gold;
-        ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().PoppingText($"+{gold}", Color.yellow);
+        if (ColorCheckManager.Instance.SelectedCharacter)
+            ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().PoppingText($"+{gold}", Color.yellow);
+        else StageManager.Instance.Player.PoppingText($"+{gold}", Color.yellow);
         yield return new WaitForSeconds(2f);
 
         ObjectManager.Instance.ObjectDie(obj.gameObject);

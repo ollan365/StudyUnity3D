@@ -173,7 +173,8 @@ public class EventManager : MonoBehaviour
     {
         switch (name)
         {
-            case "악마의 교활함":
+            case "악마의 교활함": return false;
+
             case "잔혹한 계약":
             case "등가교환":
             case "뒤통수":
@@ -220,7 +221,7 @@ public class EventManager : MonoBehaviour
 
             case "잔혹한 계약":
                 Object friendObj = RandomObejectOfPlayerTeam(false);
-                StageManager.Instance.Player.OnHit(StatusEffect.HP, friendObj.HP * 50 / 100);
+                StageManager.Instance.Player.OnHit(StatusEffect.HP, -friendObj.HP * 50 / 100);
                 friendObj.OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
 
@@ -351,16 +352,21 @@ public class EventManager : MonoBehaviour
                 break;
         }
 
-        StageManager.Instance.CubeRotate(cube.Color);
+        StartCoroutine(StageManager.Instance.CubeRotate(cube.Color));
         yield return new WaitForSeconds(1f);
+        obj.OnHit(StatusEffect.HP_PERCENT, -hpPercent);
 
-        obj.gameObject.SetActive(true);
+        if (obj.Type == ObjectType.ENEMY) ParticleManager.Instance.PlayParticle(cube.gameObject, Particle.Enemy_Summon);
+        else if (obj.Type == ObjectType.FRIEND) ParticleManager.Instance.PlayParticle(cube.gameObject, Particle.Friend_Summon);
 
         ColorCheckManager.Instance.CharacterSelect(obj.gameObject);
         StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(cube.Color, cube.Index));
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
 
-        obj.OnHit(StatusEffect.HP_PERCENT, -hpPercent);
+        yield return new WaitForSeconds(0.5f);
+        obj.gameObject.SetActive(true);
+
+        obj.transform.localRotation = Quaternion.Euler(Vector3.zero);
 
         Debug.Log($"{obj} : {obj.HP} / Touch: {cube.Color} {cube.Index}");
     }
