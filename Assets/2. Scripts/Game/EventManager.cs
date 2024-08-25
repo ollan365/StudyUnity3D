@@ -21,11 +21,11 @@ public class EventManager : MonoBehaviour
 
     [Header("Event")]
     [SerializeField] private GameObject eventPanel;
-    [SerializeField] private Button[] eventButtons;
-    [SerializeField] private TMP_Text[] eventNameTexts;
-    [SerializeField] private TMP_Text[] eventDescriptionTexts;
+    [SerializeField] private Transform eventButtonParent;
+    [SerializeField] private GameObject eventButtonPrefab;
     [SerializeField] private EventCard[] eventCards;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
+
     public ColorEffect Effect { get => colorEffect; }
     private Colors[][] bingoCheck;
 
@@ -68,7 +68,7 @@ public class EventManager : MonoBehaviour
     }
     private void BingoMark()
     {
-        // ºù°í Á¶°Ç
+        // ë¹™ê³  ì¡°ê±´
         for (int i = 0; i < 6; i++)
         {
             for (int j = 0; j < 9; j++) bingoCheck[i][j] = Colors.NULL;
@@ -115,7 +115,7 @@ public class EventManager : MonoBehaviour
                 }
             }
 
-            // ÇÑ¸é ºù°í°¡ ÀÖ´ÂÁö È®ÀÎ
+            // í•œë©´ ë¹™ê³ ê°€ ìˆëŠ”ì§€ í™•ì¸
             for (int j = 0; j < 6; j++)
             {
                 if (bingoNum[j] == 6 && bingoStatus[j] != BingoStatus.ALL)
@@ -128,13 +128,14 @@ public class EventManager : MonoBehaviour
 
     public void StageEnd()
     {
-        // ¼±¾Ç°ú ±«·Ú ¼Ò¸ê
-        // »óÅÂ ÀÌ»ó ÃÊ±âÈ­
+        // ì„ ì•…ê³¼ ê´´ë¢° ì†Œë©¸
+        // ìƒíƒœ ì´ìƒ ì´ˆê¸°í™”
     }
     private void EventAdd()
     {
-        foreach (Button b in eventButtons) b.onClick.RemoveAllListeners();
+        foreach (Transform child in eventButtonParent) Destroy(child.gameObject);
 
+        // ë°œìƒ ê°€ëŠ¥í•œ ì´ë²¤íŠ¸ë“¤ì„ ì €ì¥í•œ ë¦¬ìŠ¤íŠ¸
         List<EventCard> eventList = new();
 
         foreach(EventCard card in eventCards)
@@ -145,18 +146,26 @@ public class EventManager : MonoBehaviour
             }
         }
 
-        int random_1 = Random.Range(0, eventList.Count);
-        int random_2 = random_1;
-        while (eventList.Count > 1 && random_1 == random_2) random_2 = Random.Range(0, eventList.Count);
+        // ë¦¬ìŠ¤íŠ¸ë¥¼ ëœë¤ìœ¼ë¡œ ì„ëŠ”ë‹¤
+        for (int i = 0; i < eventList.Count; i++)
+        {
+            int randomIndex = Random.Range(i, eventList.Count);
+            EventCard temp = eventList[i];
+            eventList[i] = eventList[randomIndex];
+            eventList[randomIndex] = temp;
+        }
 
-        eventButtons[0].onClick.AddListener(() => Event(eventList[random_1].eventName));
-        eventButtons[1].onClick.AddListener(() => Event(eventList[random_2].eventName));
+        // ë°œìƒ ê°€ëŠ¥í•œ ì´ë²¤íŠ¸ë“¤ì„ UIì— ë²„íŠ¼ìœ¼ë¡œ ë„ìš´ë‹¤
+        for (int i = 0; i < eventList.Count; i++)
+        {
+            int index = i;
+            GameObject newEventCard = Instantiate(eventButtonPrefab, eventButtonParent);
+            newEventCard.GetComponent<Button>().onClick.AddListener(() => Event(eventList[index].eventName));
 
-        eventNameTexts[0].text = eventList[random_1].eventName;
-        eventNameTexts[1].text = eventList[random_2].eventName;
-
-        eventDescriptionTexts[0].text = eventList[random_1].EventDescription[0];
-        eventDescriptionTexts[1].text = eventList[random_2].EventDescription[0];
+            TextMeshProUGUI[] childTexts = newEventCard.GetComponentsInChildren<TextMeshProUGUI>();
+            childTexts[0].text = eventList[i].eventName;
+            childTexts[1].text = eventList[i].EventDescription[0];
+        }
     }
     
 
@@ -164,28 +173,28 @@ public class EventManager : MonoBehaviour
     {
         switch (name)
         {
-            case "¾Ç¸¶ÀÇ ±³È°ÇÔ":
-            case "ÀÜÈ¤ÇÑ °è¾à":
-            case "µî°¡±³È¯":
-            case "µÚÅë¼ö":
+            case "ì•…ë§ˆì˜ êµí™œí•¨":
+            case "ì”í˜¹í•œ ê³„ì•½":
+            case "ë“±ê°€êµí™˜":
+            case "ë’¤í†µìˆ˜":
                 if (FriendCount > 0) return true;
                 else return false;
 
-            case "ÃÖÈÄÀÇ ÀúÇ×":
+            case "ìµœí›„ì˜ ì €í•­":
                 if (RandomDeadObject() != null) return true;
                 else return false;
 
-            case "Ã»ºÎ»ìÀÎ":
-            case "¿À¾Æ½Ã½º":
-            case "º¹±Ç ±¸¸Å":
+            case "ì²­ë¶€ì‚´ì¸":
+            case "ì˜¤ì•„ì‹œìŠ¤":
+            case "ë³µê¶Œ êµ¬ë§¤":
                 if (StaticManager.Instance.Gold > 100) return true;
                 else return false;
 
-            case "¸Å¼ö":
+            case "ë§¤ìˆ˜":
                 if (StaticManager.Instance.Gold > 100 && RandomDeadFriend() != null) return true;
                 else return false;
 
-            case "º´ ÁÖ°í ¾à ÁÖ°í":
+            case "ë³‘ ì£¼ê³  ì•½ ì£¼ê³ ":
                 if (RandomDeadEnemy() != null) return true;
                 else return false;
 
@@ -196,125 +205,125 @@ public class EventManager : MonoBehaviour
     {
         switch (name)
         {
-            case "°Å¿ï":
+            case "ê±°ìš¸":
                 StartCoroutine(Event_16());
                 break;
 
-            case "ÃÖÈÄÀÇ ÀúÇ×":
+            case "ìµœí›„ì˜ ì €í•­":
                 StartCoroutine(Revive(RandomDeadObject()));
                 break;
 
-            case "µî°¡±³È¯":
+            case "ë“±ê°€êµí™˜":
                 RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
                 RandomObejectOfPEnemy().OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
 
-            case "ÀÜÈ¤ÇÑ °è¾à":
+            case "ì”í˜¹í•œ ê³„ì•½":
                 Object friendObj = RandomObejectOfPlayerTeam(false);
                 StageManager.Instance.Player.OnHit(StatusEffect.HP, friendObj.HP * 50 / 100);
                 friendObj.OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
 
-            case "¼±¾Ç°ú":
+            case "ì„ ì•…ê³¼":
                 ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 1);
                 break;
 
-            case "Áö·Ú":
+            case "ì§€ë¢°":
                 ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 2);
                 break;
 
-            case "³Ê Á×°í ³ª Á×ÀÚ":
+            case "ë„ˆ ì£½ê³  ë‚˜ ì£½ì":
                 foreach (Object obj in ObjectList(Colors.RED))
                     obj.OnHit(StatusEffect.HP_PERCENT, 50);
                 break;
 
-            case "Ãàº¹ÀÇ ¶¥":
+            case "ì¶•ë³µì˜ ë•…":
                 foreach (Object obj in ObjectList(Colors.RED))
                     obj.OnHit(StatusEffect.HP_PERCENT, -50);
                 break;
 
-            case "ÇÇÀÇ ´ë°¡":
+            case "í”¼ì˜ ëŒ€ê°€":
                 colorEffect.Add(POWERFUL);
                 colorEffect.Add(CURSE);
                 break;
 
-            case "ºñÆø·ÂÁÖÀÇ":
+            case "ë¹„í­ë ¥ì£¼ì˜":
                 colorEffect.Add(SLIENCE);
                 break;
 
-            case "°ø°İÅÂ¼¼":
+            case "ê³µê²©íƒœì„¸":
                 colorEffect.Add(POWERFUL);
                 break;
 
-            case "³«ÀÎ":
+            case "ë‚™ì¸":
                 colorEffect.Add(WEAKEN);
                 break;
 
-            case "È¸ÇÇÀÇ ´ŞÀÎ":
+            case "íšŒí”¼ì˜ ë‹¬ì¸":
                 colorEffect.Add(INVINCIBILITY);
                 break;
 
-            case "¶¥ ÆÄ¸é ¿À¹é¿ø ³ª¿À³ª?":
+            case "ë•… íŒŒë©´ ì˜¤ë°±ì› ë‚˜ì˜¤ë‚˜?":
                 StaticManager.Instance.Gold += 500;
                 break;
 
-            case "Ã»ºÎ»ìÀÎ":
+            case "ì²­ë¶€ì‚´ì¸":
                 StaticManager.Instance.Gold -= 100;
                 RandomObejectOfPEnemy().OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
 
-            case "¸Å¼ö":
+            case "ë§¤ìˆ˜":
                 StaticManager.Instance.Gold -= 100;
                 StartCoroutine(Revive(RandomDeadFriend()));
                 break;
 
-            case "º¹±Ç ±¸¸Å":
+            case "ë³µê¶Œ êµ¬ë§¤":
                 StaticManager.Instance.Gold -= 100;
                 StaticManager.Instance.Gold += Random.Range(50, 200);
                 break;
 
-            case "º´ ÁÖ°í ¾à ÁÖ°í":
+            case "ë³‘ ì£¼ê³  ì•½ ì£¼ê³ ":
                 StaticManager.Instance.Gold += 100;
                 StartCoroutine(Revive(RandomDeadEnemy()));
                 break;
 
-            case "µÚÅë¼ö":
+            case "ë’¤í†µìˆ˜":
                 StaticManager.Instance.Gold += 100;
                 RandomObejectOfPlayerTeam(false).OnHit(StatusEffect.HP_PERCENT, 100);
                 break;
 
-            case "È¸Àü ÁõÆø":
+            case "íšŒì „ ì¦í­":
                 StageManager.Instance.SetStageTextValue(StageText.ROTATE, 5);
                 break;
 
-            case "È¸Àü Ãß°¡":
+            case "íšŒì „ ì¶”ê°€":
                 StageManager.Instance.SetStageTextValue(StageText.ROTATE_INIT, 5);
                 break;
 
-            case "ºü¸¥ ¼Õ³î¸²":
+            case "ë¹ ë¥¸ ì†ë†€ë¦¼":
                 StageManager.Instance.SetStageTextValue(StageText.WEAPON_CHANGE, 5);
                 break;
 
-            case "±â¹ÎÇÑ ¹ß³î¸²":
+            case "ê¸°ë¯¼í•œ ë°œë†€ë¦¼":
                 StageManager.Instance.SetStageTextValue(StageText.MOVE, 5);
                 break;
 
-            case "¹ÎÃ¸ÇÑ °ÉÀ½":
+            case "ë¯¼ì²©í•œ ê±¸ìŒ":
                 StageManager.Instance.SetStageTextValue(StageText.MOVE_INIT, 5);
                 break;
 
-            case "¿î¼ö´ëÅë":
+            case "ìš´ìˆ˜ëŒ€í†µ":
                 foreach (GameObject obj in StageManager.Instance.TreasureList)
                     if (obj.GetComponent<Object>().touchCube.RelativeColor == Effect.color)
                         StageManager.Instance.StagePlayLogic.Trigger(obj);
                 break;
 
-            case "¿À¾Æ½Ã½º":
+            case "ì˜¤ì•„ì‹œìŠ¤":
                 StaticManager.Instance.Gold -= 100;
                 ObjectManager.Instance.AddItem(110000, null);
                 break;
 
-            case "¹Ì±Ã":
+            case "ë¯¸ê¶":
                 cubeManager.StartRandomTurn(5, true);
                 break;
 
@@ -376,7 +385,7 @@ public class EventManager : MonoBehaviour
         yield return null;
     }
 
-    // ========== ÆíÀÇ¸¦ À§ÇØ ¸¸µç ÇÔ¼ö ========== //
+    // ========== í¸ì˜ë¥¼ ìœ„í•´ ë§Œë“  í•¨ìˆ˜ ========== //
     public List<Object> ObjectList(Colors color)
     {
         List<Object> output = new();
@@ -526,11 +535,11 @@ public class EventManager : MonoBehaviour
 
             int index = 0;
 
-            // ÇÃ·¹ÀÌ¾î Ãß°¡
+            // í”Œë ˆì´ì–´ ì¶”ê°€
             allObject[index] = StageManager.Instance.Player;
             index++;
 
-            // »ì¾ÆÀÖ´Â µ¿·á Ãß°¡
+            // ì‚´ì•„ìˆëŠ” ë™ë£Œ ì¶”ê°€
             for(int i = 0; i < 3; i++)
             {
                 if(StageManager.Instance.FriendList[i] != null &&
@@ -541,7 +550,7 @@ public class EventManager : MonoBehaviour
                 }
             }
 
-            // »ì¾ÆÀÖ´Â Àû Ãß°¡
+            // ì‚´ì•„ìˆëŠ” ì  ì¶”ê°€
             for (int i = 0; i < 3; i++)
             {
                 if (StageManager.Instance.EnemyList[i].activeSelf)
@@ -556,10 +565,10 @@ public class EventManager : MonoBehaviour
     }
     private Object[] RandomObejectOfALL(int count)
     {
-        // ÀÏ´Ü ÇöÀç±îÁö·Î´Â, countº¸´Ù ÀüÃ¼ À¯´ÖÀÌ ´õ ÀûÀ¸¸é ±×³É ¸ğµç À¯´Ö¿¡ È¿°ú Àû¿ë
+        // ì¼ë‹¨ í˜„ì¬ê¹Œì§€ë¡œëŠ”, countë³´ë‹¤ ì „ì²´ ìœ ë‹›ì´ ë” ì ìœ¼ë©´ ê·¸ëƒ¥ ëª¨ë“  ìœ ë‹›ì— íš¨ê³¼ ì ìš©
         if (AllObject.Length < count) return AllObject;
 
-        // array¸¦ ·£´ıÇÏ°Ô ¼¯À½
+        // arrayë¥¼ ëœë¤í•˜ê²Œ ì„ìŒ
         int[] objectIndex = new int[AllObject.Length];
         for (int i = 0; i < objectIndex.Length; i++)
             objectIndex[i] = i;
