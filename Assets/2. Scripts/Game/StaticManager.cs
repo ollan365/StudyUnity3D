@@ -26,7 +26,7 @@ public class StaticManager : MonoBehaviour
             player.SetWeapon(playerWeapon.MinDamage, playerWeapon.MaxDamage, playerWeapon.WeaponType);
         }
     }
-    private int gold = 1000; // ÀÏ´Ü Å×½ºÆ®¸¦ À§ÇØ 1000°ñµå
+    private int gold = 1000; // ì¼ë‹¨ í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•´ 1000ê³¨ë“œ
     public int Gold
     {
         get => gold; 
@@ -34,7 +34,7 @@ public class StaticManager : MonoBehaviour
         set
         {
             if (gold < value) player.PoppingText("+" + value.ToString(), Color.yellow);
-            else if (gold > value) player.PoppingText("-" + value.ToString(), Color.red);
+            else if (gold > value) player.PoppingText("-" + (gold - value).ToString(), Color.red);
             
             gold = value;
         }
@@ -85,7 +85,7 @@ public class StaticManager : MonoBehaviour
     }
     public void GameStart(bool isLobby)
     {
-        if (isLobby) // ¿©±â¼­ ÀúÀåµÈ °ÔÀÓ µ¥ÀÌÅÍ ·Îµå ÇØ¾ßµÉµí?
+        if (isLobby) // ì—¬ê¸°ì„œ ì €ì¥ëœ ê²Œì„ ë°ì´í„° ë¡œë“œ í•´ì•¼ë ë“¯?
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
