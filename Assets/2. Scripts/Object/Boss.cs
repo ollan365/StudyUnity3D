@@ -14,7 +14,7 @@ public class Boss : MonoBehaviour
     private Object thisObject;
     public float skillEffectTime = 0;
 
-    [Header("∫∏Ω∫ Ω∫≈≥ »ø∞˙µÈ")]
+    [Header("Î≥¥Ïä§ Ïä§ÌÇ¨ Ìö®Í≥ºÎì§")]
     public bool playerCantMove = false;
     public int playerWeaken = 0;
     public GameObject slienceObject = null;
@@ -132,20 +132,20 @@ public class Boss : MonoBehaviour
         if (phase == 1)
         {
             Object randomObj = EventManager.Instance.RandomObejectOfPlayerTeam(true);
-            ParticleManager.Instance.PlayParticle(randomObj.touchCube.gameObject, Particle.Attack_Enemy_BySword);
+            ParticleManager.Instance.PlayParticle(randomObj.gameObject, Particle.Attack_Enemy_BySword);
             yield return new WaitForSeconds(0.5f);
             randomObj.OnHit(StatusEffect.HP_PERCENT, 30);
         }
         if (phase == 2)
         {
-            ParticleManager.Instance.PlayParticle(thisObject.touchCube.gameObject, Particle.Heal);
+            ParticleManager.Instance.PlayParticle(thisObject.gameObject, Particle.Heal);
             yield return new WaitForSeconds(0.5f);
             thisObject.OnHit(StatusEffect.HP_PERCENT, -20);
         }
         if (phase == 3)
         {
             Object randomObj = EventManager.Instance.RandomObejectOfPlayerTeam(true);
-            ParticleManager.Instance.PlayParticle(randomObj.touchCube.gameObject, Particle.Attack_Enemy_BySword);
+            ParticleManager.Instance.PlayParticle(randomObj.gameObject, Particle.Attack_Enemy_BySword);
             yield return new WaitForSeconds(0.5f);
             slienceObject = randomObj.gameObject;
         }
@@ -154,14 +154,14 @@ public class Boss : MonoBehaviour
     {
         if (phase == 1)
         {
-            ParticleManager.Instance.PlayParticle(StageManager.Instance.Player.touchCube.gameObject, Particle.Attack_Enemy_BySword);
+            ParticleManager.Instance.PlayParticle(StageManager.Instance.Player.gameObject, Particle.Attack_Enemy_BySword);
             yield return new WaitForSeconds(0.5f);
             playerWeaken = 3;
         }
         if (phase == 2)
         {
             foreach (GameObject obj in StageManager.Instance.EnemyList)
-                ParticleManager.Instance.PlayParticle(obj.GetComponent<Object>().touchCube.gameObject, Particle.Attack_Enemy_BySword);
+                ParticleManager.Instance.PlayParticle(obj.gameObject, Particle.Attack_Enemy_BySword);
             yield return new WaitForSeconds(0.5f);
 
             foreach (GameObject obj in StageManager.Instance.EnemyList)
@@ -173,7 +173,7 @@ public class Boss : MonoBehaviour
             StartCoroutine(EventManager.Instance.Revive(obj, 50));
             yield return new WaitForSeconds(0.5f);
 
-            ParticleManager.Instance.PlayParticle(obj.touchCube.gameObject, Particle.Attack_Enemy_BySword);
+            ParticleManager.Instance.PlayParticle(obj.gameObject, Particle.Attack_Enemy_BySword);
         }
     }
     private IEnumerator Gabriel(int phase)
@@ -182,10 +182,10 @@ public class Boss : MonoBehaviour
         {
             int count = EventManager.Instance.EnemyCount / 2;
 
-            // GameObject πËø≠¿ª List∑Œ ∫Ø»Ø«’¥œ¥Ÿ.
+            // GameObject Î∞∞Ïó¥ÏùÑ ListÎ°ú Î≥ÄÌôòÌï©ÎãàÎã§.
             List<GameObject> gameObjectList = StageManager.Instance.EnemyList.ToList();
 
-            // Fisher-Yates º≈«√ æÀ∞Ì∏Æ¡Ú¿∏∑Œ ∏ÆΩ∫∆Æ∏¶ ∑£¥˝«œ∞‘ ºØΩ¿¥œ¥Ÿ.
+            // Fisher-Yates ÏÖîÌîå ÏïåÍ≥†Î¶¨Ï¶òÏúºÎ°ú Î¶¨Ïä§Ìä∏Î•º ÎûúÎç§ÌïòÍ≤å ÏÑûÏäµÎãàÎã§.
             for (int i = gameObjectList.Count - 1; i > 0; i--)
             {
                 int randomIndex = Random.Range(0, i + 1);
@@ -194,24 +194,24 @@ public class Boss : MonoBehaviour
                 gameObjectList[randomIndex] = temp;
             }
 
-            // ºØ¿Œ ∏ÆΩ∫∆Æø°º≠ æ’¬  ¿˝π›¿ª º±≈√«’¥œ¥Ÿ.
+            // ÏÑûÏù∏ Î¶¨Ïä§Ìä∏ÏóêÏÑú ÏïûÏ™Ω Ï†àÎ∞òÏùÑ ÏÑ†ÌÉùÌï©ÎãàÎã§.
             invincibilityObjects = gameObjectList.Take(count).ToList();
 
             foreach (GameObject obj in invincibilityObjects)
             {
-                ParticleManager.Instance.PlayParticle(obj.GetComponent<Object>().touchCube.gameObject, Particle.Enemy_INVINCIBILITY);
+                ParticleManager.Instance.PlayParticle(obj.gameObject, Particle.Enemy_INVINCIBILITY);
             }
             yield return new WaitForSeconds(0.5f);
         }
         if (phase == 2)
         {
-            ParticleManager.Instance.PlayParticle(thisObject.touchCube.gameObject, Particle.Heal);
+            ParticleManager.Instance.PlayParticle(thisObject.gameObject, Particle.Heal);
             yield return new WaitForSeconds(0.5f);
             thisObject.OnHit(StatusEffect.HP_PERCENT, -30);
         }
         if (phase == 3)
         {
-            ParticleManager.Instance.PlayParticle(StageManager.Instance.Player.touchCube.gameObject, Particle.Attack_Enemy_BySword);
+            ParticleManager.Instance.PlayParticle(StageManager.Instance.Player.gameObject, Particle.Attack_Enemy_BySword);
             yield return new WaitForSeconds(0.5f);
             foreach (GameObject enemeyObject in StageManager.Instance.EnemyList)
                 enemeyObject.SetActive(false);
@@ -248,20 +248,20 @@ public class Boss : MonoBehaviour
     {
         if (phase == 1)
         {
-            ParticleManager.Instance.PlayParticle(StageManager.Instance.Player.touchCube.gameObject, Particle.Enemy_Summon);
+            ParticleManager.Instance.PlayParticle(StageManager.Instance.Player.gameObject, Particle.Enemy_Summon);
             yield return new WaitForSeconds(0.5f);
             playerCantMove = true;
         }
         if (phase == 2)
         {
-            ParticleManager.Instance.PlayParticle(StageManager.Instance.Player.touchCube.gameObject, Particle.Enemy_Summon);
+            ParticleManager.Instance.PlayParticle(StageManager.Instance.Player.gameObject, Particle.Enemy_Summon);
             yield return new WaitForSeconds(0.5f);
             shadowColor = thisObject.Color;
         }
         if (phase == 3)
         {
             foreach (GameObject obj in StageManager.Instance.EnemyList)
-                ParticleManager.Instance.PlayParticle(obj.GetComponent<Object>().touchCube.gameObject, Particle.Enemy_INVINCIBILITY);
+                ParticleManager.Instance.PlayParticle(obj.gameObject, Particle.Enemy_INVINCIBILITY);
             yield return new WaitForSeconds(0.5f);
             enemyPowerful = true;
         }

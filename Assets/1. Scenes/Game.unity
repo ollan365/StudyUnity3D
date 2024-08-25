@@ -14674,7 +14674,7 @@ MonoBehaviour:
   - {fileID: 8780727661788297695, guid: d21e5b00fdb343444a500464d07897b8, type: 3}
   - {fileID: 3676554860531327467, guid: 7c3def371b2b8614bb5d78ec6e318587, type: 3}
   testObjectForParticle:
-  - {fileID: 1126331715}
+  - {fileID: 1463790524}
   - {fileID: 2056644293}
   - {fileID: 631695465}
   - {fileID: 1801803418}
@@ -22893,11 +22893,6 @@ PrefabInstance:
 --- !u!4 &1126331714 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 974382774053221035, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
-  m_PrefabInstance: {fileID: 1126331713}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1126331715 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4698402151052848256, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 1126331713}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1129747992
@@ -37264,7 +37259,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 866461321260495778, guid: 00069a84aacf12b42a7d5ff89b55cd20, type: 3}
   m_PrefabInstance: {fileID: 1126331713}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1126331715}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52bea5a3f9cc70c4e945eb3518965bc8, type: 3}

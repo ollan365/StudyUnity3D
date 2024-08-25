@@ -326,6 +326,7 @@ public class StageManager : MonoBehaviour
 
     public IEnumerator CubeRotate(Colors color)
     {
+        if (isCubeMove) yield break;
         isCubeMove = true;
 
         Quaternion startRotation = cube.transform.localRotation;

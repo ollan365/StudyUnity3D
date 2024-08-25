@@ -31,9 +31,20 @@ public class ParticleManager : MonoBehaviour
     {
         GameObject particleObj = null;
 
-        if (obj.GetComponent<Touch>()) particleObj = Instantiate(particlePrefabs[Int(particle)], obj.transform.position, obj.GetComponent<Touch>().ObjectPostion.transform.rotation);
-        else particleObj = Instantiate(particlePrefabs[Int(particle)], obj.transform.position, obj.transform.rotation);
-        
+        if (obj.GetComponent<Touch>())
+        {
+            particleObj = Instantiate(particlePrefabs[Int(particle)], obj.transform);
+            particleObj.transform.rotation = obj.GetComponent<Touch>().ObjectPostion.rotation;
+        }
+        else
+        {
+            particleObj = Instantiate(particlePrefabs[Int(particle)], obj.transform);
+            particleObj.transform.rotation = obj.transform.rotation;
+        }
+
+        Vector3 parentScale = obj.transform.localScale;
+        float particle_X = 1 / parentScale.x, particle_Y = 1 / parentScale.y, particle_Z = 1 / parentScale.z;
+
         switch (particle)
         {
             case Particle.Enemy_Summon:
@@ -42,21 +53,30 @@ public class ParticleManager : MonoBehaviour
             case Particle.PlayerTeam_Sttaff_Charging:
             case Particle.Attack_Enemy_BySword:
             case Particle.Enemy_Sttaff_Charging:
-                particleObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                particle_X *= 0.5f;
+                particle_Y *= 0.5f;
+                particle_Z *= 0.5f;
                 break;
             case Particle.Heal:
-                particleObj.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+                particle_X *= 0.4f;
+                particle_Y *= 0.4f;
+                particle_Z *= 0.4f;
                 break;
             case Particle.Enemy_INVINCIBILITY:
             case Particle.PlayerTeam_INVINCIBILITY:
-                particleObj.transform.localScale = new Vector3(0.2f, 0.3f, 0.2f);
+                particle_X *= 0.2f;
+                particle_Y *= 0.3f;
+                particle_Z *= 0.2f;
                 break;
 
             case Particle.PlayerTeam_Sttaff_Projectile:
             case Particle.Enemy_Sttaff_Projectile:
-                particleObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                particle_X *= 0.01f;
+                particle_Y *= 0.01f;
+                particle_Z *= 0.01f;
                 break;
         }
+        particleObj.transform.localScale = new Vector3(particle_X, particle_Y, particle_Z);
 
         particleObj.GetComponent<ParticleSystem>().Play();
         return particleObj;
