@@ -281,6 +281,8 @@ public class StageManager : MonoBehaviour
         EventManager.Instance.StageEnd();
 
         yield return new WaitForSeconds(3);
+        //스테이지 종료 시 플레이어 HP Bar 비활성화
+        player.GetComponent<Object>().OverheadCanvas.SetActive(false);
         cubeManager.InverseTurn();
         yield return new WaitForSeconds(3);
         StartCoroutine(CubeRotate(Player.Color));
