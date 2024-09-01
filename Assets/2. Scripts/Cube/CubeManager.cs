@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 using static Constants;
 
 public class CubeManager : MonoBehaviour
@@ -74,6 +75,11 @@ public class CubeManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                // UI를 클릭한 경우, 3D 오브젝트와의 상호작용을 방지
+                return;
+            }
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
             if (IsEvent) return;
 
@@ -112,6 +118,11 @@ public class CubeManager : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                // UI를 클릭한 경우, 3D 오브젝트와의 상호작용을 방지
+                return;
+            }
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
             if (IsEvent) return;
 
