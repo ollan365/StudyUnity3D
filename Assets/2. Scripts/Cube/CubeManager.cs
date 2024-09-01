@@ -360,7 +360,11 @@ public class CubeManager : MonoBehaviour
                 {
                     case ObjectType.MERCHANT:
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, false))
+                        {
                             ObjectManager.Instance.OpenShop();
+                            ChangeToNormal();
+                        }
+                            
                         break;
                     case ObjectType.TRIGGER:
                         Debug.Log(obj.gameObject);

@@ -277,7 +277,8 @@ public class StageManager : MonoBehaviour
         foreach (GameObject f in friend)
             if (f != null && f.activeSelf) f.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
         foreach (GameObject t in treasure)
-            t.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 100);
+            ObjectManager.Instance.ObjectDie(t);
+            
         EventManager.Instance.StageEnd();
 
         yield return new WaitForSeconds(3);

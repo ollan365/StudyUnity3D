@@ -15,28 +15,33 @@ public class PlayLogic : MonoBehaviour
         
     }
 
-    public void Trigger (GameObject obj)
+    public void Trigger (GameObject obj, bool isEvent = false)
     {
         Object triggerObj = obj.GetComponent<Object>();
         Debug.Log("Trigger name: " + triggerObj.name);
 
         switch (triggerObj.Name)
         {
-            case "Treasure": StartCoroutine(OpenTreasure(triggerObj)); break;
+            case "Treasure": StartCoroutine(OpenTreasure(triggerObj, isEvent)); break;
             case "ForbiddenFruit": StartCoroutine(EatForbiddenFruit(triggerObj)); break;
             case "Thunder": StartCoroutine(StrikeThunder(triggerObj)); break;
         }
     }
-    private IEnumerator OpenTreasure(Object obj)
+    private IEnumerator OpenTreasure(Object obj, bool isEvent = false)
     {
-        Vector3 direc = StageManager.Instance.Player.transform.position - obj.transform.position;
-        Quaternion pRot = Quaternion.LookRotation(direc);
-        Quaternion oRot = Quaternion.LookRotation(direc);
-        StageManager.Instance.Player.transform.rotation = pRot;
-        obj.transform.rotation = oRot;
+        Debug.Log(isEvent);
+        if (!isEvent)
+        {
+            Vector3 direc = StageManager.Instance.Player.transform.position - obj.transform.position;
+            Quaternion pRot = Quaternion.LookRotation(direc);
+            Quaternion oRot = Quaternion.LookRotation(direc);
+            StageManager.Instance.Player.transform.rotation = pRot;
+            obj.transform.rotation = oRot;
+        }
 
         animator = obj.GetComponent<Animator>();
         animator.SetBool("Open", true);
+
         int gold = (int)obj.Damage;
         StaticManager.Instance.Gold += gold;
         if (ColorCheckManager.Instance.SelectedCharacter)
@@ -45,7 +50,8 @@ public class PlayLogic : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         ObjectManager.Instance.ObjectDie(obj.gameObject);
-        ColorCheckManager.Instance.Move(obj.Color, obj.Index, true);
+        if(!isEvent)
+            ColorCheckManager.Instance.Move(obj.Color, obj.Index, true);
         yield break;
     }
     private IEnumerator EatForbiddenFruit(Object obj)

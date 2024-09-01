@@ -58,6 +58,7 @@ public class EventManager : MonoBehaviour
 
         if (color == Colors.WY) bingoStatus[cube.RelativeColor.ToInt()] = BingoStatus.ALL;
         else if (color != Colors.WY) bingoStatus[color.ToInt()] = BingoStatus.ONE;
+        cubeManager.ChangeToNormal();
 
         eventPanel.SetActive(true);
         colorEffect = new ColorEffect(color);
@@ -316,7 +317,7 @@ public class EventManager : MonoBehaviour
             case "운수대통":
                 foreach (GameObject obj in StageManager.Instance.TreasureList)
                     if (obj.GetComponent<Object>().touchCube.RelativeColor == Effect.color)
-                        StageManager.Instance.StagePlayLogic.Trigger(obj);
+                        StageManager.Instance.StagePlayLogic.Trigger(obj, true);
                 break;
 
             case "오아시스":

@@ -199,8 +199,6 @@ public class ObjectManager : MonoBehaviour
                     break;
                 }
 
-        // ���� �ֵ��� ���� �� ���� ���߱⸦ ���ؼ� �ϴ��� �ٸ� ���� �Űܵд�
-        // ���߿� ���� �ý��۸� ��° �ٲٸ� �׳� destroy �ص� �ɵ�
         obj.transform.position = dieObject.position;
         obj.transform.parent = dieObject;
     }
