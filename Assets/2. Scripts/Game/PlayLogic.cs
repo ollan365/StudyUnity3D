@@ -28,6 +28,12 @@ public class PlayLogic : MonoBehaviour
     }
     private IEnumerator OpenTreasure(Object obj, bool isEvent = false)
     {
+        if(ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().Type == ObjectType.ENEMY)
+        {
+            ObjectManager.Instance.ObjectDie(obj.gameObject);
+            yield break;
+        }
+
         if (!isEvent)
         {
             Vector3 direc = StageManager.Instance.Player.transform.position - obj.transform.position;
