@@ -227,11 +227,21 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "선악과":
-                ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 1);
+                foreach(Touch touch in RelativeColorCubeList(Colors.RED))
+                    if(touch.Obj == null)
+                    {
+                        ObjectManager.Instance.Summons(touch, ObjectType.TRIGGER, 1);
+                        break;
+                    }
                 break;
 
             case "지뢰":
-                ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 2);
+                foreach (Touch touch in RelativeColorCubeList(Colors.RED))
+                    if (touch.Obj == null)
+                    {
+                        ObjectManager.Instance.Summons(touch, ObjectType.TRIGGER, 2);
+                        break;
+                    }
                 break;
 
             case "너 죽고 나 죽자":
@@ -329,6 +339,7 @@ public class EventManager : MonoBehaviour
                 cubeManager.StartRandomTurn(5, true);
                 break;
 
+
             default: Debug.Log(name); break;
         }
 
@@ -414,6 +425,20 @@ public class EventManager : MonoBehaviour
 
             Object enemyObject = e.GetComponent<Object>();
             if (enemyObject.touchCube.RelativeColor == color) output.Add(enemyObject);
+        }
+
+        return output;
+    }
+    public List<Touch> RelativeColorCubeList(Colors color)
+    {
+        List<Touch> output = new();
+
+        foreach(Touch[] touchArray in StageCube.Instance.touchArray)
+        {
+            foreach(Touch touch in touchArray)
+            {
+                if (touch.RelativeColor == color) output.Add(touch);
+            }
         }
 
         return output;

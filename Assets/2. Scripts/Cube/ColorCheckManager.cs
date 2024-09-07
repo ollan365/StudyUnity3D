@@ -123,5 +123,10 @@ public class ColorCheckManager : MonoBehaviour
         MovableCubeSetting(index);
 
         if (obj.GetComponent<Object>().Type == ObjectType.PLAYER) EventManager.Instance.BingoCheck();
+        else if(obj.GetComponent<Object>().Type == ObjectType.ENEMY)
+        {
+            if (obj.GetComponent<Object>().touchCube.Obj.Type == ObjectType.TRIGGER)
+                StageManager.Instance.StagePlayLogic.Trigger(obj.GetComponent<Object>().touchCube.Obj.gameObject);
+        }
     }
 }

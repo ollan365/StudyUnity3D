@@ -12,7 +12,6 @@ public class PlayLogic : MonoBehaviour
     private void Start()
     {
         sequence = DOTween.Sequence();
-        
     }
 
     public void Trigger (GameObject obj, bool isEvent = false)
@@ -29,7 +28,6 @@ public class PlayLogic : MonoBehaviour
     }
     private IEnumerator OpenTreasure(Object obj, bool isEvent = false)
     {
-        Debug.Log(isEvent);
         if (!isEvent)
         {
             Vector3 direc = StageManager.Instance.Player.transform.position - obj.transform.position;
@@ -50,7 +48,7 @@ public class PlayLogic : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         ObjectManager.Instance.ObjectDie(obj.gameObject);
-        if(!isEvent)
+        if (!isEvent)
             ColorCheckManager.Instance.Move(obj.Color, obj.Index, true);
         yield break;
     }

@@ -117,7 +117,13 @@ public class Object : MonoBehaviour
         dmg = Mathf.Round(dmg);
         HP -= dmg;
 
-        StartCoroutine(HPEffect(effectDelay, dmg));
+        if (!gameObject.activeSelf)
+        {
+            if (hpSlider != null) hpSlider.value = hp / maxHp;
+            if (bottomHP != null) bottomHP.value = hp / maxHp;
+        }
+        else
+            StartCoroutine(HPEffect(effectDelay, dmg));
     }
     private IEnumerator HPEffect(float delay, float dmg)
     {
