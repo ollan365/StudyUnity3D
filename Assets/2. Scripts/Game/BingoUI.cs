@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using static Constants;
+using TMPro;
 
 public class BingoUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -47,7 +48,15 @@ public class BingoUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         break;
                 }
             }
-            panel.GetComponentInChildren<Text>().text = text;
+            //텍스트 길이에 맞춰서 사이즈 늘리기
+            TMP_Text efftect_Text = panel.transform.GetChild(0).GetComponent<TMP_Text>();
+            efftect_Text.text = text;
+
+            RectTransform textRect = panel.GetComponent<RectTransform>();
+            Vector2 rectSize = textRect.sizeDelta;
+            rectSize.x = efftect_Text.preferredWidth + 20f;
+            textRect.sizeDelta = rectSize;
+            
         }
     }
     public void OnPointerExit(PointerEventData eventData)
