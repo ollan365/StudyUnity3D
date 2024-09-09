@@ -118,7 +118,7 @@ public class FightLogic : MonoBehaviour
                 dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight, time);
                 return time;
 
-            case WeaponType.HOLY:
+            case WeaponType.DUAL:
                 return 0;
 
             case WeaponType.NULL:
@@ -180,16 +180,10 @@ public class FightLogic : MonoBehaviour
         if (objType == ObjectType.PLAYER && StageManager.Instance.Player.gameObject.activeSelf)
         {
             Object p = StageManager.Instance.Player;
-            if (weaponType == WeaponType.SWORD || weaponType == WeaponType.STAFF)
-            {
-                if (p.Color == color && AttackableRange(weaponType, index)[p.Index])
-                    attackable.Add(StageManager.Instance.Player.gameObject);
-            }
-            else if (weaponType == WeaponType.HOLY)
-            {
-                if (p.Color != color && p.Index == index)
-                    attackable.Add(StageManager.Instance.Player.gameObject);
-            }
+
+            if (p.Color == color && AttackableRange(weaponType, index)[p.Index])
+                attackable.Add(StageManager.Instance.Player.gameObject);
+
         }
         else if (objType == ObjectType.FRIEND)
         {
@@ -198,16 +192,9 @@ public class FightLogic : MonoBehaviour
                 if (StageManager.Instance.FriendList[i] == null || StageManager.Instance.FriendList[i].GetComponent<Object>().HP <= 0) continue;
 
                 Object f = StageManager.Instance.FriendList[i].GetComponent<Object>();
-                if (weaponType == WeaponType.SWORD || weaponType == WeaponType.STAFF)
-                {
-                    if (f.Color == color && AttackableRange(weaponType, index)[f.Index])
-                        attackable.Add(StageManager.Instance.FriendList[i]);
-                }
-                else if (weaponType == WeaponType.HOLY)
-                {
-                    if (f.Color != color && f.Index == index)
-                        attackable.Add(StageManager.Instance.FriendList[i]);
-                }
+
+                if (f.Color == color && AttackableRange(weaponType, index)[f.Index])
+                    attackable.Add(StageManager.Instance.FriendList[i]);
             }
         }
         else if (objType == ObjectType.ENEMY)
@@ -217,33 +204,22 @@ public class FightLogic : MonoBehaviour
                 if (enemyObj.GetComponent<Object>().HP <= 0) continue;
 
                 Object e = enemyObj.GetComponent<Object>();
-                if (weaponType == WeaponType.SWORD || weaponType == WeaponType.STAFF)
-                {
-                    if (e.Color == color && AttackableRange(weaponType, index)[e.Index])
-                        attackable.Add(enemyObj);
-                }
-                else if (weaponType == WeaponType.HOLY)
-                {
-                    if (e.Color != color && e.Index == index)
-                        attackable.Add(enemyObj);
-                }
+
+                if (e.Color == color && AttackableRange(weaponType, index)[e.Index])
+                    attackable.Add(enemyObj);
             }
         }
         return attackable;
     }
 
-    
+
     private bool[] AttackableRange(WeaponType weaponType, int index)
     {
         bool[] attackable = new bool[9];
         for (int i = 0; i < 9; i++)
             attackable[i] = false;
 
-        if (weaponType == WeaponType.SWORD)
-        {
-            attackable = StageCube.Instance.Cross(index);
-        }
-        else if (weaponType == WeaponType.STAFF)
+        if (weaponType == WeaponType.STAFF || weaponType == WeaponType.DUAL)
         {
             switch (index)
             {
@@ -283,6 +259,20 @@ public class FightLogic : MonoBehaviour
                     break;
                 default:
                     break;
+            }
+        }
+
+        if (weaponType == WeaponType.SWORD)
+        {
+            attackable = StageCube.Instance.Cross(index);
+        }
+
+        if (weaponType == WeaponType.DUAL)
+        {
+            for (int i = 0; i < StageCube.Instance.Cross(index).Length; i++)
+            {
+                if (StageCube.Instance.Cross(index)[i])
+                    attackable[i] = true;
             }
         }
 

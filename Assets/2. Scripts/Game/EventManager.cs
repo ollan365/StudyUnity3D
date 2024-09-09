@@ -26,6 +26,11 @@ public class EventManager : MonoBehaviour
     [SerializeField] private EventCard[] eventCards;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
 
+    // 면 빙고 효과
+    private bool IsEnhancedWeapon { get; set; }
+    public bool IsDual { get; set; }
+
+
     public ColorEffect Effect { get => colorEffect; }
     private Colors[][] bingoCheck;
 
@@ -43,6 +48,9 @@ public class EventManager : MonoBehaviour
             bingoCheck[i] = new Colors[9];
             for (int j = 0; j < 9; j++) bingoCheck[i][j] = Colors.NULL;
         }
+
+        IsDual = false;
+        IsEnhancedWeapon = false;
     }
 
     public void BingoCheck()
