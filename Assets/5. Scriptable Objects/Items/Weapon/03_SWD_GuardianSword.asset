@@ -25,8 +25,8 @@ MonoBehaviour:
   level: 0
   weaponLevel:
   - level: 0
-    minDamage: 600
-    maxDamage: 800
+    minDamage: 300
+    maxDamage: 400
   - level: 1
     minDamage: 780
     maxDamage: 1000
