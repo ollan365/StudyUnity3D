@@ -295,7 +295,7 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "회전 증폭":
-                StageManager.Instance.SetStageTextValue(StageText.ROTATE, 5);
+                StageManager.Instance.SetStageTextValue(StageText.ROTATE, 10);
                 break;
 
             case "회전 추가":
@@ -307,7 +307,7 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "기민한 발놀림":
-                StageManager.Instance.SetStageTextValue(StageText.MOVE, 5);
+                StageManager.Instance.SetStageTextValue(StageText.MOVE, 10);
                 break;
 
             case "민첩한 걸음":

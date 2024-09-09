@@ -121,14 +121,16 @@ MonoBehaviour:
   objectManager: {fileID: 0}
   bottomHP: {fileID: 0}
   hpSlider: {fileID: 0}
-  goldText: {fileID: 0}
+  popTextObj: {fileID: 0}
   id: 1
   objName: ForbiddenFruit
   minDamage: 0
   maxDamage: 0
   type: 3
   weaponType: 0
-  eventEffect: {fileID: 11400000, guid: 82381b06fb6dc0f46a768b2ca4b4454a, type: 2}
+  indicator: {fileID: 0}
+  textFontSize: 0
+  overheadCanvas: {fileID: 0}
   touchCube: {fileID: 0}
   maxHp: 0
   hp: 0

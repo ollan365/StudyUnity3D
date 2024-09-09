@@ -32,11 +32,18 @@ public class PlayLogic : MonoBehaviour
         Debug.Log(isEvent);
         if (!isEvent)
         {
-            Vector3 direc = StageManager.Instance.Player.transform.position - obj.transform.position;
+            Vector3 direc = StageManager.Instance.Player.transform.parent.position - obj.transform.parent.position;
+            Debug.Log(direc);
+            
             Quaternion pRot = Quaternion.LookRotation(direc);
             Quaternion oRot = Quaternion.LookRotation(direc);
-            StageManager.Instance.Player.transform.rotation = pRot;
-            obj.transform.rotation = oRot;
+            Debug.Log(pRot);
+            Debug.Log(oRot);
+
+            //Debug.Log(pRot + " " + oRot); 
+            StageManager.Instance.Player.transform.localRotation = pRot;
+            obj.transform.localRotation = oRot;
+
         }
 
         animator = obj.GetComponent<Animator>();
