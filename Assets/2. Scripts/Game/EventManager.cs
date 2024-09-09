@@ -502,7 +502,7 @@ public class EventManager : MonoBehaviour
         }
         return null;
     }
-    private int FriendCount
+    public int FriendCount
     {
         get
         {
