@@ -1,6 +1,6 @@
 Script ID,Kor,Event(Dialogue event랑 다름),비고,EOL
 Speaker_000,시스템,,,EOL
-Speaker_001,엘,,"이미지, 사운",EOL
+Speaker_001,엘,,이미지+ 사운,EOL
 Speaker_002,물의 정령,,다 하고 나서 쉼표 + 로 바꾸기,EOL
 Speaker_003,바람의 정령,,,EOL
 Speaker_004,대지의 정령,,,EOL
@@ -14,33 +14,33 @@ Speaker_010,루시퍼,,,EOL
 ,,,,EOL
 ,,,,EOL
 ,,,,EOL
-Script_001,"모든 것이 생겨나기 이전,",,,EOL
-Script_002,세상은 천국과 지옥 뿐이었다.,,,EOL
-Script_003,모든 곳의 균형을 지키는 천국과,,,EOL
-Script_004,"모든 곳의 균형을 무너뜨리는 지옥,",Dialogue 창을 바꾸고 싶으면 여기에 적기,,EOL
-Script_005,그 둘은 늘 서로를 견제해왔다.,,,EOL
-Script_006,천국의 대천사이던 루시퍼는,,,EOL
-Script_007,모두에게 공평한 천국의 시스템에 불만을 가지고 있었다,,,EOL
-Script_008,그리고 마침내 그는 천국을 벗어나,,,EOL
-Script_009,지옥으로 향했다.,,,EOL
-Script_010,"그리고 그를 필두로, 지옥은 전쟁을 시작했다. ",,,EOL
-Script_011,초반에는 지옥이 우세하였으나,,,EOL
-Script_012,혼란한 지옥이 질서있는 천국을 이길 수는 없었다.,,,EOL
-Script_013,결국 루시퍼는 그 죄를 물어,,,EOL
-Script_014,"천국의 감옥, 큐브에 갇히게 되었다. ",,,EOL
-Script_015,"큐브, 그 어떤 로직으로도 접근이 불가능하다는",,,EOL
-Script_016,악명높은 천국의 특수감옥.,,,EOL
-Script_017,수많은 악마들이 루시퍼를 되찾기 위해 도전했으나,,,EOL
-Script_018,그 누구도 살아나올 수 없었다.,,,EOL
-Script_019,...,,,EOL
-Script_020,그리고 여기 한 악마가 있다. ,,,EOL
-Script_021,"그의 이름은 엘,",,,EOL
-Script_022,"아픈 어머니를 모시고 홀로 사는 엘,",,,EOL
-Script_023,그는 주변 악마들과 다른 외형을 가지고 있었다,,,EOL
-Script_024,"늘 주변의 시선에서 자유롭지 못하던 엘,",,,EOL
-Script_025,그는 대악마가 되어 인정받고 싶었다.,,,EOL
-Script_026,그러나 대악마 양성소에 지원하는 족족 떨어지던 엘. ,,,EOL
-Script_027,그러던 그의 앞에 한 종이가 떨어지게 되는데..,,,EOL
+Script_001,모든 것이 생겨나기 이전+,Dialogue_Canvas_Line,,EOL
+Script_002,세상은 천국과 지옥 뿐이었다.,Dialogue_Canvas_Line,,EOL
+Script_003,모든 곳의 균형을 지키는 천국과,Dialogue_Canvas_Line,,EOL
+Script_004,모든 곳의 균형을 무너뜨리는 지옥+,Dialogue_Canvas_Line,,EOL
+Script_005,그 둘은 늘 서로를 견제해왔다.,Dialogue_Canvas_Line,,EOL
+Script_006,천국의 대천사이던 루시퍼는,Dialogue_Canvas_Line,,EOL
+Script_007,모두에게 공평한 천국의 시스템에 불만을 가지고 있었다,Dialogue_Canvas_Line,,EOL
+Script_008,그리고 마침내 그는 천국을 벗어나,Dialogue_Canvas_Line,,EOL
+Script_009,지옥으로 향했다.,Dialogue_Canvas_Line,,EOL
+Script_010,그리고 그를 필두로+ 지옥은 전쟁을 시작했다. ,Dialogue_Canvas_Line,,EOL
+Script_011,초반에는 지옥이 우세하였으나,Dialogue_Canvas_Line,,EOL
+Script_012,혼란한 지옥이 질서있는 천국을 이길 수는 없었다.,Dialogue_Canvas_Line,,EOL
+Script_013,결국 루시퍼는 그 죄를 물어,Dialogue_Canvas_Line,,EOL
+Script_014,천국의 감옥+ 큐브에 갇히게 되었다. ,Dialogue_Canvas_Line,,EOL
+Script_015,큐브+ 그 어떤 로직으로도 접근이 불가능하다는,Dialogue_Canvas_Line,,EOL
+Script_016,악명높은 천국의 특수감옥.,Dialogue_Canvas_Line,,EOL
+Script_017,수많은 악마들이 루시퍼를 되찾기 위해 도전했으나,Dialogue_Canvas_Line,,EOL
+Script_018,그 누구도 살아나올 수 없었다.,Dialogue_Canvas_Line,,EOL
+Script_019,...,Dialogue_Canvas_Line,,EOL
+Script_020,그리고 여기 한 악마가 있다. ,Dialogue_Canvas_Line,,EOL
+Script_021,그의 이름은 엘+,Dialogue_Canvas_Line,,EOL
+Script_022,아픈 어머니를 모시고 홀로 사는 엘+,Dialogue_Canvas_Line,,EOL
+Script_023,그는 주변 악마들과 다른 외형을 가지고 있었다,Dialogue_Canvas_Line,,EOL
+Script_024,늘 주변의 시선에서 자유롭지 못하던 엘+,Dialogue_Canvas_Line,,EOL
+Script_025,그는 대악마가 되어 인정받고 싶었다.,Dialogue_Canvas_Line,,EOL
+Script_026,그러나 대악마 양성소에 지원하는 족족 떨어지던 엘. ,Dialogue_Canvas_Line,,EOL
+Script_027,그러던 그의 앞에 한 종이가 떨어지게 되는데..,Dialogue_Canvas_Line,,EOL
 Script_028, ... (쳐다보는 시선),,,EOL
 Script_029,... (꿈뻑),,,EOL
 Script_030,... !!,,,EOL
@@ -50,13 +50,13 @@ Script_033,큐브다룽.,,,EOL
 Script_034,큐브? 들어와진건가?,,,EOL
 Script_035,큐브에 도전하러 온거라면 성공이다룽! 너도 루시퍼를 찾아 왔냐룽?,,,EOL
 Script_036,맞아 .. 난 큐브를 클리어 하고 루시퍼를 데려가야만 해.,,,EOL
-Script_037,"그런데 너, 악마 치고는 이상하게 생겼다룽.",,,EOL
+Script_037,그런데 너+ 악마 치고는 이상하게 생겼다룽.,,,EOL
 Script_038,그건 ... 말할 수 없어..,,,EOL
 Script_039,말해줘. 어떻게 하면 큐브를 클리어할 수 있지?,,,EOL
 Script_040,큐브는 총 24개의 스테이지로 구성되어 있다룽.,,,EOL
 Script_041,각 스테이지에서 해당 큐브를 지키고 있는 천사들을 모두 물리치면 다음 스테이지로 올라갈 수 있다룽.,,,EOL
 Script_042,하지만 방심하지 말라룽. 이곳의 천사들은 모두 전투에 특화된 천사들이다룽.,,,EOL
-Script_043,"너같이 루시퍼를 데리러 수 많은 악마들이 왔지만, 모두 이 안에서 죽었다룽.",,,EOL
+Script_043,너같이 루시퍼를 데리러 수 많은 악마들이 왔지만+ 모두 이 안에서 죽었다룽.,,,EOL
 Script_044,넌 .. 도전하겠냐룽..?,,,EOL
 Script_045,난 각오했어. 도전하겠어.,,,EOL
 Script_046,모두 죽었다고? 난.. 돌아가겠어.,,,EOL
@@ -71,79 +71,80 @@ Script_054,녹슨 검'을 클릭해 보세요.,Dialogue_Canvas_Popup,,EOL
 Script_055,장착이 완료되었습니다! 무기는 클릭을 통해 장착하실 수 있습니다.,Dialogue_Canvas_Popup,,EOL
 Script_056,그럼 행운을 빈다룽.,,,EOL
 ,,,,EOL
-Script_057,"스테이지에 입장하면, 자동으로 큐브가 섞이게 됩니다.",Dialogue_Canvas_Popup,,EOL
-Script_058,"자신의 턴에는 큐브 회전, 이동의 행동을 할 수 있습니다.",Dialogue_Canvas_Popup,,EOL
+Script_057,스테이지에 입장하면+ 자동으로 큐브가 섞이게 됩니다.,Dialogue_Canvas_Popup,,EOL
+Script_058,자신의 턴에는 큐브 회전+ 이동의 행동을 할 수 있습니다.,Dialogue_Canvas_Popup,,EOL
 Script_059,먼저 큐브를 회전시켜보세요.,Dialogue_Canvas_Popup,,EOL
 Script_060,잘 하셨습니다!,Dialogue_Canvas_Popup,,EOL
-Script_061,"큐브 회전을 통해 전략을 세우거나, 빙고를 맞출 수 있습니다. ",Dialogue_Canvas_Popup,,EOL
+Script_061,큐브 회전을 통해 전략을 세우거나+ 빙고를 맞출 수 있습니다. ,Dialogue_Canvas_Popup,,EOL
 Script_062,빙고를 맞춰볼까요?,Dialogue_Canvas_Popup,,EOL
-Script_063,"잘 하셨습니다! 빙고를 맞추면, 플레이에 도움이 되는 카드를 선택하실 수 있습니다.",Dialogue_Canvas_Popup,,EOL
-Script_064,"한 면 빙고를 맞춘다면, 더 큰 보상이 기다리고 있겠죠?",Dialogue_Canvas_Popup,,EOL
+Script_063,잘 하셨습니다! 빙고를 맞추면+ 플레이에 도움이 되는 카드를 선택하실 수 있습니다.,Dialogue_Canvas_Popup,,EOL
+Script_064,한 면 빙고를 맞춘다면+ 더 큰 보상이 기다리고 있겠죠?,Dialogue_Canvas_Popup,,EOL
 Script_065,카드를 선택해 보세요.,Dialogue_Canvas_Popup,,EOL
 Script_066,선택하신 카드는 해당 전투 턴에 적용됩니다.,Dialogue_Canvas_Popup,,EOL
 Script_067,다음은 이동입니다.,Dialogue_Canvas_Popup,,EOL
 Script_068,원하는 곳을 눌러 이동해보세요.,Dialogue_Canvas_Popup,,EOL
 Script_069,잘 하셨습니다! 이렇게 이동과 회전을 통해 적과 가까워질 수 있습니다.,Dialogue_Canvas_Popup,,EOL
 Script_070,공격 범위에 대해 설명드리겠습니다.,Dialogue_Canvas_Popup,,EOL
-Script_071,"검은 십자 범위로 공격을,",Dialogue_Canvas_Popup,,EOL
-Script_072,", 스태프는 X자 범위로 공격 가능합니다.",Dialogue_Canvas_Popup,,EOL
-Script_073,"천사들 또한 동일하니, 전략적으로 위치를 선점하시길 바랍니다.",Dialogue_Canvas_Popup,,EOL
+Script_071,검은 십자 범위로 공격을+,Dialogue_Canvas_Popup / Sword_Range,,EOL
+Script_072,스태프는 X자 범위로 공격 가능합니다.,Dialogue_Canvas_Popup / Staff_Range,,EOL
+Script_073,천사들 또한 동일하니+ 전략적으로 위치를 선점하시길 바랍니다.,Dialogue_Canvas_Popup,,EOL
 Script_074,이제 실전입니다! 무운을 빕니다.,Dialogue_Canvas_Popup,,EOL
 ,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
-,,,,EOL
+Script_075, 너 생각보다.. 괜찮은 실력을 가지고 있는 것 같은데 ..,,,EOL
+Script_076,혹시 .. 우리를 도와줄 수 있냐룽?,,,EOL
+Script_077,.. 어떤?,,,EOL
+Script_078,사실 우린 이곳에 갇혀 있다룽. 평생을 이곳에서 보내야 하는 운명이라룽..,,,EOL
+Script_079,그게 무슨 말이야? 자세히 말해줘.,,,EOL
+Script_080,인간들이 존재하기 훨씬 이전부터 우리는 지구에 살고 있었다룽.,Dialogue_Canvas_Line,,EOL
+Script_081,사실상 지구는 우리의 삶이자 고향이였다룽.,Dialogue_Canvas_Line,,EOL
+Script_082,그런데 어느날+ 천사가 우리에게 갑작스러운 이주를 명령했다룽..,Dialogue_Canvas_Line,,EOL
+Script_083,인간들을 위해 지구를 떠나라는 명령이었다룽.,Dialogue_Canvas_Line,,EOL
+Script_084,우리들은 지구를 쉽게 떠날 수 없었고+ 천사에게 반기를 들기 시작했다룽..,Dialogue_Canvas_Line,,EOL
+Script_085,하지만 당연히 정령인 우리는 천사에게 아무것도 아니였다룽...,Dialogue_Canvas_Line,,EOL
+Script_086,우리는 반기를 들었다는 이유로 모두 징집을 당했고+,Dialogue_Canvas_Line,,EOL
+Script_087,이 곳 '큐브'에서 평생을 보내게 되었다룽..,Dialogue_Canvas_Line,,EOL
+Script_088,어떻게 그런일이 .. 천사라는 놈들이..,,,EOL
+Script_089,그래서 우리를 도와줄 수 있겠냐룽?,,,EOL
+Script_090,안타까운 마음은 이해하지만+ 나도 루시퍼를 구하는 것 만으로도 벅차.,,,EOL
+Script_091,당연하지. 내가 너희들을 꼭 이곳에서 해방시켜 줄게.,,,
+Script_092,다시 생각해달라룽.. 네가 우릴 도와주면+ 우리도 너를 돕겠다룽.,,,EOL
+Script_093,고맙다룽. 대신 우리도 너를 도와주겠다룽. ,,,EOL
+Script_094, 흠.. 좋아. 어떤 식으로 도와줄 수 있지?,,,EOL
+Script_095,고마워. 그런데 너희가 나를 어떤 식으로 도와준다는 거지?,,,EOL
+Script_096,우리 정령들은 큐브 곳곳에서 일하고 있다룽. ,,,EOL
+Script_097,나처럼 몇몇 정령들은 도전자를 안내하는 임무를 맡고 있다룽.,,,EOL
+Script_098,그러나 우리들은 수만년 동안 큐브를 안내하며 도전자와 천사들의 무기를 훔쳤다룽.,,,EOL
+Script_099,그러니 우리가 그 무기를 빌려주겠다룽.,,,EOL
+Script_100,진짜? 정말 고마워. 어떤 무기들이 있는데?,,,EOL
+Script_101,왠만한 무기는 다 있다고 보면 된다룽.,,,EOL
+Script_102,특히 상위 스테이지에 있는 정령들은 고급 무기를 많이 가지고 있으니 참고하라룽.,,,EOL
+Script_103,가서 네 이름을 얘기하고 빌려달라고 하면 되나?,,,EOL
+Script_104,정령들에게는 내가 말해놓겠다룽. 그렇지만+ 대가는 필요하다룽,,,EOL
+Script_105,상위 정령들은 욕심이 많기도 하고+ 성격이 괴팍하기도 하다룽,,,EOL
+Script_106, 나와는 다르게..!,,,EOL
+Script_107,(이상하군 .. ),,,EOL
+Script_108,무기를 빌리고 싶으면+ 큐브에서 얻을 수 있는 골드를 지불하면 된다룽.,,,EOL
+Script_109,우리도 그냥 빌려줄 수는 없으니까 말이룽.,,,EOL
+Script_110,물론! 나는 착하니까 너에게 공짜로 무기를 빌려주겠지만룽!,,,EOL
+Script_111,룽. 룽. ..(ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ),,,EOL
+Script_112,골드? 골드는 어떻게 얻는거지?,,,EOL
+Script_113,골드는 스테이지를 클리어 하면 보상으로 얻을 수 있다룽.,,,EOL
+Script_114,하지만 특급 비밀을 하나 알려주겠다룽.,,,EOL
+Script_115,특급 비밀? 뭐지?,,,EOL
+Script_116,바로 '보물상자' 라룽.,,,EOL
+Script_117,보물상자?,,,EOL
+Script_118,보물상자는 몇몇 정령들이 큐브에 숨겨놓은 자기 비상금이라고 보면 된다룽.,,,EOL
+Script_119,큐브 곳곳에 숨겨져 있으니 꼭! 확인해보라룽.,,,EOL
+Script_120,이걸 말해줘도 괜찮은거야?,,,EOL
+Script_121,물론! 하지만 다른 정령들에게 내가 말했다고 절대 말하지 말라룽..,,,EOL
+Script_122,(음흉한 미소),,,EOL
+Script_123,(역시 이상한 녀석이군..),,,EOL
+Script_124,아무튼 고마워. ,,,EOL
+Script_125,약속 꼭 지키라룽! ,,,EOL
+Script_126,당연하지. ,,,EOL
+Script_127,그럼 다음 스테이지에 도움이 될 무기를 빌려주겠다룽.,,,EOL
+Script_128,또 다른 천사들이 큐브를 지키고 있을 테니+ 조심하라룽.,,,EOL
+Script_129,고마워.,,,EOL
 ,,,,EOL
 ,,,,EOL
 ,,,,EOL
