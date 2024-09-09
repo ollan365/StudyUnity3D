@@ -1,0 +1,6 @@
+choice ID,text ID (script),next,비고
+Choice_001,Script_045,Prologue_003,
+,Script_046,Prologue_004,
+,,,
+Choice_002,Script_070,DIalogue_002,
+,Script_071,DIalogue_003,

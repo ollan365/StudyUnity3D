@@ -11,6 +11,11 @@ public class StageManager : MonoBehaviour
 {
     Sequence sequence;
 
+    [Header("Test")]
+    [SerializeField] private int rotateValue;
+    [SerializeField] private int moveValue;
+
+
     public static StageManager Instance { get; private set; }
     [SerializeField] private GameObject player;
     public Object Player { get => player.GetComponent<Object>(); }
@@ -90,9 +95,9 @@ public class StageManager : MonoBehaviour
         stageTextValues[StageText.MONSTER.ToInt()] = stageTextValues[StageText.MONSTER_INIT.ToInt()]
             = stageDatas[ENEMY_COUNT];
         stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()]
-            = stageDatas[ROTATE_COUNT] = 100;
+            = stageDatas[ROTATE_COUNT] = rotateValue;
         stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()]
-            = stageDatas[MOVE_COUNT] = 10;
+            = stageDatas[MOVE_COUNT] = moveValue;
         stageTextValues[StageText.WEAPON_CHANGE.ToInt()] = stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]
             = stageDatas[WEAPON_CHANGE];
 
