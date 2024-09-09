@@ -11,11 +11,6 @@ public class StageManager : MonoBehaviour
 {
     Sequence sequence;
 
-    [Header("Test")]
-    [SerializeField] private int rotateValue;
-    [SerializeField] private int moveValue;
-
-
     public static StageManager Instance { get; private set; }
     [SerializeField] private GameObject player;
     public Object Player { get => player.GetComponent<Object>(); }
@@ -35,7 +30,7 @@ public class StageManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private TMP_Text[] stageTexts;
-    private int[] stageTextValues;
+    [SerializeField] private List<CustomElement> stageTextValues;
 
     private int[] stageDatas;
     public int StageData(int column)
@@ -75,10 +70,23 @@ public class StageManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        stageTextValues = new int[8];
+        ChangeValueForTest();
         StageInit(StaticManager.Instance.stageDatas[StaticManager.Instance.Stage]);
     }
 
+    public void ChangeValueForTest()
+    {
+        stageTextValues = new();
+
+        stageTextValues.Add(new CustomElement("Enemy Count", 0));
+        stageTextValues.Add(new CustomElement("Move Count", 0));
+        stageTextValues.Add(new CustomElement("Rotate Count", 0));
+        stageTextValues.Add(new CustomElement("Weapon Change Count", 0));
+        stageTextValues.Add(new CustomElement("Monster Init Count", 0));
+        stageTextValues.Add(new CustomElement("Move Init Count", 0));
+        stageTextValues.Add(new CustomElement("Rotate Init Count", 0));
+        stageTextValues.Add(new CustomElement("Weapon Change Count", 0));
+    }
     public void StageInit(string data)
     {
         StatusOfStage = StageStatus.INIT;
@@ -92,14 +100,14 @@ public class StageManager : MonoBehaviour
         Player.Init(ObjectType.PLAYER, new string[] { stageDatas[MAX_HP].ToString() }, StageCube.Instance.touchArray[WHITE][4]);
 
         // 나중에 계산 공식으로 바꾸기!
-        stageTextValues[StageText.MONSTER.ToInt()] = stageTextValues[StageText.MONSTER_INIT.ToInt()]
-            = stageDatas[ENEMY_COUNT];
-        stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()]
-            = stageDatas[ROTATE_COUNT] = rotateValue;
-        stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()]
-            = stageDatas[MOVE_COUNT] = moveValue;
-        stageTextValues[StageText.WEAPON_CHANGE.ToInt()] = stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()]
-            = stageDatas[WEAPON_CHANGE];
+        stageTextValues[StageText.MONSTER.ToInt()].value = stageDatas[ENEMY_COUNT];
+        stageTextValues[StageText.MONSTER_INIT.ToInt()].value = stageDatas[ENEMY_COUNT];
+        stageTextValues[StageText.ROTATE.ToInt()].value = stageDatas[ROTATE_COUNT];
+        stageTextValues[StageText.ROTATE_INIT.ToInt()].value = stageDatas[ROTATE_COUNT];
+        stageTextValues[StageText.MOVE.ToInt()].value = 2;
+        stageTextValues[StageText.MOVE_INIT.ToInt()].value = 2;
+        stageTextValues[StageText.WEAPON_CHANGE.ToInt()].value = stageDatas[WEAPON_CHANGE];
+        stageTextValues[StageText.WEAPON_CHANGE_INIT.ToInt()].value = stageDatas[WEAPON_CHANGE];
 
         
         enemy = new GameObject[stageDatas[ENEMY_COUNT]];
@@ -111,7 +119,7 @@ public class StageManager : MonoBehaviour
     }
     public int GetStageTextValue(StageText text)
     {
-        return stageTextValues[text.ToInt()];
+        return stageTextValues[text.ToInt()].value;
     }
     public void SetStageTextValue(StageText text, int addValue)
     {
@@ -127,21 +135,21 @@ public class StageManager : MonoBehaviour
         }
         else if (text == StageText.ALL_INIT)
         {
-            stageTextValues[StageText.MOVE.ToInt()] = stageTextValues[StageText.MOVE_INIT.ToInt()];
-            stageTextValues[StageText.ROTATE.ToInt()] = stageTextValues[StageText.ROTATE_INIT.ToInt()];
+            stageTextValues[StageText.MOVE.ToInt()].value = stageTextValues[StageText.MOVE_INIT.ToInt()].value;
+            stageTextValues[StageText.ROTATE.ToInt()].value = stageTextValues[StageText.ROTATE_INIT.ToInt()].value;
         }
-        else stageTextValues[text.ToInt()] += addValue;
+        else stageTextValues[text.ToInt()].value += addValue;
 
-        stageTextValues[StageText.MONSTER.ToInt()] = 0;
+        stageTextValues[StageText.MONSTER.ToInt()].value = 0;
         foreach (GameObject e in enemy)
         {
-            if (e.GetComponent<Object>().HP > 0) stageTextValues[StageText.MONSTER.ToInt()]++;
+            if (e.GetComponent<Object>().HP > 0) stageTextValues[StageText.MONSTER.ToInt()].value++;
         }
             
-        stageTexts[2].text = $"{stageTextValues[StageText.ROTATE.ToInt()]} / {stageTextValues[StageText.ROTATE_INIT.ToInt()]}";
-        stageTexts[3].text = $"{stageTextValues[StageText.MOVE.ToInt()]} / {stageTextValues[StageText.MOVE_INIT.ToInt()]}";
-        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()]}";
-        stageTexts[5].text = $"{stageTextValues[StageText.MONSTER.ToInt()]} / {stageTextValues[StageText.MONSTER_INIT.ToInt()]}";
+        stageTexts[2].text = $"{stageTextValues[StageText.ROTATE.ToInt()].value} / {stageTextValues[StageText.ROTATE_INIT.ToInt()].value}";
+        stageTexts[3].text = $"{stageTextValues[StageText.MOVE.ToInt()].value} / {stageTextValues[StageText.MOVE_INIT.ToInt()].value}";
+        stageTexts[4].text = $"{stageTextValues[StageText.WEAPON_CHANGE.ToInt()].value}";
+        stageTexts[5].text = $"{stageTextValues[StageText.MONSTER.ToInt()].value} / {stageTextValues[StageText.MONSTER_INIT.ToInt()].value}";
     }
     public IEnumerator StartStage()
     {
@@ -269,7 +277,7 @@ public class StageManager : MonoBehaviour
     }
     public void CheckStageClear()
     {
-        if (stageTextValues[StageText.MONSTER.ToInt()] > 0) return;
+        if (stageTextValues[StageText.MONSTER.ToInt()].value > 0) return;
         StartCoroutine(StageClear());
     }
     private IEnumerator StageClear()

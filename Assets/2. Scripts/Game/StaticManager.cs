@@ -26,7 +26,7 @@ public class StaticManager : MonoBehaviour
             player.SetWeapon(playerWeapon.MinDamage, playerWeapon.MaxDamage, playerWeapon.WeaponType);
         }
     }
-    private int gold = 1000; // 일단 테스트를 위해 1000골드
+    [SerializeField] private int gold = 0; // 일단 테스트를 위해 1000골드
     public int Gold
     {
         get => gold; 
@@ -117,7 +117,7 @@ public class StaticManager : MonoBehaviour
 
             if (data[i].Split(',')[STAGE_ENEMY_STAGE] == "") break;
 
-            while ( (i + add < data.Length + 1) && data[i].Split(',')[STAGE_ENEMY_STAGE] == data[i + add].Split(',')[STAGE_ENEMY_STAGE])
+            while ( (i + add < data.Length) && data[i].Split(',')[STAGE_ENEMY_STAGE] == data[i + add].Split(',')[STAGE_ENEMY_STAGE])
             {
                 valueList.Add(data[i + add]);
                 add++;
@@ -150,17 +150,16 @@ public class StaticManager : MonoBehaviour
 
             if (data[i].Split(',')[FRIEND_ID] == "") break;
 
-            while ((i + add < data.Length + 1) && data[i].Split(',')[FRIEND_ID] == data[i + add].Split(',')[FRIEND_ID])
+            while ((i + add < data.Length) && data[i].Split(',')[FRIEND_ID] == data[i + add].Split(',')[FRIEND_ID])
             {
-                valueList.Add(int.Parse(data[i + add].Split(',')[FRIEND_STAGE]), data[i]);
+                valueList.Add(int.Parse(data[i + add].Split(',')[FRIEND_STAGE]), data[i + add]);
                 add++;
-
-                if (data.Length <= i + add) break;
             }
 
             friendDatas.Add(int.Parse(data[i].Split(',')[FRIEND_ID]), valueList);
             i += add;
         }
+
     }
     private void SaveItemDatas()
     {

@@ -1974,7 +1974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c98dd558d420440b51ae7434f8cbbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stage: 3
+  stage: 9
   inventory:
   - item: {fileID: 11400000, guid: 1ccebde6cac3eb444a0f774c8cc2b48e, type: 2}
     count: 1
@@ -2003,6 +2003,7 @@ MonoBehaviour:
   nullObject: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
   player: {fileID: 0}
   playerWeapon: {fileID: 11400000, guid: 255a402360ebe9d47bbb330f9cc1f87f, type: 2}
+  gold: 0
   portionList:
   - {fileID: 11400000, guid: 28b4674014134fa449bf240e7b6a92a2, type: 2}
   - {fileID: 11400000, guid: 1d859bc08e9eacc4ca6bff80eb882bec, type: 2}

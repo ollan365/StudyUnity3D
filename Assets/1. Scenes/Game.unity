@@ -11240,8 +11240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97da29fb889d2ab42b69a4fdcb424cf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateValue: 0
-  moveValue: 0
+  testArray: []
   player: {fileID: 1463790524}
   cube: {fileID: 924632}
   isCubeMove: 0

@@ -123,7 +123,8 @@ public class ObjectManager : MonoBehaviour
                 value = values[StaticManager.Instance.Stage];
                 if (value == null) return null;
                 newObject = Instantiate(friendPrefab);
-                
+
+                Debug.Log($"{values[StaticManager.Instance.Stage]} / {StaticManager.Instance.Stage} /  {value}");
 
                 for (int i = 0; i < 3; i++)
                     if (!friendObjectStatus[i].activeSelf)

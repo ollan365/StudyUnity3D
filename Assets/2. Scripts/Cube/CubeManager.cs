@@ -75,6 +75,10 @@ public class CubeManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            // 초기화
+            mouseStartObject = null;
+            mouseStartTouchCube = null;
+
             if (EventSystem.current.IsPointerOverGameObject())
             {
                 // UI를 클릭한 경우, 3D 오브젝트와의 상호작용을 방지
@@ -82,10 +86,6 @@ public class CubeManager : MonoBehaviour
             }
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
             if (IsEvent) return;
-
-            // 초기화
-            mouseStartObject = null;
-            mouseStartTouchCube = null;
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
