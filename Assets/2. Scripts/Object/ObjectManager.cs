@@ -472,7 +472,8 @@ public class ObjectManager : MonoBehaviour
             if(targetObj.Type == ObjectType.PLAYER)
                 objectInfoImage.sprite = objectInfoImages[0];
             else
-                objectInfoImage.sprite = objectInfoImages[1];
+                objectInfoImage.sprite = objectInfoImages[targetObj.ID-120000 + 1];
+
 
             //name
             objectInfoName.text = objName;
