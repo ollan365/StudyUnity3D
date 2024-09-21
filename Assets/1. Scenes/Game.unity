@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9592,7 +9592,9 @@ MonoBehaviour:
   objectInfoImage: {fileID: 237195152}
   objectInfoImages:
   - {fileID: 21300000, guid: 843019b398e72ea49a323cfd83caab0c, type: 3}
-  - {fileID: 21300000, guid: a80d3f2b2f1f87747a6f5babd857f911, type: 3}
+  - {fileID: 21300000, guid: 7a620397a82d2364388f380319f8edaa, type: 3}
+  - {fileID: 21300000, guid: 6f444a4f1b2f9d14abc7b2adbbf68453, type: 3}
+  - {fileID: 21300000, guid: 133c213992e76e6478c9a5b123672bc6, type: 3}
   objectInfoName: {fileID: 614326192}
   objectInfoHPslider: {fileID: 1521466157}
   objectInfoHPText: {fileID: 1811209138}
@@ -9600,11 +9602,20 @@ MonoBehaviour:
   objectInfoBasicAttack: {fileID: 1842497866}
   playerWeapon: {fileID: 194768346}
   weapons:
-  - {fileID: 648909195865136375, guid: 7aaed58213e380c499fc225e92b07853, type: 3}
-  - {fileID: 3097236184402197886, guid: aa9adc4db68ba2543857c971239fb787, type: 3}
-  - {fileID: 725720561042874929, guid: 01b11bc097b5a484282f4a0adda662bd, type: 3}
-  - {fileID: 3028205134758857411, guid: dfbc85f7f691ebc489a6073ded7f32b3, type: 3}
-  - {fileID: 5684989371586828938, guid: f20e64d81794bd2488efa1f9fc9f7bba, type: 3}
+  - {fileID: 4378098358500014954, guid: 73fce764643ed6649aab4338ef93e4d8, type: 3}
+  - {fileID: 7364141203620045414, guid: 8a60b035229608f4db7af2bb3c7e469d, type: 3}
+  - {fileID: 7992186416447757892, guid: e69e0ef5ca1ebe546b80136570c706bb, type: 3}
+  - {fileID: 9192926534150154580, guid: 4d28dd83af075b645b14992cc90e785a, type: 3}
+  - {fileID: 7828227922083455772, guid: ba321fa22f7ad7c43b4f477108b60ad0, type: 3}
+  - {fileID: 7399382180046429598, guid: 43bcccf2457be4740b3568bd2a7de57a, type: 3}
+  - {fileID: 5349905064872637631, guid: 2403a9b259ec95947954d8f93cbf324d, type: 3}
+  - {fileID: 1576146324617484171, guid: bd3c883597051844b86283b2c0163723, type: 3}
+  - {fileID: 8899481486628836097, guid: 1620222f94c4f954491854bd77455106, type: 3}
+  - {fileID: 77888712173655157, guid: 6e41ab5050a80f6419bb2b6c990d0533, type: 3}
+  - {fileID: 6367825435412429315, guid: 766e972b74ae73142bcc6789edb8d50f, type: 3}
+  - {fileID: 7169759102193396607, guid: aec07c6ce85ec4344b59339398f9ea40, type: 3}
+  - {fileID: 1269209264353555142, guid: a579154b8001feb45b1823f1fbc8647b, type: 3}
+  - {fileID: 922543145883113932, guid: ba3138867f1e0744889804f70823ba2b, type: 3}
 --- !u!114 &502851762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11240,7 +11251,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97da29fb889d2ab42b69a4fdcb424cf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testArray: []
   player: {fileID: 1463790524}
   cube: {fileID: 924632}
   isCubeMove: 0
@@ -11255,6 +11265,7 @@ MonoBehaviour:
   - {fileID: 1624795183}
   - {fileID: 1175755846}
   - {fileID: 1542697268}
+  stageTextValues: []
   enemy: []
   friend: []
   treasure: []
