@@ -149,10 +149,7 @@ public class EventManager : MonoBehaviour
 
         foreach(EventCard card in eventCards)
         {
-            foreach(Colors c in card.eventColors)
-            {
-                if (c == colorEffect.color && CheckEvent(card.eventName)) eventList.Add(card);
-            }
+            if(CheckEvent(card.eventName)) eventList.Add(card);
         }
 
         // 리스트를 랜덤으로 섞는다

@@ -115,7 +115,9 @@ public class StageManager : MonoBehaviour
         treasure = new GameObject[stageDatas[TREASURE_COUNT]];
 
         clickIgnorePanel.SetActive(true);
-        StartCoroutine(StartStage());
+
+        // if(StaticManager.Instance.Stage != 1) 
+            StartCoroutine(StartStage());
     }
     public int GetStageTextValue(StageText text)
     {
@@ -156,26 +158,9 @@ public class StageManager : MonoBehaviour
         yield return new WaitForFixedUpdate();
 
         // 보물 소환
-        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
-        {
-            Touch cube;
-            while (true)
-            {
-                int cubeColor = Random.Range(0, 6), cubeIndex = Random.Range(0, 9);
-                cube = StageCube.Instance.touchArray[cubeColor][cubeIndex];
-                if (cube.Obj != null
-                    || (cubeColor == WHITE && cubeIndex == 3)
-                    || (cubeColor == WHITE && cubeIndex == 4))
-                    continue;
+        SummonStageTreasure();
+        yield return new WaitForFixedUpdate();
 
-                break;
-            }
-
-            treasure[i] = ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 0);
-            treasure[i].GetComponent<Object>().SetWeapon(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX], WeaponType.NULL);
-            yield return new WaitForFixedUpdate();
-        }
-        
         // 화면 밝아짐
         ScreenEffect.Instance.Fade(1, 0, 1);
         yield return new WaitForSeconds(2f);
@@ -203,20 +188,11 @@ public class StageManager : MonoBehaviour
         yield return new WaitForSeconds(1.2f);
 
         // 적 소환 (1. 소환할 큐브 블록을 미리 정함 -> 2. 파티클 재생 -> 3. 적 소환)
-        int index = 0;
-        List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
-
-        for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
-        {
-            for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
-            {
-                enemy[index] = ObjectManager.Instance.Summons(null, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
-                index++;
-            }
-        }
+        SummonStageEnemy();
         yield return new WaitForSeconds(1.2f);
 
-        startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<TMP_Text>(); 
+        // UI 및 체력바 활성화
+        startPanelText = stageStartPanel.transform.GetChild(0).transform.GetChild(0).GetComponent<TMP_Text>();
         startPanelText.text = $"Stage {StaticManager.Instance.Stage}";
 
         // UI 활성화
@@ -231,7 +207,43 @@ public class StageManager : MonoBehaviour
         foreach (GameObject obj in enemy) obj.GetComponent<Object>().OverheadCanvas.SetActive(true);
 
         ChangeStatus(StageStatus.PLAYER);
+
         EventManager.Instance.BingoCheck();
+    }
+    public void SummonStageTreasure()
+    {
+        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
+        {
+            Touch cube;
+            while (true)
+            {
+                int cubeColor = Random.Range(0, 6), cubeIndex = Random.Range(0, 9);
+                cube = StageCube.Instance.touchArray[cubeColor][cubeIndex];
+                if (cube.Obj != null
+                    || (cubeColor == WHITE && cubeIndex == 3)
+                    || (cubeColor == WHITE && cubeIndex == 4))
+                    continue;
+
+                break;
+            }
+
+            treasure[i] = ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 0);
+            treasure[i].GetComponent<Object>().SetWeapon(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX], WeaponType.NULL);
+        }
+    }
+    public void SummonStageEnemy()
+    {
+        int index = 0;
+        List<string> stageEnemy = StaticManager.Instance.stageEnemyDatas[StaticManager.Instance.Stage];
+
+        for (int i = 0; i < stageEnemy.Count; i++) // enemy 배치
+        {
+            for (int j = 0; j < int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_COUNT]); j++)
+            {
+                enemy[index] = ObjectManager.Instance.Summons(null, ObjectType.ENEMY, int.Parse(stageEnemy[i].Split(',')[STAGE_ENEMY_ID]));
+                index++;
+            }
+        }
     }
     public void ClickFightButton()
     {

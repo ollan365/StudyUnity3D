@@ -18,7 +18,8 @@ public class CSVDownloaderEditor : EditorWindow
     {
         {"Dialogues", "0"},
         {"Scripts", "1528558809"},
-        {"Choices", "889635938"}
+        {"Choices", "889635938"},
+        {"Events", "1146617069"}
     };
 
     [MenuItem("Tools/Download CSVs")]

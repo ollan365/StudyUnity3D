@@ -5,7 +5,6 @@ using static Constants;
 [CreateAssetMenu(fileName = "New EventCard", menuName = "Event/EventCard")]
 public class EventCard : ScriptableObject
 {
-    public Colors[] eventColors;
     public string eventName;
     [SerializeField] private string eventDescription;
     public List<string> EventDescription => GetEventDescription(eventDescription);
@@ -21,33 +20,33 @@ public class EventCard : ScriptableObject
 
         if (description.Contains("{SLIENCE}"))
         {
-            descriptions[0] = descriptions[0].Replace("{SLIENCE}", "<b>Ä§¹¬</b>");
-            descriptions.Add("ÁÖ´Â µ¥¹ÌÁö¸¦ 0À¸·Î ¸¸µç´Ù");
+            descriptions[0] = descriptions[0].Replace("{SLIENCE}", "<b>ì¹¨ë¬µ</b>");
+            descriptions.Add("ì£¼ëŠ” ë°ë¯¸ì§€ë¥¼ 0ìœ¼ë¡œ ë§Œë“ ë‹¤");
         }
         if (description.Contains("{POWERFUL}"))
         {
-            descriptions[0] = descriptions[0].Replace("{POWERFUL}", "<b>°­È­</b>");
-            descriptions.Add("ÁÖ´Â µ¥¹ÌÁö°¡ 2¹è°¡ µÈ´Ù");
+            descriptions[0] = descriptions[0].Replace("{POWERFUL}", "<b>ê°•í™”</b>");
+            descriptions.Add("ì£¼ëŠ” ë°ë¯¸ì§€ê°€ 2ë°°ê°€ ëœë‹¤");
         }
         if (description.Contains("{INVINCIBILITY}"))
         {
-            descriptions[0] = descriptions[0].Replace("{INVINCIBILITY}", "<b>¹«Àû</b>");
-            descriptions.Add("¹Ş´Â µ¥¹ÌÁö¸¦ 0À¸·Î ¸¸µç´Ù");
+            descriptions[0] = descriptions[0].Replace("{INVINCIBILITY}", "<b>ë¬´ì </b>");
+            descriptions.Add("ë°›ëŠ” ë°ë¯¸ì§€ë¥¼ 0ìœ¼ë¡œ ë§Œë“ ë‹¤");
         }
         if (description.Contains("{WEAKEN}"))
         {
-            descriptions[0] = descriptions[0].Replace("{WEAKEN}", "<b>Ãë¾à</b>");
-            descriptions.Add("¹Ş´Â µ¥¹ÌÁö°¡ 2¹è°¡ µÈ´Ù");
+            descriptions[0] = descriptions[0].Replace("{WEAKEN}", "<b>ì·¨ì•½</b>");
+            descriptions.Add("ë°›ëŠ” ë°ë¯¸ì§€ê°€ 2ë°°ê°€ ëœë‹¤");
         }
         if (description.Contains("{BLESS}"))
         {
-            descriptions[0] = descriptions[0].Replace("{BLESS}", "<b>Ãàº¹</b>");
-            descriptions.Add("Ã¼·ÂÀ» ÀÏºÎ È¸º¹ÇÑ´Ù");
+            descriptions[0] = descriptions[0].Replace("{BLESS}", "<b>ì¶•ë³µ</b>");
+            descriptions.Add("ì²´ë ¥ì„ ì¼ë¶€ íšŒë³µí•œë‹¤");
         }
         if (description.Contains("{CURSE}"))
         {
-            descriptions[0] = descriptions[0].Replace("{CURSE}", "<b>ÀúÁÖ</b>");
-            descriptions.Add("Ã¼·ÂÀ» ÀÏºÎ ÀÒ´Â´Ù");
+            descriptions[0] = descriptions[0].Replace("{CURSE}", "<b>ì €ì£¼</b>");
+            descriptions.Add("ì²´ë ¥ì„ ì¼ë¶€ ìƒëŠ”ë‹¤");
         }
 
         return descriptions;

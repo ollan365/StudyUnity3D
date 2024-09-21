@@ -163,7 +163,7 @@ public class FightLogic : MonoBehaviour
 
             LookAt(attacker.gameObject, attacked[i]);
 
-            yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, attacked.Count - 1)));
+            yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, i + 1)));
 
             // disable indicator
             attacker.Indicator.SetActive(false);

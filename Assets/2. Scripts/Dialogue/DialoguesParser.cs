@@ -8,11 +8,13 @@ public class DialoguesParser : MonoBehaviour
     private TextAsset dialoguesCSV = Resources.Load<TextAsset>("CSV/Dialogues");
     private TextAsset scriptsCSV = Resources.Load<TextAsset>("CSV/Scripts");
     private TextAsset choicesCSV = Resources.Load<TextAsset>("CSV/Choices");
+    private TextAsset eventsCSV = Resources.Load<TextAsset>("CSV/Events");
 
     // 자료 구조
     private Dictionary<string, Dialogue> dialogues = new Dictionary<string, Dialogue>();
     private Dictionary<string, Script> scripts = new Dictionary<string, Script>();
     private Dictionary<string, Choice> choices = new Dictionary<string, Choice>();
+    private List<string> events = new List<string>();
 
     private string Escaper(string originalString)
     {
@@ -110,5 +112,23 @@ public class DialoguesParser : MonoBehaviour
         }
 
         return choices;
+    }
+    public List<string> ParseEvents()
+    {
+        string[] lines = eventsCSV.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+            string eventID = lines[i].Split(',')[0].Trim();
+
+            if (!events.Contains(eventID))
+            {
+                events.Add(eventID);
+            }
+        }
+
+        return events;
     }
 }

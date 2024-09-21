@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -10,8 +11,8 @@ public class DialogueManager : MonoBehaviour
 
     // Dialogue UI
     [Header("Dialogue UI")]
-    private const int DIALOGUE_0 = 0, DIALOGUE_1 = 1, DIALOGUE_2 = 2;
-    private int dialogueType = DIALOGUE_0;
+    private const int DIALOGUE_NORMAL = 0, DIALOGUE_POPUP = 1, DIALOGUE_LINE = 2;
+    private int dialogueType = DIALOGUE_NORMAL;
     public GameObject[] dialogueSet;
     public TextMeshProUGUI speakerText;
     public TextMeshProUGUI[] scriptText;
@@ -32,7 +33,7 @@ public class DialogueManager : MonoBehaviour
     public Dictionary<string, Dialogue> dialogues = new Dictionary<string, Dialogue>();
     public Dictionary<string, Script> scripts = new Dictionary<string, Script>();
     private Dictionary<string, Choice> choices = new Dictionary<string, Choice>();
-    private List<string> events = new List<string>(); 
+    private List<string> events = new List<string>();
 
     // 상태 변수
     private string currentDialogueID = "";
@@ -51,6 +52,7 @@ public class DialogueManager : MonoBehaviour
             dialogues = dialoguesParser.ParseDialogues();
             scripts = dialoguesParser.ParseScripts();
             choices = dialoguesParser.ParseChoices();
+            events = dialoguesParser.ParseEvents();
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
@@ -83,10 +85,16 @@ public class DialogueManager : MonoBehaviour
 
     private void DisplayDialogueLine(DialogueLine dialogueLine)
     {
-            foreach (Transform child in choicesContainer[dialogueType])
-            {
-                Destroy(child.gameObject);
-            }
+        dialogueType = DIALOGUE_NORMAL;
+        if (events.Contains(scripts[dialogueLine.ScriptID].ScriptEvent))
+        {
+            CallEvent(scripts[dialogueLine.ScriptID].ScriptEvent);
+        }
+
+        foreach (Transform child in choicesContainer[dialogueType])
+        {
+            Destroy(child.gameObject);
+        }
 
         // 타자 효과 적용
         isTyping = true;
@@ -108,7 +116,7 @@ public class DialogueManager : MonoBehaviour
             backgroundImage.sprite = backgroundSprite;
             backgroundImage.color = new Color(1, 1, 1, 1);
         }
-        
+
 
         // 화자 이미지 표시
         var imageID = dialogueLine.ImageID;
@@ -276,8 +284,69 @@ public class DialogueManager : MonoBehaviour
     }
 
 
-    private void CallEvent(string eventID)
+    public void CallEvent(string eventID)
     {
+        if (eventID.StartsWith("Event_Dialogue"))
+        {
+            StartDialogue(eventID.Substring(14));
+        }
+        else if (eventID.StartsWith("Dialogue_Canvas"))
+        {
+            switch (eventID.Substring(15))
+            {
+                case "Popup":
+                    dialogueType = DIALOGUE_POPUP;
+                    break;
+                case "Line":
+                    dialogueType = DIALOGUE_LINE;
+                    break;
+            }
+        }
+        else
+        {
+            switch (eventID)
+            {
+                case "Inventory_Click_1":
+                    TutorialManager.Instance.Inventory_Click_1();
+                    break;
 
+                case "Inventory_Click_2":
+                    TutorialManager.Instance.Inventory_Click_2();
+                    break;
+
+                case "Event_Bright":
+                    ScreenEffect.Instance.Fade(1, 0, 1);
+                    break;
+
+                case "Event_TutorialStageStart":
+                    StartCoroutine(TutorialManager.Instance.StartStage());
+                    break;
+
+                case "Event_Dark":
+                    StartCoroutine(EventDark());
+                    break;
+
+                case "Event_Dark_002":
+                    StartCoroutine(Event_Dark_002());
+                    break;
+
+                case "Cube_Mix":
+                    StartCoroutine(TutorialManager.Instance.CubeMix());
+                    break;
+            }
+        }
+    }
+
+    private IEnumerator EventDark()
+    {
+        ScreenEffect.Instance.Fade(0, 1, 1);
+        yield return new WaitForSeconds(1);
+        SceneManager.LoadScene(0);
+    }
+    private IEnumerator Event_Dark_002()
+    {
+        ScreenEffect.Instance.Fade(0, 1, 1);
+        yield return new WaitForSeconds(1);
+        StartDialogue("Dialogue_002");
     }
 }
