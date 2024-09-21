@@ -39,7 +39,7 @@ public class ColorCheckManager : MonoBehaviour
         return true;
     }
 
-    private void MovableCubeSetting(int index)
+    public void MovableCubeSetting(int index)
     {
         if (selectedCharacter == null) index = -1;
 

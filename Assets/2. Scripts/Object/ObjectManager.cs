@@ -276,9 +276,7 @@ public class ObjectManager : MonoBehaviour
                         Destroy(playerWeapon.transform.GetChild(0).gameObject);
 
                     int idx = (StaticManager.Instance.inventory[index].item.ID - 110014);
-                    Debug.Log(idx);
                     idx = (weapons.Length == 0) ? 0 : idx % (weapons.Length);
-                    Debug.Log(weapons.Length);
                     GameObject.Instantiate(weapons[idx], playerWeapon.transform);
                     
 
