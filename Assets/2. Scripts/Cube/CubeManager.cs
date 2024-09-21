@@ -337,8 +337,9 @@ public class CubeManager : MonoBehaviour
                     playerTurnStatus = PlayerTurnStatus.NORMAL;
                 break;
             case ItemType.PORTION:
-                if (playerTurnStatus == PlayerTurnStatus.NORMAL && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
+                if ((playerTurnStatus == PlayerTurnStatus.NORMAL || playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED) && StageManager.Instance.StatusOfStage == StageStatus.PLAYER)
                 {
+                    ColorCheckManager.Instance.CharacterSelectCancel(null, true);
                     playerTurnStatus = PlayerTurnStatus.PORTION_SELECTED;
                     itemID = itemIndex;
                     Debug.Log("portion selected!");
@@ -346,8 +347,6 @@ public class CubeManager : MonoBehaviour
                 else if (playerTurnStatus == PlayerTurnStatus.PORTION_SELECTED)
                     playerTurnStatus = PlayerTurnStatus.NORMAL;
                 break;
-
-
         }
     }
 

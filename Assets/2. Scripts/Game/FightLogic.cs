@@ -13,61 +13,24 @@ public class FightLogic : MonoBehaviour
 
     public IEnumerator FightLogicStart()
     {
-        Object player = StageManager.Instance.Player;
-        List<GameObject> attackableEnemy = AttackableObject(player.AttackType, player.Color, player.Index, ObjectType.ENEMY);
+        List<KeyValuePair<float, Object>> objectAttackOrder = ObjectAttackOrder();
 
-        attacking = true;
-        StartCoroutine(Attack(player, attackableEnemy));
-        while (attacking) yield return new WaitForFixedUpdate();
-
-        // 적과 동료의 공격 순서 결정을 위해 List 생성
-        List<KeyValuePair<float, int>> enemyAttackOrder = new List<KeyValuePair<float, int>>();
-        for (int i = 0; i < StageManager.Instance.StageData(ENEMY_COUNT); i++)
+        for (int i = 0; i < objectAttackOrder.Count; i++)
         {
-            Object enemyObject = StageManager.Instance.EnemyList[i].GetComponent<Object>();
-            if (enemyObject.gameObject.activeSelf && enemyObject.HP > 0)
-                enemyAttackOrder.Add(new KeyValuePair<float, int>(enemyObject.Damage, i));
-        }
-        List<KeyValuePair<float, int>> friendAttackOrder = new List<KeyValuePair<float, int>>();
-        for (int i = 0; i < 3; i++)
-        {
-            if (StageManager.Instance.FriendList[i] == null) continue;
-            Object friendObject = StageManager.Instance.FriendList[i].GetComponent<Object>();
-            if (friendObject.gameObject.activeSelf && friendObject.HP > 0)
-                friendAttackOrder.Add(new KeyValuePair<float, int>(friendObject.Damage, i));
-        }
-        enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
-        friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
-
-        // 공격
-        int count = enemyAttackOrder.Count > friendAttackOrder.Count ? enemyAttackOrder.Count : friendAttackOrder.Count;
-        for (int i = 0; i < count; i++)
-        {
-            // 동료 선공격
-            if (i < friendAttackOrder.Count && StageManager.Instance.FriendList[friendAttackOrder[i].Value].activeSelf) // 동료도 있다면
+            if (objectAttackOrder[i].Value.HP > 0)
             {
-                Object friendObj = StageManager.Instance.FriendList[friendAttackOrder[i].Value].GetComponent<Object>();
-                attackableEnemy = AttackableObject(friendObj.AttackType, friendObj.Color, friendObj.Index, ObjectType.ENEMY);
-
+                List<GameObject> attackableEnemy = new();
+                if (objectAttackOrder[i].Value.Type != ObjectType.ENEMY)
+                    attackableEnemy = AttackableObject(objectAttackOrder[i].Value.AttackType, objectAttackOrder[i].Value.Color, objectAttackOrder[i].Value.Index, ObjectType.ENEMY);
+                else
+                {
+                    attackableEnemy = AttackableObject(objectAttackOrder[i].Value.AttackType, objectAttackOrder[i].Value.Color, objectAttackOrder[i].Value.Index, ObjectType.PLAYER);
+                    attackableEnemy.AddRange(AttackableObject(objectAttackOrder[i].Value.AttackType, objectAttackOrder[i].Value.Color, objectAttackOrder[i].Value.Index, ObjectType.FRIEND));
+                }
                 attacking = true;
-                StartCoroutine(Attack(friendObj, attackableEnemy));
+                StartCoroutine(Attack(objectAttackOrder[i].Value, objectAttackOrder[i].Key, attackableEnemy));
                 while (attacking) yield return new WaitForFixedUpdate();
             }
-
-            // 적 공격
-            if (i < enemyAttackOrder.Count && StageManager.Instance.EnemyList[enemyAttackOrder[i].Value].activeSelf)
-            {
-                Object enemyObj = StageManager.Instance.EnemyList[enemyAttackOrder[i].Value].GetComponent<Object>();
-                List<GameObject> attackablePlayerTeam;
-
-                attackablePlayerTeam = AttackableObject(enemyObj.AttackType, enemyObj.Color, enemyObj.Index, ObjectType.PLAYER);
-                attackablePlayerTeam.AddRange(AttackableObject(enemyObj.AttackType, enemyObj.Color, enemyObj.Index, ObjectType.FRIEND));
-
-                attacking = true;
-                StartCoroutine(Attack(enemyObj, attackablePlayerTeam));
-                while (attacking) yield return new WaitForFixedUpdate();
-            }
-
         }
         
         //딜교가 종료되면, 일정시간 기다렸다가 ENV 턴으로 넘어간다.
@@ -76,35 +39,136 @@ public class FightLogic : MonoBehaviour
         if (StageManager.Instance.StatusOfStage != StageStatus.END)
             StageManager.Instance.ChangeStatus(StageStatus.ENV);
     }
-
-    private void LookAt(GameObject src, GameObject dst)
+    private List<KeyValuePair<float, Object>> ObjectAttackOrder()
     {
-        Vector3 direc = src.transform.position - dst.transform.position;
-        Quaternion sRot = Quaternion.LookRotation(direc);
-        Quaternion dRot = Quaternion.LookRotation(-direc);
-        src.transform.rotation = sRot;
-        dst.transform.rotation = dRot;
+        List<KeyValuePair<float, Object>> objectAttackOrder = new();
+
+        // 플레이어가 가장 먼저 공격
+        objectAttackOrder.Add(new KeyValuePair<float, Object>(StageManager.Instance.Player.Damage, StageManager.Instance.Player));
+
+        // 적과 동료의 공격 순서 결정을 위해 List 생성
+        List<KeyValuePair<float, Object>> enemyAttackOrder = new List<KeyValuePair<float, Object>>();
+        for (int i = 0; i < StageManager.Instance.StageData(ENEMY_COUNT); i++)
+        {
+            Object enemyObject = StageManager.Instance.EnemyList[i].GetComponent<Object>();
+            if (enemyObject.gameObject.activeSelf && enemyObject.HP > 0)
+                enemyAttackOrder.Add(new KeyValuePair<float, Object>(enemyObject.Damage, enemyObject));
+        }
+        List<KeyValuePair<float, Object>> friendAttackOrder = new List<KeyValuePair<float, Object>>();
+        for (int i = 0; i < 3; i++)
+        {
+            if (StageManager.Instance.FriendList[i] == null) continue;
+            Object friendObject = StageManager.Instance.FriendList[i].GetComponent<Object>();
+            if (friendObject.gameObject.activeSelf && friendObject.HP > 0)
+                friendAttackOrder.Add(new KeyValuePair<float, Object>(friendObject.Damage, friendObject));
+        }
+        enemyAttackOrder = enemyAttackOrder.OrderByDescending(enemyAttackOrder => enemyAttackOrder.Key).ToList(); // 공격력 순으로 내림차순 정렬
+        friendAttackOrder = friendAttackOrder.OrderByDescending(friendAttackOrder => friendAttackOrder.Key).ToList();
+
+        int count = enemyAttackOrder.Count > friendAttackOrder.Count ? enemyAttackOrder.Count : friendAttackOrder.Count;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (friendAttackOrder.Count > i) objectAttackOrder.Add(friendAttackOrder[i]);
+            if (enemyAttackOrder.Count > i) objectAttackOrder.Add(enemyAttackOrder[i]);
+        }
+
+        return objectAttackOrder;
+    }
+    private IEnumerator Attack(Object attacker, float damage, List<GameObject> attacked)
+    {
+        if (attacked.Count == 0)
+        { attacking = false; yield break; }
+
+        StartCoroutine(StageManager.Instance.CubeRotate(attacker.Color));
+        while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
+        yield return new WaitForSeconds(1f);
+
+        // 보스 관련하여 일반 공격을 하는지 판단
+        if (BossLogic(attacker)) yield break;
+
+        // 일반 공격 시작
+        // activate indicator
+        attacker.Indicator.SetActive(true);
+
+        GameObject chargingObject = null;
+        if (attacker.AttackType == WeaponType.STAFF || attacker.AttackType == WeaponType.DUAL_STAFF)
+        {
+            // 차징 시작
+            if (attacker.Type == ObjectType.ENEMY) chargingObject = ParticleManager.Instance.PlayParticle(attacker.gameObject, Particle.Enemy_Sttaff_Charging);
+            else chargingObject = ParticleManager.Instance.PlayParticle(attacker.gameObject, Particle.PlayerTeam_Sttaff_Charging);
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        // 일반 공격
+        for (int i = 0; i < attacked.Count; i++)
+        {
+            attacked[i].GetComponent<Object>().Indicator.SetActive(true);
+            yield return new WaitForSeconds(0.2f);
+
+            LookAt(attacker.gameObject, attacked[i]);
+
+            yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, damage, Mathf.Pow(1.2f, i + 1)));
+
+            attacked[i].GetComponent<Object>().Indicator.SetActive(false);
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        if (chargingObject != null) Destroy(chargingObject);
+
+        // disable indicator
+        attacker.Indicator.SetActive(false);
+
+        attacking = false;
+    }
+    private bool BossLogic(Object attacker)
+    {
+        if (!Boss.Instance) return false;
+
+        if (Boss.Instance && Boss.Instance.slienceObject == attacker.gameObject)
+        { attacking = false; return true; }
+
+        if (attacker.GetComponent<Boss>() && attacker.GetComponent<Boss>().UseSkill())
+        {
+            StartCoroutine(BossSkill(attacker));
+            return true;
+        }
+
+        return false;
+    }
+    private IEnumerator BossSkill(Object attacker)
+    {
+        attacker.Indicator.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+
+        yield return new WaitForSeconds(attacker.GetComponent<Boss>().skillEffectTime + 0.5f);
+
+        attacker.Indicator.SetActive(false);
+        yield return new WaitForSeconds(0.1f);
+
+        attacking = false;
+        yield break;
     }
 
-    private float AttackProduction(Transform src, Transform dst, float weight = 1)
+    private float AttackProduction(Transform src, Transform dst, float damage, float weight)
     {
-        //공격자의 공격 타입을 얻고, 그에 따른 연출
         sequence = DOTween.Sequence();
-        Vector3 knockback = dst.transform.position + (dst.transform.position - src.transform.position) / 6;
 
-        // 보스 스킬 효과에 따라 weight 달라짐
-        if(src.GetComponent<Object>().Type == ObjectType.ENEMY)
+        if (src.GetComponent<Object>().Type == ObjectType.ENEMY)
         {
-            if (Boss.Instance && Boss.Instance.enemyPowerful) weight = 1.1f;
-            else weight = 1;
-        }  
+            if (Boss.Instance && Boss.Instance.enemyPowerful) damage *= 1.1f;
+        }
+        else damage *= weight;
+
 
         // OnHit()을 기다렸다가 시키면, turn 넘어갈 때, 죽었는지 살았는지 판단할 때, 공격 판단 등 너무 많이 꼬이므로
         // 체력바가 닳고, 데미지 텍스트가 뜨는 건 미루더라도 HP 자체는 먼저 닳아야 함
         switch (src.GetComponent<Object>().AttackType)
         {
             case WeaponType.SWORD:
-                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight, 0.2f);
+            case WeaponType.DUAL_SWORD:
+                Vector3 knockback = dst.transform.position + (dst.transform.position - src.transform.position) / 6;
+                dst.GetComponent<Object>().OnHit(StatusEffect.HP, damage, 0.2f);
 
                 sequence.Append(src.transform.DOMove(dst.transform.position, 0.3f).SetEase(Ease.InExpo))
                         .Append(src.transform.DOLocalMove(Vector3.zero, 0.6f)).SetEase(Ease.Linear)
@@ -114,12 +178,10 @@ public class FightLogic : MonoBehaviour
                 return ParticleManager.Instance.AttackParticle(src, dst);
 
             case WeaponType.STAFF:
+            case WeaponType.DUAL_STAFF:
                 float time = ParticleManager.Instance.AttackParticle(src, dst);
-                dst.GetComponent<Object>().OnHit(StatusEffect.HP, src.GetComponent<Object>().Damage * weight, time);
+                dst.GetComponent<Object>().OnHit(StatusEffect.HP, damage, time);
                 return time;
-
-            case WeaponType.DUAL:
-                return 0;
 
             case WeaponType.NULL:
                 return 0;
@@ -127,52 +189,15 @@ public class FightLogic : MonoBehaviour
                 return 0;
         }
     }
-
-    private IEnumerator Attack(Object attacker, List<GameObject> attacked)
+    private void LookAt(GameObject src, GameObject dst)
     {
-        if (attacker.GetComponent<Boss>() && attacker.GetComponent<Boss>().UseSkill())
-        {
-            attacker.Indicator.SetActive(true);
-            yield return new WaitForSeconds(0.2f);
-
-            yield return new WaitForSeconds(attacker.GetComponent<Boss>().skillEffectTime + 0.5f);
-
-            attacker.Indicator.SetActive(false);
-            yield return new WaitForSeconds(0.1f);
-
-            attacking = false;
-            yield break;
-        }
-
-        if (attacked.Count == 0)
-        { attacking = false; yield break; }
-
-        StartCoroutine(StageManager.Instance.CubeRotate(attacker.Color));
-        while (StageManager.Instance.isCubeMove) yield return new WaitForFixedUpdate();
-        yield return new WaitForSeconds(1f);
-
-        if (Boss.Instance && Boss.Instance.slienceObject == attacker.gameObject)
-        { attacking = false; yield break; }
-
-        for(int i = 0; i < attacked.Count; i++)
-        {
-            // activate indicator
-            attacker.Indicator.SetActive(true);
-            attacked[i].GetComponent<Object>().Indicator.SetActive(true);
-            yield return new WaitForSeconds(0.2f);
-
-            LookAt(attacker.gameObject, attacked[i]);
-
-            yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, Mathf.Pow(1.2f, i + 1)));
-
-            // disable indicator
-            attacker.Indicator.SetActive(false);
-            attacked[i].GetComponent<Object>().Indicator.SetActive(false);
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        attacking = false;
+        Vector3 direc = src.transform.position - dst.transform.position;
+        Quaternion sRot = Quaternion.LookRotation(direc);
+        Quaternion dRot = Quaternion.LookRotation(-direc);
+        src.transform.rotation = sRot;
+        dst.transform.rotation = dRot;
     }
+
     private List<GameObject> AttackableObject(WeaponType weaponType, Colors color, int index, ObjectType objType)
     {
         List<GameObject> attackable = new();
@@ -219,7 +244,7 @@ public class FightLogic : MonoBehaviour
         for (int i = 0; i < 9; i++)
             attackable[i] = false;
 
-        if (weaponType == WeaponType.STAFF || weaponType == WeaponType.DUAL)
+        if (weaponType == WeaponType.STAFF || weaponType == WeaponType.DUAL_SWORD || weaponType == WeaponType.DUAL_STAFF)
         {
             switch (index)
             {
@@ -267,7 +292,7 @@ public class FightLogic : MonoBehaviour
             attackable = StageCube.Instance.Cross(index);
         }
 
-        if (weaponType == WeaponType.DUAL)
+        if (weaponType == WeaponType.DUAL_SWORD || weaponType == WeaponType.DUAL_STAFF)
         {
             for (int i = 0; i < StageCube.Instance.Cross(index).Length; i++)
             {

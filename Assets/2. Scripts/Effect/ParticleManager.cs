@@ -91,7 +91,7 @@ public class ParticleManager : MonoBehaviour
         else if (src.GetComponent<Object>().AttackType == WeaponType.STAFF)
         {
             StartCoroutine(AttackStaffCoroutine(src, dst, isEnemyAttack));
-            return 2;
+            return 0.5f;
         }
         return Time.deltaTime;
     }
@@ -104,20 +104,12 @@ public class ParticleManager : MonoBehaviour
     }
     private IEnumerator AttackStaffCoroutine(Transform src, Transform dst, bool isEnemy)
     {
-        GameObject chargingObject = null, projectile = null;
-
-        // 차징 시작
-        if (isEnemy) chargingObject = PlayParticle(src.gameObject, Particle.Enemy_Sttaff_Charging);
-        else chargingObject = PlayParticle(src.gameObject, Particle.PlayerTeam_Sttaff_Charging);
-        yield return new WaitForSeconds(0.5f);
+        GameObject projectile = null;
 
         // 투사체 생성
-        if (isEnemy) projectile = PlayParticle(src.gameObject, Particle.Enemy_Sttaff_Projectile);
-        else projectile = PlayParticle(src.gameObject, Particle.PlayerTeam_Sttaff_Projectile);
+        if (isEnemy) projectile = PlayParticle(src.GetComponent<Object>().touchCube.gameObject, Particle.Enemy_Sttaff_Projectile);
+        else projectile = PlayParticle(src.GetComponent<Object>().touchCube.gameObject, Particle.PlayerTeam_Sttaff_Projectile);
         yield return new WaitForSeconds(0.5f);
-
-        // 차징 끝 -> 투사체 날림
-        Destroy(chargingObject);
 
         Vector3 direction = (dst.transform.position - src.transform.position).normalized;
         projectile.GetComponent<Rigidbody>().velocity = direction * projectileSpeed;
