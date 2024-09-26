@@ -24,6 +24,10 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             itemImage.GetComponent<Button>().onClick.AddListener(() => ObjectManager.Instance.ClickInventoryBTN(index));
         }
+        else if (slotType == SlotType.STORE_INVENTORY)
+        {
+            itemImage.GetComponent<Button>().onClick.AddListener(() => ObjectManager.Instance.ClickShopInventoryBTN(index));
+        }
         else if (slotType == SlotType.STORE)
         {
             itemImage.GetComponent<Button>().onClick.AddListener(() => ObjectManager.Instance.BuyItem(index));
@@ -59,8 +63,6 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-
-
         //슬롯 타입에 따라 다른 인벤토리를 참조하여 itemInfoPanel을 구성한다.
         switch (slotType)
         {

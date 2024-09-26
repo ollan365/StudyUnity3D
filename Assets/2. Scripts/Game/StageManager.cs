@@ -314,6 +314,9 @@ public class StageManager : MonoBehaviour
         StartCoroutine(CubeRotate(Player.Color));
         yield return new WaitForSeconds(2f);
 
+        // 스테이지 클리어 시 골드 획득
+        StaticManager.Instance.Gold += stageDatas[REWARD];
+
         // 상인과 포탈 소환
         ObjectType[] summonObjectArray = new ObjectType[2] { ObjectType.MERCHANT, ObjectType.PORTAL };
         for (int i = 0; i < summonObjectArray.Length; i++)
@@ -348,9 +351,11 @@ public class StageManager : MonoBehaviour
     public void GameOver()
     {
         // 게임 오버
-        // StopCoroutine(fightLogic.FightLogicStart());
-
         gameOverPanel.SetActive(true);
+    }
+    public void LoadScene()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
     public IEnumerator CubeRotate(Colors color)

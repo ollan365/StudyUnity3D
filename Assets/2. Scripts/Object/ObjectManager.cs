@@ -300,6 +300,12 @@ public class ObjectManager : MonoBehaviour
         }
         ChangePlayerInventory();
     }
+    public void ClickShopInventoryBTN(int index)
+    {
+        StaticManager.Instance.Gold += StaticManager.Instance.inventory[index].item.SellCost;
+        StaticManager.Instance.inventory[index].count--;
+        ChangePlayerInventory();
+    }
     public void UseItem(ItemType itemType, int itemID)
     {
         for(int i = 0; i < StaticManager.Instance.inventory.Length; i++)
