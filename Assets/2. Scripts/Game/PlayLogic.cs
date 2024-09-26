@@ -28,31 +28,37 @@ public class PlayLogic : MonoBehaviour
     }
     private IEnumerator OpenTreasure(Object obj, bool isEvent = false)
     {
+        //obj: Treasure Box <Object>, isEvent: 빙고 효과로 상자를 열게 되는 경우, True로 설정됨.
+
+        ColorCheckManager.Instance.MovableCubeSetting(-1);
+
+        //적이 이동해서 상자를 오픈하는 경우
         if(ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().Type == ObjectType.ENEMY)
         {
             ObjectManager.Instance.ObjectDie(obj.gameObject);
             yield break;
         }
 
+        //플레이어가 이동해서 상자를 오픈하는 경우
         if (!isEvent)
         {
-            Vector3 direc = StageManager.Instance.Player.transform.parent.position - obj.transform.parent.position;
-            Debug.Log(direc);
-            
+            Vector3 direc = StageManager.Instance.Player.transform.position - obj.transform.position;
+
             Quaternion pRot = Quaternion.LookRotation(direc);
             Quaternion oRot = Quaternion.LookRotation(direc);
-            Debug.Log(pRot);
-            Debug.Log(oRot);
 
-            //Debug.Log(pRot + " " + oRot); 
-            StageManager.Instance.Player.transform.localRotation = pRot;
-            obj.transform.localRotation = oRot;
+            StageManager.Instance.Player.transform.rotation = pRot;
+            obj.transform.rotation = oRot;
 
+            StageManager.Instance.Player.transform.localEulerAngles = new Vector3(0, StageManager.Instance.Player.transform.localEulerAngles.y, 0);
+            obj.transform.localEulerAngles = new Vector3(0, obj.transform.localEulerAngles.y, 0);
         }
 
+        //보물상자 여는 애니메이션
         animator = obj.GetComponent<Animator>();
         animator.SetBool("Open", true);
 
+        //골드 획득 연출
         int gold = (int)obj.Damage;
         StaticManager.Instance.Gold += gold;
         if (ColorCheckManager.Instance.SelectedCharacter)
@@ -60,9 +66,10 @@ public class PlayLogic : MonoBehaviour
         else StageManager.Instance.Player.PoppingText($"+{gold}", Color.yellow);
         yield return new WaitForSeconds(2f);
 
+        //상자 제거
         ObjectManager.Instance.ObjectDie(obj.gameObject);
         if (!isEvent)
-            ColorCheckManager.Instance.Move(obj.Color, obj.Index, true);
+            ColorCheckManager.Instance.Move(obj.Color, obj.Index, true); //상자로 이동
         yield break;
     }
     private IEnumerator EatForbiddenFruit(Object obj)

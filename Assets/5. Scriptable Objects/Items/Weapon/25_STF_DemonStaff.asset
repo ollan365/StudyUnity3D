@@ -19,7 +19,7 @@ MonoBehaviour:
   buyCost: 1600
   spawnMinStage: 20
   spawnMaxStage: 22
-  icon: {fileID: 21300000, guid: 843019b398e72ea49a323cfd83caab0c, type: 3}
+  icon: {fileID: 21300000, guid: d27266369dbba064c8c268156a6e33c1, type: 3}
   description: 
   weaponType: 1
   level: 0
