@@ -32,8 +32,6 @@ public class EnvLogic : MonoBehaviour
             }
 
             while (isMoving) yield return new WaitForFixedUpdate();
-
-            ColorCheckManager.Instance.CharacterSelectCancel(e, true);
         }
         yield return new WaitForFixedUpdate();
         StageManager.Instance.ChangeStatus(StageStatus.PLAYER);
@@ -46,7 +44,7 @@ public class EnvLogic : MonoBehaviour
         enemy.Indicator.SetActive(true);
         yield return new WaitForSeconds(1f);
 
-        ColorCheckManager.Instance.Move(enemy.Color, index, true);
+        ColorCheckManager.Instance.Move(enemy.Color, index);
         yield return new WaitForSeconds(1f); // Move에 걸리는 시간
         enemy.Indicator.SetActive(false);
         yield return new WaitForSeconds(1f);

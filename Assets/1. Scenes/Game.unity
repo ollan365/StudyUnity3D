@@ -9649,6 +9649,7 @@ MonoBehaviour:
   - {fileID: 360777001147702422, guid: 2760ecf787b1bd34aabe0b7874e52e20, type: 3}
   - {fileID: 360777001147702422, guid: d42e09af2a180f149a926325027b36a7, type: 3}
   - {fileID: 360777001147702422, guid: 9e0d56f0e70a8984b88a3e98320252ca, type: 3}
+  - {fileID: 360777001147702422, guid: 887aea1a4f63e894ab6783f24ca1ce74, type: 3}
   merchantPrefab: {fileID: 360777001147702422, guid: 1bdf0a1e8f1ee0942b331d21d4b34e2d, type: 3}
   portalPrefab: {fileID: 360777001147702422, guid: 33863ed9a20f64f41a56f8196a76d774, type: 3}
   friendHpSlider:
@@ -12280,6 +12281,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 24536485d84bba74e9d724c47c77f1cf, type: 2}
   - {fileID: 11400000, guid: db795567f5c450943a41f622ff27a276, type: 2}
   - {fileID: 11400000, guid: 0aaebb8dd5b40534bb50326cbc8b8f7e, type: 2}
+  - {fileID: 11400000, guid: 8c357964ab1ee14489243a58a8523d2c, type: 2}
+  - {fileID: 11400000, guid: 0300a7bc806b9794eb3f2a57a98d42bf, type: 2}
+  - {fileID: 11400000, guid: 0e35cdcbf471fb540b3fdba241668c21, type: 2}
+  - {fileID: 11400000, guid: e8d2600add522364f984e47992214443, type: 2}
   colorEffect:
     color: 9
     statusEffects: 000000000000
@@ -33476,7 +33481,7 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 280, y: 300}
+  m_CellSize: {x: 280, y: 120}
   m_Spacing: {x: 20, y: 20}
   m_Constraint: 0
   m_ConstraintCount: 2

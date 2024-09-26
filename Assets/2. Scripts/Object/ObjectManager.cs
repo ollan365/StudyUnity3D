@@ -143,6 +143,7 @@ public class ObjectManager : MonoBehaviour
                 if (objectID == 0) name[0] = "Treasure";
                 else if (objectID == 1) name[0] = "ForbiddenFruit";
                 else if (objectID == 2) name[0] = "Thunder";
+                else if (objectID == 3) name[0] = "HealBead";
 
                 newObject = Instantiate(triggerPrefabs[objectID]);
                 newObject.GetComponent<Object>().Init(objectType, name, cube);
@@ -320,6 +321,7 @@ public class ObjectManager : MonoBehaviour
     }
     public void OpenShop()
     {
+        ChangeShop();
         clickIgnorePanel.SetActive(true);
         shopPopup.SetActive(true);
         ChangePlayerInventory();

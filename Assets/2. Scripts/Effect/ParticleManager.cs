@@ -87,6 +87,7 @@ public class ParticleManager : MonoBehaviour
         if (src.GetComponent<Object>().AttackType == WeaponType.SWORD)
         {
             StartCoroutine(AttackSwordCoroutine(dst, isEnemyAttack));
+            return 0.5f;
         }
         else if (src.GetComponent<Object>().AttackType == WeaponType.STAFF)
         {

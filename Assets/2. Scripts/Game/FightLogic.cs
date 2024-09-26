@@ -97,7 +97,7 @@ public class FightLogic : MonoBehaviour
             // 차징 시작
             if (attacker.Type == ObjectType.ENEMY) chargingObject = ParticleManager.Instance.PlayParticle(attacker.gameObject, Particle.Enemy_Sttaff_Charging);
             else chargingObject = ParticleManager.Instance.PlayParticle(attacker.gameObject, Particle.PlayerTeam_Sttaff_Charging);
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.5f)  ;
         }
 
         // 일반 공격
@@ -115,6 +115,8 @@ public class FightLogic : MonoBehaviour
         }
 
         if (chargingObject != null) Destroy(chargingObject);
+
+        yield return new WaitForSeconds(0.5f);
 
         // disable indicator
         attacker.Indicator.SetActive(false);

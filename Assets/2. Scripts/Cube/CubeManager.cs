@@ -180,14 +180,14 @@ public class CubeManager : MonoBehaviour
         {
             if (playerTurnStatus == PlayerTurnStatus.CHARACTER_SELECTED)
             {
-                if (StageManager.Instance.GetStageTextValue(StageText.MOVE) > 0 && ColorCheckManager.Instance.Move(script.Color, script.Index, true))
+                if (StageManager.Instance.GetStageTextValue(StageText.MOVE) > 0 && ColorCheckManager.Instance.Move(script.Color, script.Index, true, false))
                     StageManager.Instance.SetStageTextValue(StageText.MOVE, -1);
                 else
                     ChangeToNormal();
             }
             if (playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
             {
-                StageManager.Instance.SummonsFriend(script.Color, script.Index, itemID);
+                StageManager.Instance.SummonsFriend(script, itemID);
                 playerTurnStatus = PlayerTurnStatus.NORMAL;
             }
         }
@@ -367,11 +367,11 @@ public class CubeManager : MonoBehaviour
                         break;
                     case ObjectType.TRIGGER:
                         Debug.Log(obj.gameObject);
-                        if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, false))
+                        if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, false, false))
                             StageManager.Instance.StagePlayLogic.Trigger(obj.gameObject);
                         break;
                     case ObjectType.PORTAL:
-                        if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, true))
+                        if (ColorCheckManager.Instance.Move(obj.Color, obj.Index))
                         {
                             StageManager.Instance.NextStage(obj.gameObject);
                         }

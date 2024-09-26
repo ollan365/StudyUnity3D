@@ -205,6 +205,10 @@ public class EventManager : MonoBehaviour
                 if (RandomDeadEnemy() != null) return true;
                 else return false;
 
+            case "용병술":
+                if (StaticManager.Instance.Stage >= 6 && FriendCount < 3) return true;
+                else return false;
+
             default: return true;
         }
     }
@@ -232,7 +236,7 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "선악과":
-                foreach(Touch touch in RelativeColorCubeList(Colors.RED))
+                foreach(Touch touch in RelativeColorCubeList(StageManager.Instance.Player.touchCube.RelativeColor))
                     if(touch.Obj == null)
                     {
                         ObjectManager.Instance.Summons(touch, ObjectType.TRIGGER, 1);
@@ -241,7 +245,7 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "지뢰":
-                foreach (Touch touch in RelativeColorCubeList(Colors.RED))
+                foreach (Touch touch in RelativeColorCubeList(StageManager.Instance.Player.touchCube.RelativeColor))
                     if (touch.Obj == null)
                     {
                         ObjectManager.Instance.Summons(touch, ObjectType.TRIGGER, 2);
@@ -344,6 +348,26 @@ public class EventManager : MonoBehaviour
                 cubeManager.StartRandomTurn(5, true);
                 break;
 
+            case "보물찾기":
+                StageManager.Instance.SummonStageTreasure(3);
+                break;
+
+            case "떠돌이 상인":
+                ObjectManager.Instance.OpenShop();
+                break;
+
+            case "용병술":
+                StageManager.Instance.SummonsFriend(null, Random.Range(110002, 110011));
+                break;
+
+            case "회복 구슬":
+                foreach (Touch touch in RelativeColorCubeList(StageManager.Instance.Player.touchCube.RelativeColor))
+                    if (touch.Obj == null)
+                    {
+                        ObjectManager.Instance.Summons(touch, ObjectType.TRIGGER, 3);
+                        break;
+                    }
+                break;
 
             default: Debug.Log(name); break;
         }
@@ -377,8 +401,7 @@ public class EventManager : MonoBehaviour
         else if (obj.Type == ObjectType.FRIEND) ParticleManager.Instance.PlayParticle(cube.gameObject, Particle.Friend_Summon);
 
         ColorCheckManager.Instance.CharacterSelect(obj.gameObject);
-        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(cube.Color, cube.Index));
-        ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(cube.Color, cube.Index, true));
 
         yield return new WaitForSeconds(0.5f);
         obj.gameObject.SetActive(true);
@@ -394,15 +417,16 @@ public class EventManager : MonoBehaviour
         if (inverseTouch.Obj != null)
         {
             Touch objInverseTouch = StageManager.Instance.Player.touchCube;
-            ColorCheckManager.Instance.CharacterSelect(inverseTouch.Obj.gameObject);
-            StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(objInverseTouch.Color, objInverseTouch.Index));
-            ColorCheckManager.Instance.CharacterSelectCancel(null, true);
-            inverseTouch.Obj.transform.localRotation = Quaternion.Euler(Vector3.zero);
+            Object obj = inverseTouch.Obj;
+            ColorCheckManager.Instance.CharacterSelect(obj.gameObject);
+            StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(objInverseTouch.Color, objInverseTouch.Index, true));
+            yield return new WaitForFixedUpdate();
+            obj.transform.localRotation = Quaternion.Euler(Vector3.zero);
         }
 
         ColorCheckManager.Instance.CharacterSelect(StageManager.Instance.Player.gameObject);
-        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(inverseTouch.Color, inverseTouch.Index));
-        ColorCheckManager.Instance.CharacterSelectCancel(null, true);
+        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(inverseTouch.Color, inverseTouch.Index, true));
+        yield return new WaitForFixedUpdate();
         StageManager.Instance.Player.transform.localRotation = Quaternion.Euler(Vector3.zero);
 
         yield return null;

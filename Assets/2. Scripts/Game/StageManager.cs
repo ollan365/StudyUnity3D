@@ -41,10 +41,10 @@ public class StageManager : MonoBehaviour
     [Header("Objects")]
     [SerializeField] private GameObject[] enemy;
     [SerializeField] private GameObject[] friend;
-    [SerializeField] private GameObject[] treasure;
+    [SerializeField] private List<GameObject> treasure;
     public GameObject[] EnemyList { get => enemy; }
     public GameObject[] FriendList { get => friend; }
-    public GameObject[] TreasureList { get => treasure; }
+    public List<GameObject> TreasureList { get => treasure; }
 
     [Header("Panel")]
     [SerializeField] private GameObject stageStartPanel;
@@ -112,7 +112,7 @@ public class StageManager : MonoBehaviour
         
         enemy = new GameObject[stageDatas[ENEMY_COUNT]];
         friend = new GameObject[3];
-        treasure = new GameObject[stageDatas[TREASURE_COUNT]];
+        treasure = new();
 
         clickIgnorePanel.SetActive(true);
 
@@ -158,7 +158,7 @@ public class StageManager : MonoBehaviour
         yield return new WaitForFixedUpdate();
 
         // 보물 소환
-        SummonStageTreasure();
+        SummonStageTreasure(stageDatas[TREASURE_COUNT]);
         yield return new WaitForFixedUpdate();
 
         // 화면 밝아짐
@@ -173,9 +173,8 @@ public class StageManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
         player.gameObject.SetActive(true);
         ColorCheckManager.Instance.CharacterSelect(player);
-        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(WHITE, 4));
+        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(WHITE, 4, true));
         yield return new WaitForSeconds(1f);
-        ColorCheckManager.Instance.CharacterSelectCancel(null, true);
         ObjectEffect.Instance.MakeSmall(portal);
         yield return new WaitForSeconds(2f);
 
@@ -210,24 +209,28 @@ public class StageManager : MonoBehaviour
 
         EventManager.Instance.BingoCheck();
     }
-    public void SummonStageTreasure()
+    public void SummonStageTreasure(int count)
     {
-        for (int i = 0; i < stageDatas[TREASURE_COUNT]; i++) // treasure 배치
+        for (int i = 0; i < count; i++) // treasure 배치
         {
             Touch cube;
             while (true)
             {
                 int cubeColor = Random.Range(0, 6), cubeIndex = Random.Range(0, 9);
                 cube = StageCube.Instance.touchArray[cubeColor][cubeIndex];
-                if (cube.Obj != null
-                    || (cubeColor == WHITE && cubeIndex == 3)
-                    || (cubeColor == WHITE && cubeIndex == 4))
-                    continue;
+
+                if (cube.Obj != null) continue;
+
+                if (StatusOfStage == StageStatus.INIT)
+                {
+                    if ((cubeColor == WHITE && cubeIndex == 3) || (cubeColor == WHITE && cubeIndex == 4))
+                        continue;
+                }
 
                 break;
             }
 
-            treasure[i] = ObjectManager.Instance.Summons(null, ObjectType.TRIGGER, 0);
+            treasure.Add(ObjectManager.Instance.Summons(cube, ObjectType.TRIGGER, 0));
             treasure[i].GetComponent<Object>().SetWeapon(stageDatas[TREASURE_MIN], stageDatas[TREASURE_MAX], WeaponType.NULL);
         }
     }
@@ -412,10 +415,9 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    public void SummonsFriend(Colors color, int index, int scrollID)
+    public void SummonsFriend(Touch cube, int scrollID)
     {
-        Touch cube = StageCube.Instance.touchArray[color.ToInt()][index];
-        if (cube.Obj != null) return;
+        if (cube != null && cube.Obj != null) return;
 
         for (int i = 0; i < 3; i++)
         {

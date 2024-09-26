@@ -24,20 +24,20 @@ public class PlayLogic : MonoBehaviour
             case "Treasure": StartCoroutine(OpenTreasure(triggerObj, isEvent)); break;
             case "ForbiddenFruit": StartCoroutine(EatForbiddenFruit(triggerObj)); break;
             case "Thunder": StartCoroutine(StrikeThunder(triggerObj)); break;
+            case "HealBead": StartCoroutine(HealBead(triggerObj)); break;
         }
     }
     private IEnumerator OpenTreasure(Object obj, bool isEvent = false)
     {
-        //obj: Treasure Box <Object>, isEvent: 빙고 효과로 상자를 열게 되는 경우, True로 설정됨.
-
-        ColorCheckManager.Instance.MovableCubeSetting(-1);
-
         //적이 이동해서 상자를 오픈하는 경우
         if(ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().Type == ObjectType.ENEMY)
         {
             ObjectManager.Instance.ObjectDie(obj.gameObject);
             yield break;
         }
+
+        GameObject selectedCharacter = ColorCheckManager.Instance.SelectedCharacter;
+        ColorCheckManager.Instance.CharacterSelectCancel(null, true);
 
         //플레이어가 이동해서 상자를 오픈하는 경우
         if (!isEvent)
@@ -69,7 +69,10 @@ public class PlayLogic : MonoBehaviour
         //상자 제거
         ObjectManager.Instance.ObjectDie(obj.gameObject);
         if (!isEvent)
-            ColorCheckManager.Instance.Move(obj.Color, obj.Index, true); //상자로 이동
+        {
+            ColorCheckManager.Instance.CharacterSelect(selectedCharacter);
+            ColorCheckManager.Instance.Move(obj.Color, obj.Index, true, false); //상자로 이동
+        }
         yield break;
     }
     private IEnumerator EatForbiddenFruit(Object obj)
@@ -106,6 +109,17 @@ public class PlayLogic : MonoBehaviour
         }
 
         ObjectManager.Instance.ObjectDie(obj.gameObject);
+
+        yield return new WaitForFixedUpdate();
+    }
+    private IEnumerator HealBead(Object obj)
+    {
+        ObjectManager.Instance.ObjectDie(obj.gameObject);
+
+        int random = Random.Range(0, 100);
+
+        Object selected = ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>();
+        selected.OnHit(StatusEffect.HP_PERCENT, -50);
 
         yield return new WaitForFixedUpdate();
     }

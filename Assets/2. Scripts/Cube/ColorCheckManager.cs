@@ -77,15 +77,16 @@ public class ColorCheckManager : MonoBehaviour
                 StageCube.Instance.coverArray[selectedCharacterColor][i].SetActive(movableCube[i]);
         }
     }
-    public bool Move(Colors color, int index, bool wantMove)
+    public bool Move(Colors color, int index, bool wantMove = true, bool characterSelectCancel = true)
     {
-        if (color != selectedCharacter.GetComponent<Object>().Color || !movableCube[index]) return false;
-        if (wantMove) StartCoroutine(MoveCoroutine(color, index));
+        if (selectedCharacter == null || color != selectedCharacter.GetComponent<Object>().Color || !movableCube[index]) return false;
+        if (wantMove) StartCoroutine(MoveCoroutine(color, index, characterSelectCancel));
         return true;
     }
-    public IEnumerator MoveCoroutine(Colors color, int index)
+    public IEnumerator MoveCoroutine(Colors color, int index, bool characterSelectCancel)
     {
         GameObject obj = selectedCharacter;
+        CharacterSelectCancel(null, true);
         MovableCubeSetting(-1);
 
         Transform parent = StageCube.Instance.touchArray[color.ToInt()][index].ObjectPostion;
@@ -121,6 +122,8 @@ public class ColorCheckManager : MonoBehaviour
         obj.GetComponent<Object>().touchCube = StageCube.Instance.touchArray[color.ToInt()][index];
 
         MovableCubeSetting(index);
+
+        if (!characterSelectCancel) CharacterSelect(obj);
 
         if (obj.GetComponent<Object>().Type == ObjectType.PLAYER) EventManager.Instance.BingoCheck();
         else if(obj.GetComponent<Object>().Type == ObjectType.ENEMY)

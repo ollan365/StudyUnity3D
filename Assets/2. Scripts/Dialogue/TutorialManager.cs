@@ -38,7 +38,7 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
         StageManager.Instance.Player.gameObject.SetActive(true);
         ColorCheckManager.Instance.CharacterSelect(StageManager.Instance.Player.gameObject);
-        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(WHITE, 4));
+        StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(WHITE, 4, true));
         yield return new WaitForSeconds(1f);
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
         ObjectEffect.Instance.MakeSmall(portal);
