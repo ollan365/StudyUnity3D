@@ -421,7 +421,7 @@ public class StageManager : MonoBehaviour
 
         for (int i = 0; i < 3; i++)
         {
-            if (friend[i] == null) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
+            if (friend[i].GetComponent<Object>().HP <= 0) // 이건 동료 소환이 한 스테이지에서 3번만 가능할 때긴 함
             {
                 friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 ObjectManager.Instance.UseItem(ItemType.SCROLL, scrollID);

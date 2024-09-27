@@ -269,7 +269,6 @@ public class CubeManager : MonoBehaviour
 
         if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER && !isMaze)
         {
-            Debug.Log(EventManager.Instance);
             EventManager.Instance.BingoCheck(); 
         }
 

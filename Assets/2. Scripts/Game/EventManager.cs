@@ -26,9 +26,13 @@ public class EventManager : MonoBehaviour
     [SerializeField] private EventCard[] eventCards;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
 
-    // 면 빙고 효과
+    [Header("Weapon")]
+    [SerializeField] private Weapon bestSword;
+    [SerializeField] private Weapon bestStaff;
+    private Weapon originWeapon;
+
     private bool IsEnhancedWeapon { get; set; }
-    public bool IsDual { get; set; }
+    private bool IsDual { get; set; }
 
 
     public ColorEffect Effect { get => colorEffect; }
@@ -73,7 +77,7 @@ public class EventManager : MonoBehaviour
         bingoUI[color.ToInt()].SetLineIcon();
         cubeManager.IsEvent = true;
         foreach (GameObject obj in setActiveFalse) obj.SetActive(false);
-        EventAdd();
+        EventAdd(color == Colors.WY);
     }
     private void BingoMark()
     {
@@ -139,8 +143,12 @@ public class EventManager : MonoBehaviour
     {
         // 선악과 괴뢰 소멸
         // 상태 이상 초기화
+        // 무기 초기화 (Dual, 강화 등)
+
+        // Dual 이었으면 다시 일반 타입으로 변경
+        StaticManager.Instance.PlayerWeapon.ChangeWeaponType(false);
     }
-    private void EventAdd()
+    private void EventAdd(bool isAllBingo)
     {
         foreach (Transform child in eventButtonParent) Destroy(child.gameObject);
 
@@ -149,7 +157,7 @@ public class EventManager : MonoBehaviour
 
         foreach(EventCard card in eventCards)
         {
-            if(CheckEvent(card.eventName)) eventList.Add(card);
+            if(CheckEvent(card.eventName, isAllBingo)) eventList.Add(card);
         }
 
         // 리스트를 랜덤으로 섞는다
@@ -175,8 +183,24 @@ public class EventManager : MonoBehaviour
     }
     
 
-    private bool CheckEvent(string name)
+    private bool CheckEvent(string name, bool isAllBingo)
     {
+        if (isAllBingo)
+        {
+            switch (name)
+            {
+                case "운수특대통":
+                case "긴급구조":
+                case "이름1":
+                case "이름2":
+                case "이름3":
+                case "이름4":
+                    return true;
+
+                default: return false;
+            }
+        }
+
         switch (name)
         {
             case "악마의 교활함": return false;
@@ -367,6 +391,49 @@ public class EventManager : MonoBehaviour
                         ObjectManager.Instance.Summons(touch, ObjectType.TRIGGER, 3);
                         break;
                     }
+                break;
+
+            case "운수특대통":
+                //"보물상자를 모두 획득한다.
+                // 이 때, 각 보물상자에서 얻는 금액은 10배로 계산한다."
+                break;
+
+            case "긴급구조":
+                foreach (Object obj in AllObject)
+                    if (obj.Type == ObjectType.PLAYER || obj.Type == ObjectType.FRIEND)
+                        obj.OnHit(StatusEffect.HP_PERCENT, -100);
+                break;
+
+            case "이름1":
+                originWeapon = StaticManager.Instance.PlayerWeapon;
+                if (StaticManager.Instance.PlayerWeapon.WeaponType == WeaponType.SWORD || StaticManager.Instance.PlayerWeapon.WeaponType == WeaponType.DUAL_SWORD)
+                    StaticManager.Instance.PlayerWeapon = bestSword;
+
+                if (StaticManager.Instance.PlayerWeapon.WeaponType == WeaponType.STAFF || StaticManager.Instance.PlayerWeapon.WeaponType == WeaponType.DUAL_STAFF)
+                    StaticManager.Instance.PlayerWeapon = bestStaff;
+                IsEnhancedWeapon = true;
+                break;
+
+            case "이름2":
+                StaticManager.Instance.PlayerWeapon.ChangeWeaponType(true);
+                IsDual = true;
+                break;
+
+            case "이름3":
+                for (int i = 0; i < 3; i++)
+                    StageManager.Instance.SummonsFriend(null, Random.Range(110002, 110011));
+                break;
+
+            case "이름4":
+                foreach (Object obj in AllObject)
+                    if (obj.Type == ObjectType.ENEMY)
+                        obj.OnHit(StatusEffect.HP_PERCENT, 30);
+                break;
+
+            case "이름5":
+                break;
+
+            case "이름6":
                 break;
 
             default: Debug.Log(name); break;

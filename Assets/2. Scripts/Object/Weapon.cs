@@ -12,6 +12,27 @@ public class Weapon : ItemObject
     public int MaxDamage { get => weaponLevel[Level].maxDamage; }
     [SerializeField] private WeaponLevel[] weaponLevel;
     [SerializeField] private GameObject weaponObject;
+
+    public void ChangeWeaponType(bool dual)
+    {
+        if (dual)
+        {
+            if (weaponType == WeaponType.SWORD)
+                weaponType = WeaponType.DUAL_SWORD;
+
+            if (weaponType == WeaponType.STAFF)
+                weaponType = WeaponType.DUAL_STAFF;
+        }
+
+        if (!dual)
+        {
+            if (weaponType == WeaponType.DUAL_SWORD)
+                weaponType = WeaponType.SWORD;
+
+            if (weaponType == WeaponType.DUAL_STAFF)
+                weaponType = WeaponType.STAFF;
+        }
+    }
 }
 
 [System.Serializable]
