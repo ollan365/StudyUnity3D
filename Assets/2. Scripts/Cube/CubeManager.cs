@@ -141,6 +141,7 @@ public class CubeManager : MonoBehaviour
                     return;
                 }
             }
+
             foreach (RaycastHit hit in hits)
             {
                 Touch touchScript = hit.collider.gameObject.GetComponent<Touch>();
@@ -375,12 +376,20 @@ public class CubeManager : MonoBehaviour
                         break;
                     case ObjectType.PLAYER:
                     case ObjectType.FRIEND:
-                        playerTurnStatus = ColorCheckManager.Instance.CharacterSelectCancel(obj.gameObject, false)
+                        bool isSame = ColorCheckManager.Instance.SelectedCharacter != obj.gameObject;
+
+                        playerTurnStatus = ColorCheckManager.Instance.CharacterSelectCancel(obj.gameObject, true) 
                             ? PlayerTurnStatus.NORMAL : PlayerTurnStatus.CHARACTER_SELECTED;
+
+                        if (isSame)
+                        {
+                            ColorCheckManager.Instance.CharacterSelect(obj.gameObject);
+                            playerTurnStatus = PlayerTurnStatus.CHARACTER_SELECTED;
+                        }
                         break;
                     case ObjectType.ENEMY:
-                        
                         ChangeToNormal();
+                        ObjectManager.Instance.SetObjectInfo(obj);
                         break;
                 }
                 break;

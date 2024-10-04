@@ -515,7 +515,7 @@ public class ObjectManager : MonoBehaviour
             enemyInfoBasicAttack.text = basicAttackText;
 
             //Set Active = true
-            EnemyInfoPanel.SetActive(true);
+            EnemyInfoPanel.SetActive(!EnemyInfoPanel.activeSelf);
             
         }
     }
