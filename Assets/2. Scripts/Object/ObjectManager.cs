@@ -375,20 +375,20 @@ public class ObjectManager : MonoBehaviour
     }
     public void BuyItem(int index)
     {
-        if (StaticManager.Instance.Gold < shopItemSlotArray[index].item.SellCost) return;
+        if (StaticManager.Instance.Gold < shopItemSlotArray[index].item.BuyCost) return;
 
         // ������ �߰�
         AddItem(0, shopItemSlotArray[index].item);
 
         // ���� �� ����
-        StaticManager.Instance.Gold -= shopItemSlotArray[index].item.SellCost;
+        StaticManager.Instance.Gold -= shopItemSlotArray[index].item.BuyCost;
 
         // ���� ���� ����
         shopItemSlotArray[index].count--;
         if (shopItemSlotArray[index].count <= 0) // ������ �� �ȷ��� ��
             shopSlot[index].SetActive(false);
         else
-            shopSlot[index].ChangeText(shopItemSlotArray[index].count + " / $" + shopItemArray[index].SellCost.ToString());
+            shopSlot[index].ChangeText(shopItemSlotArray[index].count + " / $" + shopItemArray[index].BuyCost.ToString());
     }
     public void AddItem(int itemIndex, ItemObject item)
     {

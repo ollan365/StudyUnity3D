@@ -239,7 +239,7 @@ public class FightLogic : MonoBehaviour
         return attackable;
     }
 
-
+    
     private bool[] AttackableRange(WeaponType weaponType, int index)
     {
         bool[] attackable = new bool[9];
@@ -251,7 +251,7 @@ public class FightLogic : MonoBehaviour
             switch (index)
             {
                 case 0:
-                    attackable[5] = true;
+                    attackable[4] = true;
                     break;
                 case 1:
                     attackable[3] = true;
