@@ -27,14 +27,14 @@ public class ShowStatus : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        //À§Ä¡ ¼³Á¤ÇÏ°í, Á¤º¸ ³Ö°í, È°¼ºÈ­ À§Ä¡ 150¾¿
+        //ìœ„ì¹˜ ì„¤ì •í•˜ê³ , ì •ë³´ ë„£ê³ , í™œì„±í™” ìœ„ì¹˜ 150ì”©
         ObjectManager.Instance.SetObjectInfo(targetObject.GetComponent<Object>(), index);
         ObjectManager.Instance.ObjectInfoPanel.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        //ºñÈ°¼ºÈ­
+        //ë¹„í™œì„±í™”
         ObjectManager.Instance.ObjectInfoPanel.SetActive(false);
     }
 
