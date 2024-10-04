@@ -399,7 +399,7 @@ public class CubeManager : MonoBehaviour
                 {
                     ObjectManager.Instance.SetObjectInfo(obj);
                 }
-                    
+                
 
                 break;
             case PlayerTurnStatus.PORTION_SELECTED:
