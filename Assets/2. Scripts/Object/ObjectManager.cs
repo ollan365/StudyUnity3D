@@ -330,16 +330,6 @@ public class ObjectManager : MonoBehaviour
     public void ChangeShop()
     {
         int stage = StaticManager.Instance.Stage;
-        int[] scroll = new int[3] { 0, 0, 0 };
-        int scrollIndex = 3;
-
-        for (int i = 0; i < scroll.Length; i++)
-        {
-            int random = Random.Range(2, 11);
-            while (random == scroll[0] || random == scroll[1] || random == scroll[2])
-                random = Random.Range(2, 11);
-            scroll[i] = random;
-        }
 
         int itemIndex = -1;
         int shopIndex;
@@ -353,11 +343,6 @@ public class ObjectManager : MonoBehaviour
                 moreItem = true;
 
                 itemIndex = i;
-
-                if (shopItemArray[itemIndex].ItemType == ItemType.SCROLL && scrollIndex > 0)
-                    itemIndex = scroll[--scrollIndex];
-                else if (shopItemArray[itemIndex].ItemType == ItemType.SCROLL && scrollIndex == 0)
-                    continue;
 
                 break;
             }
