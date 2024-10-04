@@ -204,7 +204,11 @@ public class ObjectManager : MonoBehaviour
         obj.transform.position = dieObject.position;
         obj.transform.parent = dieObject;
     }
-
+    public void CloseShopPage()
+    {
+        cubeManager.IgnoreClick = false;
+        cubeManager.IgnoreWheel = false;
+    }
     public void ChangePlayerInventory()
     {
         goldText.text = StaticManager.Instance.Gold.ToString();
@@ -321,6 +325,9 @@ public class ObjectManager : MonoBehaviour
     }
     public void OpenShop()
     {
+        cubeManager.IgnoreClick = true;
+        cubeManager.IgnoreWheel = true;
+
         ChangeShop();
         clickIgnorePanel.SetActive(true);
         shopPopup.SetActive(true);

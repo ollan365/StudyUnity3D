@@ -442,7 +442,7 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "용병술":
-                StageManager.Instance.SummonsFriend(null, Random.Range(110002, 110011));
+                StageManager.Instance.SummonsFriend(null, Random.Range(110002, 110005));
                 break;
 
             case "회복 구슬":
@@ -482,7 +482,7 @@ public class EventManager : MonoBehaviour
 
             case "이름3":
                 for (int i = 0; i < 3; i++)
-                    StageManager.Instance.SummonsFriend(null, Random.Range(110002, 110011));
+                    StageManager.Instance.SummonsFriend(null, Random.Range(110002, 110005));
                 break;
 
             case "이름4":

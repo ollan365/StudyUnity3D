@@ -23,12 +23,16 @@ public class CubeManager : MonoBehaviour
     private float maxValue = 75f;
     private float minValue = 40f;
 
+    public bool IgnoreClick { get; set; }
+    public bool IgnoreWheel { get; set; }
     public bool IsEvent { get; set; }
 
     private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
         IsEvent = false;
+        IgnoreClick = false;
+        IgnoreWheel = false;
         turnDataSave = new();
     }
     private void Update()
@@ -40,6 +44,7 @@ public class CubeManager : MonoBehaviour
 
         if(StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END)
         {
+            if (IgnoreWheel || IsEvent) return;
             float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
             if(Camera.main.fieldOfView >= maxValue)
             {
@@ -59,12 +64,14 @@ public class CubeManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(2))
         {
+            if (IgnoreWheel) return;
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
             currentRotateSpeed = 0;
         }
         
         if (Input.GetMouseButton(2))
         {
+            if (IgnoreWheel) return;
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
 
             transform.Rotate(0f, -Input.GetAxis("Mouse X") * currentRotateSpeed, 0f, Space.World);
@@ -79,13 +86,9 @@ public class CubeManager : MonoBehaviour
             mouseStartObject = null;
             mouseStartTouchCube = null;
 
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                // UI를 클릭한 경우, 3D 오브젝트와의 상호작용을 방지
-                return;
-            }
+            if (IgnoreClick || IsEvent) return;
+            
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
-            if (IsEvent) return;
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;
@@ -118,13 +121,8 @@ public class CubeManager : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                // UI를 클릭한 경우, 3D 오브젝트와의 상호작용을 방지
-                return;
-            }
+            if (IgnoreClick || IsEvent) return;
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
-            if (IsEvent) return;
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits;

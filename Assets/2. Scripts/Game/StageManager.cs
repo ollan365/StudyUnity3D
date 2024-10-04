@@ -410,7 +410,7 @@ public class StageManager : MonoBehaviour
     {
         stageTexts[1].text = $"{++turn} Turn";
 
-        if (StaticManager.Instance.Stage < 10 && turn  >= 3)
+        if (StaticManager.Instance.Stage > 2 && turn  >= 3)
         {
             player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 10);
         }
@@ -424,6 +424,7 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null || friend[i].GetComponent<Object>().HP <= 0)
             {
+                Debug.Log($"{scrollID}"); // / {StaticManager.Instance.scrollDatas[scrollID].FriendIndex}");
                 friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 ObjectManager.Instance.UseItem(ItemType.SCROLL, scrollID);
                 break;
