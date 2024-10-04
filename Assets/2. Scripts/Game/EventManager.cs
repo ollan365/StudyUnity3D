@@ -391,8 +391,11 @@ public class EventManager : MonoBehaviour
     {
         Touch inverseTouch = InverseCube(StageManager.Instance.Player.touchCube);
 
+
+        Debug.Log("inverseTouch: " + inverseTouch + "  Obj" + inverseTouch.Obj + "  transform: " + inverseTouch.Obj.transform);
         if (inverseTouch.Obj != null)
         {
+
             Touch objInverseTouch = StageManager.Instance.Player.touchCube;
             ColorCheckManager.Instance.CharacterSelect(inverseTouch.Obj.gameObject);
             StartCoroutine(ColorCheckManager.Instance.MoveCoroutine(objInverseTouch.Color, objInverseTouch.Index));
