@@ -68,16 +68,32 @@ public class EventManager : MonoBehaviour
 
         if (color == Colors.NULL) return;
 
-        if (color == Colors.WY) bingoStatus[cube.RelativeColor.ToInt()] = BingoStatus.ALL;
-        else if (color != Colors.WY) bingoStatus[color.ToInt()] = BingoStatus.ONE;
-        cubeManager.ChangeToNormal();
+        Debug.Log(color);
 
+        if (color == Colors.WY)
+        {
+            bingoStatus[cube.RelativeColor.ToInt()] = BingoStatus.ALL;
+            bingoUI[cube.RelativeColor.ToInt()].SetSideIcon();
+        }
+        else if (color == Colors.RO)
+        {
+            for (int i = 0; i < bingoStatus.Length; i++)
+            {
+                bingoStatus[i] = BingoStatus.ALL;
+                bingoUI[i].SetSideIcon();
+            }
+        }
+        else
+        {
+            bingoStatus[cube.RelativeColor.ToInt()] = BingoStatus.ONE;
+            bingoUI[cube.RelativeColor.ToInt()].SetLineIcon();
+        }
+        cubeManager.ChangeToNormal();
         eventPanel.SetActive(true);
         colorEffect = new ColorEffect(color);
-        bingoUI[color.ToInt()].SetLineIcon();
         cubeManager.IsEvent = true;
         foreach (GameObject obj in setActiveFalse) obj.SetActive(false);
-        EventAdd(color == Colors.WY);
+        EventAdd(color);
     }
     private void BingoMark()
     {
@@ -97,6 +113,7 @@ public class EventManager : MonoBehaviour
                 new () {2,5,8 }
         };
 
+        int allCount = 0;
         for (int i = 0; i < 6; i++)
         {
             int[] bingoNum = new int[6] { 0, 0, 0, 0, 0, 0 };
@@ -107,11 +124,11 @@ public class EventManager : MonoBehaviour
                 colorOfSide[j] = StageCube.Instance.touchArray[i][j].RelativeColor.ToInt();
             }
 
-            for(int j = 0; j < 6; j++)
+            for (int j = 0; j < 6; j++)
             {
                 int color = colorOfSide[list[j][0]];
                 bool bingo = true;
-                for(int k= 0; k < list[j].Count; k++)
+                for (int k = 0; k < list[j].Count; k++)
                 {
                     if (color != colorOfSide[list[j][k]]) bingo = false;
                 }
@@ -131,10 +148,22 @@ public class EventManager : MonoBehaviour
             // 한면 빙고가 있는지 확인
             for (int j = 0; j < 6; j++)
             {
-                if (bingoNum[j] == 6 && bingoStatus[j] != BingoStatus.ALL)
+                if (bingoNum[j] == 6)
                 {
-                    for (int k = 0; k < 9; k++) bingoCheck[i][k] = Colors.WY;
+                    allCount++;
+                    if (bingoStatus[j] != BingoStatus.ALL)
+                    {
+                        for (int k = 0; k < 9; k++) bingoCheck[i][k] = Colors.WY;
+                    }
                 }
+            }
+        }
+
+        if(allCount == 6)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                for (int j = 0; j < 9; j++) bingoCheck[i][j] = Colors.RO;
             }
         }
     }
@@ -148,7 +177,14 @@ public class EventManager : MonoBehaviour
         // Dual 이었으면 다시 일반 타입으로 변경
         StaticManager.Instance.PlayerWeapon.ChangeWeaponType(false);
     }
-    private void EventAdd(bool isAllBingo)
+    public void ChangeAtPlayerTurn()
+    {
+        if(IsEnhancedWeapon)
+        {
+            StaticManager.Instance.PlayerWeapon = originWeapon;
+        }
+    }
+    private void EventAdd(Colors color)
     {
         foreach (Transform child in eventButtonParent) Destroy(child.gameObject);
 
@@ -157,7 +193,7 @@ public class EventManager : MonoBehaviour
 
         foreach(EventCard card in eventCards)
         {
-            if(CheckEvent(card.eventName, isAllBingo)) eventList.Add(card);
+            if(CheckEvent(card.eventName, color)) eventList.Add(card);
         }
 
         // 리스트를 랜덤으로 섞는다
@@ -183,9 +219,9 @@ public class EventManager : MonoBehaviour
     }
     
 
-    private bool CheckEvent(string name, bool isAllBingo)
+    private bool CheckEvent(string name, Colors color)
     {
-        if (isAllBingo)
+        if (color == Colors.WY)
         {
             switch (name)
             {
@@ -193,8 +229,23 @@ public class EventManager : MonoBehaviour
                 case "긴급구조":
                 case "이름1":
                 case "이름2":
-                case "이름3":
                 case "이름4":
+                    return true;
+
+                case "이름3":
+                    if (StaticManager.Instance.Stage >= 6) return true;
+                    else return false;
+
+                default: return false;
+            }
+        }
+
+        if (color == Colors.RO)
+        {
+            switch (name)
+            {
+                case "이름5":
+                case "이름6":
                     return true;
 
                 default: return false;
@@ -232,6 +283,16 @@ public class EventManager : MonoBehaviour
             case "용병술":
                 if (StaticManager.Instance.Stage >= 6 && FriendCount < 3) return true;
                 else return false;
+
+            case "운수특대통":
+            case "긴급구조":
+            case "이름1":
+            case "이름2":
+            case "이름3":
+            case "이름4":
+            case "이름5":
+            case "이름6":
+                return false;
 
             default: return true;
         }

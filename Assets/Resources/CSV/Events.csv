@@ -19,11 +19,11 @@ Event_Dialogue_001,스테이지 1 클리어 후 등장한 상인을 클릭 시 D
 Show_Shop_001,스테이지 1 클리어시 구매 가능한 상인 창을 띄운다.,
 Show_Shop_005,스테이지 5 클리어시 구매 가능한 상인 창을 띄운다.,
 Peer_Image,동료 스크롤의 이미지가 상단에 반짝이며 떠있는다.,
-Event_Dialogue_Boss_Info_001,9스테이지 몬스터/보스가 소환된 후 Boss_Info_001이 실행된다,우리엘
-Event_Dialogue_Boss_Info_002,17스테이지 몬스터/보스가 소환된 후 Boss_Info_002이 실행된다,라파엘
-Event_Dialogue_Boss_Info_003,21스테이지 몬스터/보스가 소환된 후 Boss_Info_003이 실행된다,가브리엘
-Event_Dialogue_Boss_Info_004,23스테이지 몬스터/보스가 소환된 후 Boss_Info_004이 실행된다,미카엘
-Event_Dialogue_Boss_Info_005,24스테이지 몬스터/보스가 소환된 후 Boss_Info_005이 실행된다,루시퍼
+Event_Dialogue_Boss_Info_001,9스테이지 몬스터/보스가 소환된 후 Boss_Info_001이 실행된다,
+Event_Dialogue_Boss_Info_002,17스테이지 몬스터/보스가 소환된 후 Boss_Info_002이 실행된다,
+Event_Dialogue_Boss_Info_003,21스테이지 몬스터/보스가 소환된 후 Boss_Info_003이 실행된다,
+Event_Dialogue_Boss_Info_004,23스테이지 몬스터/보스가 소환된 후 Boss_Info_004이 실행된다,
+Event_Dialogue_Boss_Info_005,24스테이지 몬스터/보스가 소환된 후 Boss_Info_005이 실행된다,
 Game_Start_01,게임이 진행된다.,
 Game_Start_09,9스테이지 게임이 진행된다.,
 Game_Start_17,17스테이지 게임이 진행된다.,

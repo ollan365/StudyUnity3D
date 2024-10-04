@@ -269,6 +269,7 @@ public class StageManager : MonoBehaviour
                 clickIgnorePanel.SetActive(false);
                 StartCoroutine(CubeRotate(player.GetComponent<Object>().Color)); // 플레이어 쪽으로 회전
                 TurnLimit();
+                EventManager.Instance.ChangeAtPlayerTurn();
                 break;
 
             case StageStatus.FIGHT:

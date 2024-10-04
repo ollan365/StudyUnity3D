@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad68614e8e6f0bb4fb8521c29619c356, type: 3}
+  m_Name: Event 38
+  m_EditorClassIdentifier: 
+  eventName: "\uC774\uB9844"
+  eventDescription: "\uBAA8\uB4E0 \uBAAC\uC2A4\uD130 \uC720\uB2DB\uC758 \uCCB4\uB825\uC744
+    \uC804\uCCB4 \uCCB4\uB825\uC758 10%\uB9CC\uD07C \uB370\uBBF8\uC9C0\uB97C \uC785\uD78C\uB2E4."

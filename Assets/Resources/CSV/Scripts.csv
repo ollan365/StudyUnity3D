@@ -149,10 +149,10 @@ Script_129,고마워.,,,EOL
 Script_130,반갑다람! 나는 이 스테이지를 책임지고 있는 바람의 정령이다람.,,,EOL
 Script_131,물의 정령에게 얘기 들었다람.,,,EOL
 Script_132,난 조금 더 특별한 아이템을 팔고 있는데+ 한 번 구경해볼람?,,,EOL
-Script_133,(선택지 1)  응. 뭘 팔고 있는데?,,,EOL
-Script_134,(선택지 2) 아니 괜찮아..,,,
-Script_135,(선택지 1) 좋아람! 잘 들어보람!,,,EOL
-Script_136,(선택지 2) 에이.. 그래도 한번 들어보람!,,,EOL
+Script_133,응. 뭘 팔고 있는데?,,,EOL
+Script_134,아니 괜찮아..,,,
+Script_135,좋아람! 잘 들어보람!,,,EOL
+Script_136,에이.. 그래도 한번 들어보람!,,,EOL
 Script_137, '동료'라고 들어봤람?,Peer_Image,,EOL
 Script_138,그게 뭔데?,Peer_Image,,EOL
 Script_139,동료'는 말 그대로 너의 전투를 도와주는 친구다람!,Peer_Image,,EOL

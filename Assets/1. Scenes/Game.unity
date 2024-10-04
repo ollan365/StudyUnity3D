@@ -12321,9 +12321,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0300a7bc806b9794eb3f2a57a98d42bf, type: 2}
   - {fileID: 11400000, guid: 0e35cdcbf471fb540b3fdba241668c21, type: 2}
   - {fileID: 11400000, guid: e8d2600add522364f984e47992214443, type: 2}
+  - {fileID: 11400000, guid: 667a688863e2cf347ae89b92f793a829, type: 2}
+  - {fileID: 11400000, guid: dc7d61c925c22fd4aa2944125ff1bc6b, type: 2}
+  - {fileID: 11400000, guid: f5a18964a68d15045a881c0a9b293301, type: 2}
+  - {fileID: 11400000, guid: ed884d96d3801374e80bb3a965fe3af3, type: 2}
+  - {fileID: 11400000, guid: 2423b92b4a0da234db5667fc09bd1501, type: 2}
+  - {fileID: 11400000, guid: 5adbf73bea4fe5944ab5665abc8b16ec, type: 2}
+  - {fileID: 11400000, guid: dc4617f0fa1995347b94cec78dbde185, type: 2}
+  - {fileID: 11400000, guid: 6e53f9083e4f59b4b9d5c6d2e290ebce, type: 2}
   colorEffect:
     color: 9
     statusEffects: 000000000000
+  bestSword: {fileID: 11400000, guid: 1ccebde6cac3eb444a0f774c8cc2b48e, type: 2}
+  bestStaff: {fileID: 11400000, guid: ea2e29d148e011a4fbeb9c95ed8a4838, type: 2}
 --- !u!1001 &657030866
 PrefabInstance:
   m_ObjectHideFlags: 0
