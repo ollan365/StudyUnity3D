@@ -379,16 +379,16 @@ public class StageManager : MonoBehaviour
                 endRotationVector = new(0, 0, 90);
                 break;
             case Colors.BLUE:
-                endRotationVector = new(-90, 0, 90);
+                endRotationVector = new(-90, 0, 0);
                 break;
             case Colors.GREEN:
-                endRotationVector = new(90, 0, -90);
+                endRotationVector = new(90, 0, 0);
                 break;
             case Colors.ORANGE:
-                endRotationVector = new(0, 0, -90);
+                endRotationVector = new(0, 180, -90);
                 break;
             case Colors.YELLOW:
-                endRotationVector = new(0, 0, -180);
+                endRotationVector = new(0, 180, -180);
                 break;
         }
 

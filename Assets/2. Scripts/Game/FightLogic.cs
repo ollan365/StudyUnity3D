@@ -108,7 +108,7 @@ public class FightLogic : MonoBehaviour
 
             LookAt(attacker.gameObject, attacked[i]);
 
-            yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, damage, Mathf.Pow(1.2f, i + 1)));
+            yield return new WaitForSeconds(AttackProduction(attacker.transform, attacked[i].transform, damage, Mathf.Pow(1.2f, i)));
 
             attacked[i].GetComponent<Object>().Indicator.SetActive(false);
             yield return new WaitForSeconds(0.1f);
@@ -204,106 +204,139 @@ public class FightLogic : MonoBehaviour
     {
         List<GameObject> attackable = new();
 
-        if (objType == ObjectType.PLAYER && StageManager.Instance.Player.gameObject.activeSelf)
+        foreach (int i in AttackableOrder(weaponType, color, index))
         {
-            Object p = StageManager.Instance.Player;
-
-            if (p.Color == color && AttackableRange(weaponType, index)[p.Index])
-                attackable.Add(StageManager.Instance.Player.gameObject);
-
-        }
-        else if (objType == ObjectType.FRIEND)
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                if (StageManager.Instance.FriendList[i] == null || StageManager.Instance.FriendList[i].GetComponent<Object>().HP <= 0) continue;
-
-                Object f = StageManager.Instance.FriendList[i].GetComponent<Object>();
-
-                if (f.Color == color && AttackableRange(weaponType, index)[f.Index])
-                    attackable.Add(StageManager.Instance.FriendList[i]);
-            }
-        }
-        else if (objType == ObjectType.ENEMY)
-        {
-            foreach (GameObject enemyObj in StageManager.Instance.EnemyList)
-            {
-                if (enemyObj.GetComponent<Object>().HP <= 0) continue;
-
-                Object e = enemyObj.GetComponent<Object>();
-
-                if (e.Color == color && AttackableRange(weaponType, index)[e.Index])
-                    attackable.Add(enemyObj);
-            }
+            Object obj = StageCube.Instance.touchArray[color.ToInt()][i].Obj;
+            if (obj && obj.Type == objType) attackable.Add(obj.gameObject);
         }
         return attackable;
     }
 
     
-    private bool[] AttackableRange(WeaponType weaponType, int index)
+    private List<int> AttackableOrder(WeaponType weaponType, Colors color, int index)
     {
-        bool[] attackable = new bool[9];
-        for (int i = 0; i < 9; i++)
-            attackable[i] = false;
+        List<int> attackOrder = new();
+        string order = "";
 
-        if (weaponType == WeaponType.STAFF || weaponType == WeaponType.DUAL_SWORD || weaponType == WeaponType.DUAL_STAFF)
+        if (weaponType == WeaponType.STAFF)
         {
             switch (index)
             {
                 case 0:
-                    attackable[4] = true;
+                    order = "4";
                     break;
                 case 1:
-                    attackable[3] = true;
-                    attackable[5] = true;
+                    order = "35";
                     break;
                 case 2:
-                    attackable[4] = true;
+                    order = "4";
                     break;
                 case 3:
-                    attackable[1] = true;
-                    attackable[7] = true;
+                    order = "17";
                     break;
                 case 4:
-                    attackable[0] = true;
-                    attackable[2] = true;
-                    attackable[6] = true;
-                    attackable[8] = true;
+                    order = "6028";
                     break;
                 case 5:
-                    attackable[1] = true;
-                    attackable[7] = true;
+                    order = "71";
                     break;
                 case 6:
-                    attackable[4] = true;
+                    order = "4";
                     break;
                 case 7:
-                    attackable[3] = true;
-                    attackable[5] = true;
+                    order = "35";
                     break;
                 case 8:
-                    attackable[4] = true;
+                    order = "4";
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (weaponType == WeaponType.SWORD)
+        {
+            switch (index)
+            {
+                case 0:
+                    order = "13";
+                    attackOrder.Add(1); attackOrder.Add(3);
+                    break;
+                case 1:
+                    order = "024";
+                    break;
+                case 2:
+                    order = "15";
+                    break;
+                case 3:
+                    order = "046";
+                    break;
+                case 4:
+                    order = "3157";
+                    break;
+                case 5:
+                    order = "428";
+                    break;
+                case 6:
+                    order = "37";
+                    break;
+                case 7:
+                    order = "648";
+                    break;
+                case 8:
+                    order = "75";
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (weaponType == WeaponType.DUAL_SWORD || weaponType == WeaponType.DUAL_STAFF)
+        {
+            switch (index)
+            {
+                case 0:
+                    order = "143";
+                    break;
+                case 1:
+                    order = "30254";
+                    break;
+                case 2:
+                    order = "415";
+                    break;
+                case 3:
+                    order = "01476";
+                    break;
+                case 4:
+                    order = "63012587";
+                    break;
+                case 5:
+                    order = "74128";
+                    break;
+                case 6:
+                    order = "347";
+                    break;
+                case 7:
+                    order = "63458";
+                    break;
+                case 8:
+                    order = "745";
                     break;
                 default:
                     break;
             }
         }
 
-        if (weaponType == WeaponType.SWORD)
+        foreach(char c in order)
         {
-            attackable = StageCube.Instance.Cross(index);
-        }
-
-        if (weaponType == WeaponType.DUAL_SWORD || weaponType == WeaponType.DUAL_STAFF)
-        {
-            for (int i = 0; i < StageCube.Instance.Cross(index).Length; i++)
+            int value = c - '0';
+            if (color == Colors.GREEN || color == Colors.ORANGE || color == Colors.YELLOW)
             {
-                if (StageCube.Instance.Cross(index)[i])
-                    attackable[i] = true;
+                if (value == 0 || value == 3 || value == 6) value += 2;
+                else if (value == 2 || value == 5 || value == 8) value -= 2;
             }
+            attackOrder.Add(value);
         }
 
-        return attackable;
+        return attackOrder;
     }
 
 }
