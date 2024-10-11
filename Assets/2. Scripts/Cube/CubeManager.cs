@@ -23,16 +23,32 @@ public class CubeManager : MonoBehaviour
     private float maxValue = 75f;
     private float minValue = 40f;
 
-    public bool IgnoreClick { get; set; }
-    public bool IgnoreWheel { get; set; }
+    bool ignoreClick = false;
+    bool ignoreWheel = false;
+    public bool IgnoreClick
+    {
+        get => ignoreClick;
+        set
+        {
+            if (!value) StartCoroutine(EnableClickNextFrame());
+            else ignoreClick = value;
+        }
+    }
+    public bool IgnoreWheel
+    {
+        get => ignoreWheel;
+        set
+        {
+            if (!value) StartCoroutine(EnableWheelNextFrame());
+            else ignoreWheel = value;
+        }
+    }
     public bool IsEvent { get; set; }
 
     private void Awake()
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
         IsEvent = false;
-        IgnoreClick = false;
-        IgnoreWheel = false;
         turnDataSave = new();
     }
     private void Update()
@@ -160,6 +176,17 @@ public class CubeManager : MonoBehaviour
                 Turn(mouseStartTouchCube.TouchColors[index], mouseStartTouchCube.TouchInts[index]);
             }
         }
+    }
+
+    private IEnumerator EnableClickNextFrame()
+    {
+        yield return null;
+        IgnoreClick = false;
+    }
+    private IEnumerator EnableWheelNextFrame()
+    {
+        yield return null;
+        IgnoreWheel = false;
     }
     public void MouseStart(Touch script)
     {

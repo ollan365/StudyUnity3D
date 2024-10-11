@@ -328,7 +328,6 @@ public class ObjectManager : MonoBehaviour
         cubeManager.IgnoreClick = true;
         cubeManager.IgnoreWheel = true;
 
-        ChangeShop();
         clickIgnorePanel.SetActive(true);
         shopPopup.SetActive(true);
         ChangePlayerInventory();

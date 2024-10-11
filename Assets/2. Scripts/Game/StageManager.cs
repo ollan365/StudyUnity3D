@@ -337,6 +337,9 @@ public class StageManager : MonoBehaviour
             }
         }
 
+        // 상인의 상점 변경
+        ObjectManager.Instance.ChangeShop();
+
         clickIgnorePanel.SetActive(false);
     }
     public void NextStage(GameObject portal)
