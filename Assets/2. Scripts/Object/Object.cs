@@ -188,6 +188,11 @@ public class Object : MonoBehaviour
         gameObject.SetActive(false);
         if (type == ObjectType.ENEMY) 
             StageManager.Instance.SetStageTextValue(StageText.MONSTER, -1);
+        if (type == ObjectType.FRIEND)
+        {
+            StageManager.Instance.SetStageTextValue(StageText.MOVE_INIT, -1);
+            StageManager.Instance.SetStageTextValue(StageText.MOVE, -1);
+        }
     }
 
     public void PoppingText(string text, Color color)
@@ -214,10 +219,7 @@ public class Object : MonoBehaviour
                 .Join(popText.DOFade(0.0f, 2.0f));
         }
         
-        
-
         rectTransform.localPosition = Vector3.zero;
-
     }
 
     private void OnTriggerEnter(Collider other)

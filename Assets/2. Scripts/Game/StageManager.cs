@@ -137,10 +137,11 @@ public class StageManager : MonoBehaviour
         }
         else if (text == StageText.ALL_INIT)
         {
+            stageTextValues[StageText.MOVE_INIT.ToInt()].value = 2 + EventManager.Instance.FriendCount;
             stageTextValues[StageText.MOVE.ToInt()].value = stageTextValues[StageText.MOVE_INIT.ToInt()].value;
             stageTextValues[StageText.ROTATE.ToInt()].value = stageTextValues[StageText.ROTATE_INIT.ToInt()].value;
         }
-        else stageTextValues[text.ToInt()].value += addValue;
+        else stageTextValues[text.ToInt()].value = Mathf.Max(0, stageTextValues[text.ToInt()].value + addValue);
 
         stageTextValues[StageText.MONSTER.ToInt()].value = 0;
         foreach (GameObject e in enemy)
@@ -427,9 +428,14 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null || friend[i].GetComponent<Object>().HP <= 0)
             {
+                SetStageTextValue(StageText.MOVE_INIT, 1);
+                SetStageTextValue(StageText.MOVE, 1);
+
                 Debug.Log($"{scrollID}"); // / {StaticManager.Instance.scrollDatas[scrollID].FriendIndex}");
                 friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 ObjectManager.Instance.UseItem(ItemType.SCROLL, scrollID);
+                
+
                 break;
             }
         }

@@ -102,7 +102,7 @@ public class CubeManager : MonoBehaviour
             mouseStartObject = null;
             mouseStartTouchCube = null;
 
-            if (IgnoreClick || IsEvent) return;
+            if (IgnoreClick || IsEvent) { return; }
             
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
 
