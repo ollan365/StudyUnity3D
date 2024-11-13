@@ -137,10 +137,11 @@ public class StageManager : MonoBehaviour
         }
         else if (text == StageText.ALL_INIT)
         {
+            stageTextValues[StageText.MOVE_INIT.ToInt()].value = 2 + EventManager.Instance.FriendCount;
             stageTextValues[StageText.MOVE.ToInt()].value = stageTextValues[StageText.MOVE_INIT.ToInt()].value;
             stageTextValues[StageText.ROTATE.ToInt()].value = stageTextValues[StageText.ROTATE_INIT.ToInt()].value;
         }
-        else stageTextValues[text.ToInt()].value += addValue;
+        else stageTextValues[text.ToInt()].value = Mathf.Max(0, stageTextValues[text.ToInt()].value + addValue);
 
         stageTextValues[StageText.MONSTER.ToInt()].value = 0;
         foreach (GameObject e in enemy)
@@ -337,6 +338,9 @@ public class StageManager : MonoBehaviour
             }
         }
 
+        // 상인의 상점 변경
+        ObjectManager.Instance.ChangeShop();
+
         clickIgnorePanel.SetActive(false);
     }
     public void NextStage(GameObject portal)
@@ -379,16 +383,16 @@ public class StageManager : MonoBehaviour
                 endRotationVector = new(0, 0, 90);
                 break;
             case Colors.BLUE:
-                endRotationVector = new(-90, 0, 90);
+                endRotationVector = new(-90, 0, 0);
                 break;
             case Colors.GREEN:
-                endRotationVector = new(90, 0, -90);
+                endRotationVector = new(90, 0, 0);
                 break;
             case Colors.ORANGE:
-                endRotationVector = new(0, 0, -90);
+                endRotationVector = new(0, 180, -90);
                 break;
             case Colors.YELLOW:
-                endRotationVector = new(0, 0, -180);
+                endRotationVector = new(0, 180, -180);
                 break;
         }
 
@@ -424,9 +428,14 @@ public class StageManager : MonoBehaviour
         {
             if (friend[i] == null || friend[i].GetComponent<Object>().HP <= 0)
             {
+                SetStageTextValue(StageText.MOVE_INIT, 1);
+                SetStageTextValue(StageText.MOVE, 1);
+
                 Debug.Log($"{scrollID}"); // / {StaticManager.Instance.scrollDatas[scrollID].FriendIndex}");
                 friend[i] = ObjectManager.Instance.Summons(cube, ObjectType.FRIEND, StaticManager.Instance.scrollDatas[scrollID].FriendIndex);
                 ObjectManager.Instance.UseItem(ItemType.SCROLL, scrollID);
+                
+
                 break;
             }
         }

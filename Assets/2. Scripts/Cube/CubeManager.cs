@@ -23,8 +23,26 @@ public class CubeManager : MonoBehaviour
     private float maxValue = 75f;
     private float minValue = 40f;
 
-    public bool IgnoreClick { get; set; }
-    public bool IgnoreWheel { get; set; }
+    bool ignoreClick = false;
+    bool ignoreWheel = false;
+    public bool IgnoreClick
+    {
+        get => ignoreClick;
+        set
+        {
+            if (!value) StartCoroutine(EnableClickNextFrame());
+            else ignoreClick = value;
+        }
+    }
+    public bool IgnoreWheel
+    {
+        get => ignoreWheel;
+        set
+        {
+            if (!value) StartCoroutine(EnableWheelNextFrame());
+            else ignoreWheel = value;
+        }
+    }
     public bool IsEvent { get; set; }
     private bool IsEscClicked = false;
 
@@ -32,8 +50,6 @@ public class CubeManager : MonoBehaviour
     {
         playerTurnStatus = PlayerTurnStatus.NORMAL;
         IsEvent = false;
-        IgnoreClick = false;
-        IgnoreWheel = false;
         turnDataSave = new();
     }
     private void Update()
@@ -114,7 +130,7 @@ public class CubeManager : MonoBehaviour
             mouseStartObject = null;
             mouseStartTouchCube = null;
 
-            if (IgnoreClick || IsEvent) return;
+            if (IgnoreClick || IsEvent) { return; }
             
             if (StageManager.Instance.StatusOfStage != StageStatus.PLAYER && StageManager.Instance.StatusOfStage != StageStatus.END) return;
 
@@ -192,6 +208,17 @@ public class CubeManager : MonoBehaviour
                 Turn(mouseStartTouchCube.TouchColors[index], mouseStartTouchCube.TouchInts[index]);
             }
         }
+    }
+
+    private IEnumerator EnableClickNextFrame()
+    {
+        yield return null;
+        IgnoreClick = false;
+    }
+    private IEnumerator EnableWheelNextFrame()
+    {
+        yield return null;
+        IgnoreWheel = false;
     }
     public void MouseStart(Touch script)
     {

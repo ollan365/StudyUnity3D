@@ -438,6 +438,7 @@ public class EventManager : MonoBehaviour
                 break;
 
             case "떠돌이 상인":
+                ObjectManager.Instance.ChangeShop();
                 ObjectManager.Instance.OpenShop();
                 break;
 
