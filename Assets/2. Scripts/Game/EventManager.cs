@@ -206,7 +206,8 @@ public class EventManager : MonoBehaviour
         }
 
         // 발생 가능한 이벤트들을 UI에 버튼으로 띄운다
-        for (int i = 0; i < eventList.Count; i++)
+        //for (int i = 0; i < eventList.Count; i++)
+        for (int i = 0; i < 2; i++)
         {
             int index = i;
             GameObject newEventCard = Instantiate(eventButtonPrefab, eventButtonParent);
