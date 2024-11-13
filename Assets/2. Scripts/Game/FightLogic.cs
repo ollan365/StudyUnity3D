@@ -215,6 +215,12 @@ public class FightLogic : MonoBehaviour
     
     private List<int> AttackableOrder(WeaponType weaponType, Colors color, int index)
     {
+        if (color == Colors.GREEN || color == Colors.ORANGE || color == Colors.YELLOW)
+        {
+            if (index == 0 || index == 3 || index == 6) index += 2;
+            else if (index == 2 || index == 5 || index == 8) index -= 2;
+        }
+
         List<int> attackOrder = new();
         string order = "";
 
