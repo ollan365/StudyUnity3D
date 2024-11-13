@@ -294,7 +294,7 @@ public class ObjectManager : MonoBehaviour
             case ItemType.SCROLL:
                 for (int i = 0; i < 3; i++)
                 {
-                    if (StageManager.Instance.FriendList[i] == null) // �̰� ���� ��ȯ�� �� ������������ 3���� ������ ���� ��
+                    if (StageManager.Instance.FriendList[i] == null) 
                     {
                         cubeManager.SwitchPlayerTurnStatus(StaticManager.Instance.inventory[index].item.ID, ItemType.SCROLL);
                         return;
@@ -403,7 +403,7 @@ public class ObjectManager : MonoBehaviour
         {
             if (StaticManager.Instance.inventory[i].item == item) // �̹� �ִ� �������� ���
             {
-                if (item.ItemType == ItemType.WEAPON) return; // ����� �ϳ��� ���� ����
+                if (item.ItemType == ItemType.WEAPON) return; 
                 inventoryIndex = i;
                 break;
             }

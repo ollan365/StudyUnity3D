@@ -26,6 +26,7 @@ public class CubeManager : MonoBehaviour
     public bool IgnoreClick { get; set; }
     public bool IgnoreWheel { get; set; }
     public bool IsEvent { get; set; }
+    private bool IsEscClicked = false;
 
     private void Awake()
     {
@@ -37,12 +38,39 @@ public class CubeManager : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        //오른쪽 버튼 클릭 시
+
+        if (Input.GetMouseButtonDown(1) || (IsEscClicked = Input.GetKeyDown(KeyCode.Escape)))
         {
+            //적 정보창이 띄워져 있었다면
             ObjectManager.Instance.EnemyInfoPanel.SetActive(false);
+
+            //이동가능 블록이 활성화 되어 있다면 비활성화
+            if (ColorCheckManager.Instance.SelectedCharacter != null)
+            {
+                ColorCheckManager.Instance.CharacterSelectCancel(ColorCheckManager.Instance.SelectedCharacter, false);
+            }
+
+            //포션 아이템을 클릭한 상태로, 오른쪽 버튼을 클릭했다면, 포션 사용 상태 종료
+            //플레이어 인벤토리 동료 소환 스크롤 아이템을 클릭했을 때 , 오른쪽 버튼을 클릭했다면, 동료 소환 상태 종료
+            if (playerTurnStatus == PlayerTurnStatus.PORTION_SELECTED || playerTurnStatus == PlayerTurnStatus.SUMMONS_SELECTED)
+            {
+                playerTurnStatus = PlayerTurnStatus.NORMAL;
+            }
+
+
+            //플레이어 인벤토리 무기를 클릭했을 때, 오른쪽 버튼을 클릭했다면, 무기 교체 상태 종료
+            //무기 선택 시스템이 바뀌면 적용
+
+            //stage status가 fight턴일때, player 메뉴 ui가 뜨는 조건은 형한테 물어봐야 할듯
+            if(StageManager.Instance.StatusOfStage == StageStatus.FIGHT)
+            {
+                
+            }
+
         }
 
-        if(StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END)
+        if (StageManager.Instance.StatusOfStage == StageStatus.PLAYER || StageManager.Instance.StatusOfStage == StageStatus.END)
         {
             if (IgnoreWheel || IsEvent) return;
             float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
@@ -156,6 +184,10 @@ public class CubeManager : MonoBehaviour
             // 그냥 허공에 마우스를 뗀 경우
             if (mouseStartTouchCube != null)
             {
+                if(ColorCheckManager.Instance.SelectedCharacter != null)
+                {
+
+                }
                 int index = mouseStartTouchCube.Direction(startPosition);
                 Turn(mouseStartTouchCube.TouchColors[index], mouseStartTouchCube.TouchInts[index]);
             }
