@@ -259,7 +259,6 @@ public class FightLogic : MonoBehaviour
             {
                 case 0:
                     order = "13";
-                    attackOrder.Add(1); attackOrder.Add(3);
                     break;
                 case 1:
                     order = "024";
