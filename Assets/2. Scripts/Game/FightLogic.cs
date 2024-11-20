@@ -34,14 +34,13 @@ public class FightLogic : MonoBehaviour
                 while (attacking) yield return new WaitForFixedUpdate();
             }
         }
-        
+        Time.timeScale = 1;
+
         //딜교가 종료되면, 일정시간 기다렸다가 ENV 턴으로 넘어간다.
         yield return new WaitForSeconds(2.0f);
         // statge statue를 바꾼다
         if (StageManager.Instance.StatusOfStage != StageStatus.END)
             StageManager.Instance.ChangeStatus(StageStatus.ENV);
-
-        Time.timeScale = 1;
     }
     private List<KeyValuePair<float, Object>> ObjectAttackOrder()
     {

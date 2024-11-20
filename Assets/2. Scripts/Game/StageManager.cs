@@ -11,7 +11,7 @@ public class StageManager : MonoBehaviour
 {
     Sequence sequence;
 
-    [SerializeField] public int TimeScaleValue = 2;
+    [SerializeField] public int TimeScaleValue;
 
     public static StageManager Instance { get; private set; }
     [SerializeField] private GameObject player;

@@ -8,7 +8,7 @@ public class EnvLogic : MonoBehaviour
     private bool isMoving = false;
     public IEnumerator EnvLogicStart()
     {
-        Time.timeScale = 2f * StageManager.Instance.TimeScaleValue;
+        Time.timeScale = 2 * StageManager.Instance.TimeScaleValue; ;
         foreach (GameObject e in StageManager.Instance.EnemyList)
         {
             if (e.GetComponent<Object>().HP <= 0) continue;
@@ -34,7 +34,7 @@ public class EnvLogic : MonoBehaviour
 
             while (isMoving) yield return new WaitForFixedUpdate();
         }
-        Time.timeScale = 1f;
+        Time.timeScale = 1;
         yield return new WaitForFixedUpdate();
         StageManager.Instance.ChangeStatus(StageStatus.PLAYER);
     }
