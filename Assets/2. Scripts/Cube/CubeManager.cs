@@ -30,8 +30,7 @@ public class CubeManager : MonoBehaviour
         get => ignoreClick;
         set
         {
-            if (!value) StartCoroutine(EnableClickNextFrame());
-            else ignoreClick = value;
+            ignoreClick = value;
         }
     }
     public bool IgnoreWheel
@@ -39,8 +38,7 @@ public class CubeManager : MonoBehaviour
         get => ignoreWheel;
         set
         {
-            if (!value) StartCoroutine(EnableWheelNextFrame());
-            else ignoreWheel = value;
+            ignoreWheel = value;
         }
     }
     public bool IsEvent { get; set; }
@@ -237,12 +235,12 @@ public class CubeManager : MonoBehaviour
     private IEnumerator EnableClickNextFrame()
     {
         yield return null;
-        IgnoreClick = false;
+        ignoreClick = false;
     }
     private IEnumerator EnableWheelNextFrame()
     {
         yield return null;
-        IgnoreWheel = false;
+        ignoreWheel = false;
     }
     public void MouseStart(Touch script)
     {
@@ -430,7 +428,6 @@ public class CubeManager : MonoBehaviour
                 break;
         }
     }
-
     private void ClickObject(Object obj)
     {
         switch (playerTurnStatus)
