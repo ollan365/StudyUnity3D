@@ -13,6 +13,8 @@ public class FightLogic : MonoBehaviour
 
     public IEnumerator FightLogicStart()
     {
+        Time.timeScale = StageManager.Instance.TimeScaleValue;
+
         List<KeyValuePair<float, Object>> objectAttackOrder = ObjectAttackOrder();
 
         for (int i = 0; i < objectAttackOrder.Count; i++)
@@ -38,6 +40,8 @@ public class FightLogic : MonoBehaviour
         // statge statue를 바꾼다
         if (StageManager.Instance.StatusOfStage != StageStatus.END)
             StageManager.Instance.ChangeStatus(StageStatus.ENV);
+
+        Time.timeScale = 1;
     }
     private List<KeyValuePair<float, Object>> ObjectAttackOrder()
     {

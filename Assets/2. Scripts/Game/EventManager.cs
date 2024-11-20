@@ -484,7 +484,7 @@ public class EventManager : MonoBehaviour
 
             case "이름3":
                 for (int i = 0; i < 3; i++)
-                    StageManager.Instance.SummonsFriend(null, Random.Range(110002, 110005));
+                    StageManager.Instance.SummonsFriend(null, 110000 + Random.Range(0, 3));
                 break;
 
             case "이름4":

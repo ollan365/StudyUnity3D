@@ -11,6 +11,8 @@ public class StageManager : MonoBehaviour
 {
     Sequence sequence;
 
+    [SerializeField] public int TimeScaleValue = 2;
+
     public static StageManager Instance { get; private set; }
     [SerializeField] private GameObject player;
     public Object Player { get => player.GetComponent<Object>(); }
@@ -156,6 +158,8 @@ public class StageManager : MonoBehaviour
     }
     public IEnumerator StartStage()
     {
+        Time.timeScale = TimeScaleValue;
+
         yield return new WaitForFixedUpdate();
 
         // 보물 소환
@@ -209,6 +213,8 @@ public class StageManager : MonoBehaviour
         ChangeStatus(StageStatus.PLAYER);
 
         EventManager.Instance.BingoCheck();
+
+        Time.timeScale = 1;
     }
     public void SummonStageTreasure(int count)
     {
