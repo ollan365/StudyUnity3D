@@ -70,7 +70,9 @@ public class ObjectManager : MonoBehaviour
 
     [Header("Player Weapon")]
     [SerializeField] private GameObject playerWeapon;
+    public GameObject PlayerWeapon { get=> playerWeapon; }
     [SerializeField] private GameObject[] weapons;
+    public GameObject[] Weapons { get => weapons; }
 
 
     private void Awake()
