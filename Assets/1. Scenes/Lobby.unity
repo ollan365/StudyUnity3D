@@ -2803,7 +2803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c98dd558d420440b51ae7434f8cbbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stage: 9
+  stage: 1
   inventory:
   - item: {fileID: 11400000, guid: eeedd807df1424746b780cdc0a674547, type: 2}
     count: 1

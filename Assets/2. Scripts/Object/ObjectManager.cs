@@ -212,6 +212,7 @@ public class ObjectManager : MonoBehaviour
     public void ChangePlayerInventory()
     {
         goldText.text = StaticManager.Instance.Gold.ToString();
+        shopGoldText.text = StaticManager.Instance.Gold.ToString();
 
         for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
@@ -238,9 +239,6 @@ public class ObjectManager : MonoBehaviour
                     break;
             }
         }
-
-
-        shopGoldText.text = StaticManager.Instance.Gold.ToString();
 
         for (int i = 0; i < StaticManager.Instance.inventory.Length; i++)
         {
@@ -308,6 +306,8 @@ public class ObjectManager : MonoBehaviour
     public void ClickShopInventoryBTN(int index)
     {
         StaticManager.Instance.Gold += StaticManager.Instance.inventory[index].item.SellCost;
+        goldText.text = StaticManager.Instance.Gold.ToString();
+        shopGoldText.text = StaticManager.Instance.Gold.ToString();
         StaticManager.Instance.inventory[index].count--;
         ChangePlayerInventory();
     }
@@ -381,6 +381,8 @@ public class ObjectManager : MonoBehaviour
 
         // ���� �� ����
         StaticManager.Instance.Gold -= shopItemSlotArray[index].item.BuyCost;
+        goldText.text = StaticManager.Instance.Gold.ToString();
+        shopGoldText.text = StaticManager.Instance.Gold.ToString();
 
         // ���� ���� ����
         shopItemSlotArray[index].count--;
