@@ -95,11 +95,6 @@ public class StageManager : MonoBehaviour
         StaticManager.Instance.player = player.GetComponent<Object>();
         StaticManager.Instance.PlayerWeapon = StaticManager.Instance.PlayerWeapon;
 
-        if (ObjectManager.Instance.PlayerWeapon.transform.childCount != 0)
-            Destroy(ObjectManager.Instance.PlayerWeapon.transform.GetChild(0).gameObject);
-        Debug.Log(ObjectManager.Instance.Weapons[StaticManager.Instance.PlayerWeapon.ID - 110014] + " " + ObjectManager.Instance.PlayerWeapon.transform);
-        Instantiate(ObjectManager.Instance.Weapons[StaticManager.Instance.PlayerWeapon.ID - 110014], ObjectManager.Instance.PlayerWeapon.transform);
-
         stageDatas = new int[data.Split(',').Length - 1];
         for (int i = 0; i < data.Split(',').Length - 1; i++)
             stageDatas[i] = int.Parse(data.Split(',')[i]);

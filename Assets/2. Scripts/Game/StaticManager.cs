@@ -24,6 +24,13 @@ public class StaticManager : MonoBehaviour
         {
             playerWeapon = value;
             player.SetWeapon(playerWeapon.MinDamage, playerWeapon.MaxDamage, playerWeapon.WeaponType);
+
+            if (ObjectManager.Instance.PlayerWeapon.transform.childCount != 0)
+                Destroy(ObjectManager.Instance.PlayerWeapon.transform.GetChild(0).gameObject);
+
+            int idx = (playerWeapon.ID - 110014);
+            idx = (ObjectManager.Instance.Weapons.Length == 0) ? 0 : idx % (ObjectManager.Instance.Weapons.Length);
+            Instantiate(ObjectManager.Instance.Weapons[idx], ObjectManager.Instance.PlayerWeapon.transform);
         }
     }
     [SerializeField] private int gold = 0; // 일단 테스트를 위해 1000골드

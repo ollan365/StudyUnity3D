@@ -276,13 +276,6 @@ public class ObjectManager : MonoBehaviour
                 if (StaticManager.Instance.PlayerWeapon != (Weapon)StaticManager.Instance.inventory[index].item && StageManager.Instance.GetStageTextValue(StageText.WEAPON_CHANGE) > 0)
                 {
                     StaticManager.Instance.PlayerWeapon = (Weapon)StaticManager.Instance.inventory[index].item;
-
-                    if(playerWeapon.transform.childCount != 0)
-                        Destroy(playerWeapon.transform.GetChild(0).gameObject);
-
-                    int idx = (StaticManager.Instance.inventory[index].item.ID - 110014);
-                    idx = (weapons.Length == 0) ? 0 : idx % (weapons.Length);
-                    GameObject.Instantiate(weapons[idx], playerWeapon.transform);
                     
 
                     StageManager.Instance.SetStageTextValue(StageText.WEAPON_CHANGE, -1);
