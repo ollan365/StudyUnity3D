@@ -22,6 +22,7 @@ public class EventManager : MonoBehaviour
     [Header("Event")]
     [SerializeField] private GameObject eventPanel;
     [SerializeField] private Transform eventButtonParent;
+    [SerializeField] private Button[] eventButtons;
     [SerializeField] private GameObject eventButtonPrefab;
     [SerializeField] private EventCard[] eventCards;
     [SerializeField] private ColorEffect colorEffect = new ColorEffect(Colors.NULL);
@@ -186,7 +187,7 @@ public class EventManager : MonoBehaviour
     }
     private void EventAdd(Colors color)
     {
-        foreach (Transform child in eventButtonParent) Destroy(child.gameObject);
+        //foreach (Transform child in eventButtonParent) Destroy(child.gameObject);
 
         // 발생 가능한 이벤트들을 저장한 리스트
         List<EventCard> eventList = new();
@@ -209,11 +210,18 @@ public class EventManager : MonoBehaviour
         //for (int i = 0; i < eventList.Count; i++)
         for (int i = 0; i < 2; i++)
         {
-            int index = i;
-            GameObject newEventCard = Instantiate(eventButtonPrefab, eventButtonParent);
-            newEventCard.GetComponent<Button>().onClick.AddListener(() => Event(eventList[index].eventName));
+            //이전
+            //int index = i;
+            //GameObject newEventCard = Instantiate(eventButtonPrefab, eventButtonParent);
+            //newEventCard.GetComponent<Button>().onClick.AddListener(() => Event(eventList[index].eventName));
 
-            TextMeshProUGUI[] childTexts = newEventCard.GetComponentsInChildren<TextMeshProUGUI>();
+            //TextMeshProUGUI[] childTexts = newEventCard.GetComponentsInChildren<TextMeshProUGUI>();
+            //childTexts[0].text = eventList[i].eventName;
+            //childTexts[1].text = eventList[i].EventDescription[0];
+
+            //현재
+            eventButtons[i].onClick.AddListener(() => Event(eventList[i].eventName));
+            TextMeshProUGUI[] childTexts = eventButtons[i].GetComponentsInChildren<TextMeshProUGUI>();
             childTexts[0].text = eventList[i].eventName;
             childTexts[1].text = eventList[i].EventDescription[0];
         }
