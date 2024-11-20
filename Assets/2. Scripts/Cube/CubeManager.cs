@@ -28,12 +28,20 @@ public class CubeManager : MonoBehaviour
     public bool IgnoreClick
     {
         get => ignoreClick;
-        set => ignoreClick = value;
+        set
+        {
+            if (!value) StartCoroutine(EnableClickNextFrame());
+            else ignoreClick = value;
+        }
     }
     public bool IgnoreWheel
     {
         get => ignoreWheel;
-        set => ignoreWheel = value;
+        set
+        {
+            if (!value) StartCoroutine(EnableWheelNextFrame());
+            else ignoreWheel = value;
+        }
     }
     public bool IsEvent { get; set; }
     private bool IsEscClicked = false;

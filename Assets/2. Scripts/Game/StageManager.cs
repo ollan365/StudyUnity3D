@@ -129,6 +129,9 @@ public class StageManager : MonoBehaviour
     {
         if (StatusOfStage == StageStatus.END)
         {
+            stageTextValues[StageText.MOVE.ToInt()].value = 1;
+            stageTextValues[StageText.ROTATE.ToInt()].value = 1;
+
             stageTexts[1].text = "CLEAR !";
             stageTexts[2].text = "INFINITY";
             stageTexts[3].text = "INFINITY";
