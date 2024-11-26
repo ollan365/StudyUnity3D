@@ -220,8 +220,9 @@ public class EventManager : MonoBehaviour
             //childTexts[1].text = eventList[i].EventDescription[0];
 
             //현재
+            int index = i;
             eventButtons[i].onClick.RemoveAllListeners();
-            eventButtons[i].onClick.AddListener(() => Event(eventList[i].eventName));
+            eventButtons[i].onClick.AddListener(() => Event(eventList[index].eventName));
             TextMeshProUGUI[] childTexts = eventButtons[i].GetComponentsInChildren<TextMeshProUGUI>();
             childTexts[0].text = eventList[i].eventName;
             childTexts[1].text = eventList[i].EventDescription[0];
