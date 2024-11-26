@@ -357,7 +357,7 @@ public class ObjectManager : MonoBehaviour
                 shopItemSlotArray[shopIndex] = new(shopItemArray[itemIndex], 1);
 
             shopSlot[shopIndex].ChangeImage(shopItemArray[itemIndex].Icon);
-            shopSlot[shopIndex].ChangeText(shopItemSlotArray[shopIndex].count + " / $" + shopItemArray[itemIndex].SellCost.ToString());
+            shopSlot[shopIndex].ChangeText(shopItemSlotArray[shopIndex].count + " / $" + shopItemArray[itemIndex].BuyCost.ToString());
         }
 
         for(int i = shopIndex; i < shopSlot.Length; i++)
