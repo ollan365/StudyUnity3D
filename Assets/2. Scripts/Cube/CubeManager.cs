@@ -443,7 +443,6 @@ public class CubeManager : MonoBehaviour
                             
                         break;
                     case ObjectType.TRIGGER:
-                        Debug.Log(obj.gameObject);
                         if (ColorCheckManager.Instance.Move(obj.Color, obj.Index, false, false))
                             StageManager.Instance.StagePlayLogic.Trigger(obj.gameObject);
                         break;

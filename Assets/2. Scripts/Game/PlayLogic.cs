@@ -76,8 +76,8 @@ public class PlayLogic : MonoBehaviour
 
         Object selected = ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>();
 
-        if (random < 50) selected.OnHit(StatusEffect.HP_PERCENT, -50);
-        else selected.OnHit(StatusEffect.HP_PERCENT, 50);
+        if (random < 50) selected.OnHit(StatusEffect.HP_PERCENT, -20);
+        else selected.OnHit(StatusEffect.HP_PERCENT, 20);
 
         Debug.Log($"ForbiddenFruit: {selected} {random}");
 
