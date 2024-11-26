@@ -130,7 +130,7 @@ public class ColorCheckManager : MonoBehaviour
         {
             if (obj.GetComponent<Object>().touchCube.Obj.Type == ObjectType.TRIGGER)
             {
-                if(obj.GetComponent<Object>().Name == "Treasure") ObjectManager.Instance.ObjectDie(obj.gameObject);
+                if(obj.GetComponent<Object>().touchCube.Obj.Name == "Treasure") ObjectManager.Instance.ObjectDie(obj.GetComponent<Object>().touchCube.Obj.gameObject);
                 else StageManager.Instance.StagePlayLogic.Trigger(obj.GetComponent<Object>().touchCube.Obj.gameObject);
             }
         }
