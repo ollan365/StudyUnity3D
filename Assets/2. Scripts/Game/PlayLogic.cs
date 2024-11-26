@@ -29,13 +29,6 @@ public class PlayLogic : MonoBehaviour
     }
     private IEnumerator OpenTreasure(Object obj, bool isEvent = false)
     {
-        //적이 이동해서 상자를 오픈하는 경우
-        if(ColorCheckManager.Instance.SelectedCharacter.GetComponent<Object>().Type == ObjectType.ENEMY)
-        {
-            ObjectManager.Instance.ObjectDie(obj.gameObject);
-            yield break;
-        }
-
         GameObject selectedCharacter = ColorCheckManager.Instance.SelectedCharacter;
         ColorCheckManager.Instance.CharacterSelectCancel(null, true);
 

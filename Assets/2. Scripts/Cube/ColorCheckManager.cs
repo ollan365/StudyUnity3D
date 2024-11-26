@@ -129,7 +129,10 @@ public class ColorCheckManager : MonoBehaviour
         else if(obj.GetComponent<Object>().Type == ObjectType.ENEMY)
         {
             if (obj.GetComponent<Object>().touchCube.Obj.Type == ObjectType.TRIGGER)
-                StageManager.Instance.StagePlayLogic.Trigger(obj.GetComponent<Object>().touchCube.Obj.gameObject);
+            {
+                if(obj.GetComponent<Object>().Name == "Treasure") ObjectManager.Instance.ObjectDie(obj.gameObject);
+                else StageManager.Instance.StagePlayLogic.Trigger(obj.GetComponent<Object>().touchCube.Obj.gameObject);
+            }
         }
     }
 }
