@@ -11,6 +11,7 @@ public class StaticManager : MonoBehaviour
     [SerializeField] private int stage;
     public ItemSlot[] inventory;
     public ItemObject nullObject;
+    public ItemObject rustySword;
 
     [Header("Player")]
     public Object player;
@@ -89,6 +90,17 @@ public class StaticManager : MonoBehaviour
         }
         cubeMaterialSet = new Material[][] { material1, material2, material3, material4, material5, material6 };
 
+    }
+    public void GameInfoInit()
+    {
+        // 게임 오버 후 초기화: 스테이지, 골드, 인벤토리, 플레이어 무기
+        stage = 1;
+        Gold = 0;
+
+        for (int i = 0; i < inventory.Length; i++) inventory[i].Init();
+
+        inventory[0] = new ItemSlot(rustySword, 1);
+        PlayerWeapon = (Weapon)rustySword;
     }
     public void GameStart(bool isLobby)
     {

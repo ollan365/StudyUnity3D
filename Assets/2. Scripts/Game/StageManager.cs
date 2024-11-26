@@ -372,6 +372,7 @@ public class StageManager : MonoBehaviour
     }
     public void LoadScene()
     {
+        StaticManager.Instance.GameInfoInit();
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
