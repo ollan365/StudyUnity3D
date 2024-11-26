@@ -199,12 +199,14 @@ public class EventManager : MonoBehaviour
 
         // 리스트를 랜덤으로 섞는다
         for (int i = 0; i < eventList.Count; i++)
-        {
+        { 
             int randomIndex = Random.Range(i, eventList.Count);
             EventCard temp = eventList[i];
             eventList[i] = eventList[randomIndex];
             eventList[randomIndex] = temp;
+            
         }
+
 
         // 발생 가능한 이벤트들을 UI에 버튼으로 띄운다
         //for (int i = 0; i < eventList.Count; i++)
@@ -220,16 +222,22 @@ public class EventManager : MonoBehaviour
             //childTexts[1].text = eventList[i].EventDescription[0];
 
             //현재
-            eventButtons[i].onClick.AddListener(() => Event(eventList[i].eventName));
+            int index = i; //이거 안하면 제대로 안됨.
+            //왜냐, 리스너 넘길때, () => Event(eventList[index].eventName) 의 각 값들이 마지막 값? 으로 넘어가서 i = 2로 넘어간대요
+            //그래서 따로 변수를 만들어둬야 한대요..
+            eventButtons[i].onClick.RemoveAllListeners();
+            eventButtons[i].onClick.AddListener(() => Event(eventList[index].eventName));
             TextMeshProUGUI[] childTexts = eventButtons[i].GetComponentsInChildren<TextMeshProUGUI>();
             childTexts[0].text = eventList[i].eventName;
             childTexts[1].text = eventList[i].EventDescription[0];
+
         }
     }
     
 
     private bool CheckEvent(string name, Colors color)
     {
+        
         if (color == Colors.WY)
         {
             switch (name)
