@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2805,33 +2805,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stage: 1
   inventory:
-  - item: {fileID: 11400000, guid: eeedd807df1424746b780cdc0a674547, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: 653a6cd605aaa60418708d0343a61c16, type: 2}
-    count: 3
-  - item: {fileID: 11400000, guid: b7d2d3abd5f11774eb8d3a5140e60b16, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: 28b4674014134fa449bf240e7b6a92a2, type: 2}
-    count: 3
-  - item: {fileID: 11400000, guid: 255a402360ebe9d47bbb330f9cc1f87f, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: c8903ee5785816645849ebce86a309cf, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
-    count: 0
   - item: {fileID: 11400000, guid: bb090f420cb763a48ba2cabb39cc24ef, type: 2}
     count: 1
-  - item: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
+  - item: {fileID: 0}
     count: 0
-  - item: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
+  - item: {fileID: 0}
     count: 0
-  - item: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
+  - item: {fileID: 0}
     count: 0
-  - item: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
+  - item: {fileID: 0}
+    count: 0
+  - item: {fileID: 0}
+    count: 0
+  - item: {fileID: 0}
+    count: 0
+  - item: {fileID: 0}
+    count: 0
+  - item: {fileID: 0}
+    count: 0
+  - item: {fileID: 0}
+    count: 0
+  - item: {fileID: 0}
+    count: 0
+  - item: {fileID: 0}
     count: 0
   nullObject: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
   player: {fileID: 0}
-  playerWeapon: {fileID: 11400000, guid: 8cd26a974a2f8f64782189dea1be85e9, type: 2}
+  playerWeapon: {fileID: 11400000, guid: bb090f420cb763a48ba2cabb39cc24ef, type: 2}
   gold: 0
   portionList:
   - {fileID: 11400000, guid: 28b4674014134fa449bf240e7b6a92a2, type: 2}

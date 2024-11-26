@@ -423,10 +423,11 @@ public class StageManager : MonoBehaviour
     {
         stageTexts[1].text = $"{++turn} Turn";
 
-        if (StaticManager.Instance.Stage > 2 && turn  >= 3)
-        {
-            player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 10);
-        }
+        int stage = StaticManager.Instance.Stage;
+        if (stage >= 21 && turn  >= 7) player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 20);
+        else if (stage >= 9 && turn >= 5) player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 15);
+        else if (stage >= 4 && turn >= 3) player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 10);
+        
     }
 
     public void SummonsFriend(Touch cube, int scrollID)
