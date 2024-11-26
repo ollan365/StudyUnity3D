@@ -424,9 +424,10 @@ public class StageManager : MonoBehaviour
         stageTexts[1].text = $"{++turn} Turn";
 
         int stage = StaticManager.Instance.Stage;
-        if (stage >= 21 && turn  >= 7) player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 20);
+        
+        if (stage >= 4 && turn >= 3) player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 10);
         else if (stage >= 9 && turn >= 5) player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 15);
-        else if (stage >= 4 && turn >= 3) player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 10);
+        else if (stage >= 21 && turn  >= 7) player.GetComponent<Object>().OnHit(StatusEffect.HP_PERCENT, 20);
         
     }
 
