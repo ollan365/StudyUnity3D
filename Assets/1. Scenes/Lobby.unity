@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2831,7 +2831,7 @@ MonoBehaviour:
     count: 0
   nullObject: {fileID: 11400000, guid: e6153e6bc3ad19a448c3efcdd7c9d7a5, type: 2}
   player: {fileID: 0}
-  playerWeapon: {fileID: 11400000, guid: 255a402360ebe9d47bbb330f9cc1f87f, type: 2}
+  playerWeapon: {fileID: 11400000, guid: 8cd26a974a2f8f64782189dea1be85e9, type: 2}
   gold: 0
   portionList:
   - {fileID: 11400000, guid: 28b4674014134fa449bf240e7b6a92a2, type: 2}

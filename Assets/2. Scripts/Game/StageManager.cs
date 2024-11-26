@@ -119,7 +119,7 @@ public class StageManager : MonoBehaviour
         clickIgnorePanel.SetActive(true);
 
         // if(StaticManager.Instance.Stage != 1) 
-            StartCoroutine(StartStage());
+        StartCoroutine(StartStage());
     }
     public int GetStageTextValue(StageText text)
     {
